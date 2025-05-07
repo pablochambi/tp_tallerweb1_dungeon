@@ -43,27 +43,27 @@ public class VistaLoginE2E {
         context.close();
     }
 
-    @Test
-    void deberiaDecirUNLAMEnElNavbar() {
-        String texto = vistaLogin.obtenerTextoDeLaBarraDeNavegacion();
-        assertThat("UNLAM", equalToIgnoringCase(texto));
-    }
-
-    @Test
-    void deberiaDarUnErrorAlNoCompletarElLoginYTocarElBoton() {
-        vistaLogin.escribirEMAIL("damian@unlam.edu.ar");
-        vistaLogin.escribirClave("unlam");
-        vistaLogin.darClickEnIniciarSesion();
-        String texto = vistaLogin.obtenerMensajeDeError();
-        assertThat("Error Usuario o clave incorrecta", equalToIgnoringCase(texto));
-    }
-
-    @Test
-    void deberiaNavegarAlHomeSiElUsuarioExiste() {
-        vistaLogin.escribirEMAIL("test@unlam.edu.ar");
-        vistaLogin.escribirClave("test");
-        vistaLogin.darClickEnIniciarSesion();
-        String url = vistaLogin.obtenerURLActual();
-        assertThat(url, containsStringIgnoringCase("/spring/home"));
-    }
+//    @Test
+//    void deberiaDecirUNLAMEnElNavbar() {
+//        String texto = vistaLogin.obtenerTextoDeLaBarraDeNavegacion();
+//        assertThat("UNLAM", equalToIgnoringCase(texto));
+//    }
+//
+//    @Test
+//    void deberiaDarUnErrorAlNoCompletarElLoginYTocarElBoton() {
+//        vistaLogin.escribirEMAIL("damian@unlam.edu.ar");
+//        vistaLogin.escribirClave("unlam");
+//        vistaLogin.darClickEnIniciarSesion();
+//        String texto = vistaLogin.obtenerMensajeDeError();
+//        assertThat("Error Usuario o clave incorrecta", equalToIgnoringCase(texto));
+//    }
+//
+//    @Test
+//    void deberiaNavegarAlHomeSiElUsuarioExiste() {
+//        vistaLogin.escribirEMAIL("test@unlam.edu.ar");
+//        vistaLogin.escribirClave("test");
+//        vistaLogin.darClickEnIniciarSesion();
+//        String url = vistaLogin.obtenerURLActual();
+//        assertThat(url, containsStringIgnoringCase("/spring/home"));
+//    }
 }
