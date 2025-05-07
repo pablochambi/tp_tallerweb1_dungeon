@@ -12,4 +12,19 @@ public class HomeControler {
         return new ModelAndView("home");
     }
 
+    @GetMapping("/seleccion-heroes")
+    public ModelAndView irAHeroes() {
+        return new ModelAndView("seleccion-heroes");
+    }
+
+    @GetMapping("/mazmorra")
+    public ModelAndView irAMazmorra() {
+        return new ModelAndView("mazmorra");
+    }
+
+    @GetMapping("/reglas")
+    public ModelAndView irAreglas() {
+        return new ModelAndView("reglas");
+    }
+
 }
