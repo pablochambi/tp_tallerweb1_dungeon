@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,35 +33,44 @@ public class ControladorTienda {
     private RepositorioItem repositorioItem;
 
     @GetMapping("/tienda")
-    public String mostrarTienda(Model model) {
-        List<Item> items = repositorioItem.obtenerTodosLosItems();
-        Jugador jugador = new Jugador();
-        model.addAttribute("items", items);
+    public String mostrarTienda(Model model, HttpSession session) {
+        Jugador jugador = (Jugador) session.getAttribute("jugador");
+
+        if (jugador == null) {
+            jugador = new Jugador();
+            jugador.setOro(1000);
+            session.setAttribute("jugador", jugador);
+        }
+
+        model.addAttribute("items", repositorioItem.obtenerTodosLosItems());
         model.addAttribute("jugador", jugador);
         return "tienda";
     }
 
+
     @PostMapping("/comprar")
-    public String comprarItem(@RequestParam Long itemId,
-                              RedirectAttributes redirectAttributes) {
+    public String comprarItem(@RequestParam Long itemId, Model model, HttpSession session) {
+        Item item = repositorioItem.obtenerPorId(itemId);
+        Jugador jugador = (Jugador) session.getAttribute("jugador");
 
-        Item itemSeleccionado = itemsDisponibles.stream()
-                .filter(i -> i.getId().equals(itemId))
-                .findFirst()
-                .orElse(null);
-
-        if (itemSeleccionado != null) {
-            if (jugador.getOro() >= itemSeleccionado.getPrecio()) {
-                jugador.setOro(jugador.getOro() - itemSeleccionado.getPrecio());
-                jugador.getInventario().add(itemSeleccionado);
-                redirectAttributes.addFlashAttribute("mensaje", "¡Compraste " + itemSeleccionado.getNombre() + "!");
-            } else {
-                redirectAttributes.addFlashAttribute("error", "No tenés suficiente oro.");
-            }
-        } else {
-            redirectAttributes.addFlashAttribute("error", "Ítem no encontrado.");
+        if (jugador == null) {
+            jugador = new Jugador(); // o redirigir a login si es por usuario real
+            jugador.setOro(1000);
         }
 
-        return "redirect:/tienda";
+        if (jugador.getOro() >= item.getPrecio()) {
+            jugador.setOro(jugador.getOro() - item.getPrecio());
+            model.addAttribute("mensaje", "Has comprado " + item.getNombre() + " por " + item.getPrecio() + " oro.");
+        } else {
+            model.addAttribute("error", "No tenés suficiente oro.");
+        }
+
+        // actualizar la sesión
+        session.setAttribute("jugador", jugador);
+
+        // Volver a mostrar la tienda con el nuevo oro
+        model.addAttribute("items", repositorioItem.obtenerTodosLosItems());
+        model.addAttribute("jugador", jugador);
+        return "tienda";
     }
 }

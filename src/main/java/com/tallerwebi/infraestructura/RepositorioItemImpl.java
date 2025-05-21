@@ -23,4 +23,9 @@ public class RepositorioItemImpl implements RepositorioItem {
                 .createQuery("FROM Item", Item.class)
                 .list();
     }
+
+    @Override
+    public Item obtenerPorId(Long id) {
+        return sessionFactory.getCurrentSession().get(Item.class, id);
+    }
 }

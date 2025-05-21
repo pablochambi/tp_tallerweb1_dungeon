@@ -13,6 +13,7 @@ public class Item {
     private String nombre;
     private String tipo;  //(pocion, espada, casco...)
     private int precio;
+    private String imagen;
 
     public Item() {}
 
@@ -44,4 +45,11 @@ public class Item {
         this.tipo = tipo;
     }
 
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
 }
