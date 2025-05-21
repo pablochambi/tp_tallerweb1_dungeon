@@ -1,0 +1,30 @@
+<!-- src/main/webapp/WEB-INF/views/thymeleaf/nuevo-usuario.html -->
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Registro de Usuario</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+</head>
+<body>
+<main class="container mt-5">
+    <h2>Registro de Usuario</h2>
+    <form th:action="@{/registro}" method="POST" th:object="${usuario}">
+        <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input th:field="*{email}" type="email" class="form-control" id="email" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Contraseña</label>
+            <input th:field="*{password}" type="password" class="form-control" id="password" required>
+        </div>
+
+        <div th:if="${error != null}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${exito != null}" class="alert alert-success" th:text="${exito}"></div>
+
+        <button type="submit" class="btn btn-primary">Registrarme</button>
+    </form>
+</main>
+</body>
+</html>

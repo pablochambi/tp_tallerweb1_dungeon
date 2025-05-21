@@ -1,0 +1,79 @@
+#loginbox{
+    width: 100%;
+}
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #111;
+    color: #eee;
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+main.container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    background-color: #222;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+input.form-control {
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 5px;
+    border: none;
+    background-color: #333;
+    color: #eee;
+}
+
+button {
+    padding: 10px;
+    font-size: 1.1em;
+    background-color: #30336b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #535c91;
+}
+
+.alert {
+    margin-top: 10px;
+}
+
+h3 {
+    text-align: center;
+    color: #7ed6df;
+    margin-bottom: 20px;
+}
+
+hr.colorgraph {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(to right, #7ed6df, #30336b);
+    margin: 0;
+}
+
+label{
+    margin-bottom: 5px;
+}
+
+a{
+    margin-top: 10px;
+    display: block;
+    text-align: center;
+}
