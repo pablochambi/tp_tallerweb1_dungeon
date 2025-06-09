@@ -14,6 +14,7 @@ public class Usuario {
     private String rol;
     private Boolean activo = false;
 
+
     public Long getId() {
         return id;
     }

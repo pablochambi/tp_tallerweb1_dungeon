@@ -79,7 +79,9 @@ public class HibernateConfig {
         Properties props = new Properties();
         props.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         props.put("hibernate.show_sql", true);
-        props.put("hibernate.hbm2ddl.auto", "create-drop"); // o "create"
+
+        props.put("hibernate.hbm2ddl.auto", "create"); // o "create"
+
         return props;
     }
 
