@@ -1,4 +1,4 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.entidades;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +15,15 @@ public class Usuario {
     private String password;
     private String rol;
     private Boolean activo = false;
+
+    public Usuario(Long id, String email) {
+        this.id = id;
+        this.email = email;
+    }
+
+    public Usuario(){
+
+    }
 
 
     public Long getId() {
@@ -55,4 +64,7 @@ public class Usuario {
     public void activar() {
         activo = true;
     }
+
+
+
 }

@@ -1,7 +1,7 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.ServicioLogin;
-import com.tallerwebi.dominio.Usuario;
+import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,6 +29,13 @@ public class ControladorLogin {
         ModelMap modelo = new ModelMap();
         modelo.put("datosLogin", new DatosLogin());
         return new ModelAndView("login", modelo);
+    }
+
+    @RequestMapping(path = "/nuevo-usuario", method = RequestMethod.GET)
+    public ModelAndView nuevoUsuario() {
+        ModelMap model = new ModelMap();
+        model.put("usuario", new Usuario());
+        return new ModelAndView("nuevo-usuario", model);
     }
 
     @RequestMapping(path = "/validar-login", method = RequestMethod.POST)
@@ -60,12 +67,7 @@ public class ControladorLogin {
         return new ModelAndView("redirect:/login");
     }
 
-    @RequestMapping(path = "/nuevo-usuario", method = RequestMethod.GET)
-    public ModelAndView nuevoUsuario() {
-        ModelMap model = new ModelMap();
-        model.put("usuario", new Usuario());
-        return new ModelAndView("nuevo-usuario", model);
-    }
+
 
 //    @RequestMapping(path = "/home", method = RequestMethod.GET)
 //    public ModelAndView irAHome() {

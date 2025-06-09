@@ -107,6 +107,12 @@
             <version>${playwright.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.38</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- compile only, deployed container will provide this -->
         <!--
         <dependency>

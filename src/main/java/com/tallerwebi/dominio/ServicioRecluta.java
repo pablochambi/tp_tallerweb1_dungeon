@@ -1,52 +1,70 @@
 package com.tallerwebi.dominio;
 
+import com.tallerwebi.dominio.entidades.Carruaje;
+import com.tallerwebi.dominio.entidades.Heroe;
+import com.tallerwebi.dominio.entidades.Usuario;
+
 import java.util.List;
 
 public interface ServicioRecluta {
-    //Integer getCantidadDeReclutasSemanales(Integer nivelDeCarrosa);
 
-    //Integer getCantidadDeReclutasDisponiblesHoy(Integer nivelDeCarrosa, Integer totalHeroesReclutados, Integer numeroDeSemana);
+    List<Heroe> getListaDeHeroesEnCarruaje(Carruaje carruaje);
 
-    //Integer getHeroesReclutadosEstaSemana(Integer nivelRedDeLLegadas, Integer heroesReclutadosEstaSemana, Boolean pasoUnaSemana);
+    List<Heroe> getHeroesDisponiblesEnCarruaje(Carruaje carruaje);
 
-    CarruajeHeroe reclutarSegunIdHeroe(Long idHeroe);
+    List<Heroe> getHeroesObtenidosPorElUsuario(Usuario usuario);
 
-    List<Heroe> getListaDeHeroesEnCarruaje();
+    void quitarUnHeroeDelCarruaje(Long idHeroe, Carruaje carruaje);
 
-    void setHeroeEnCarruaje(Heroe heroe, Carruaje carruaje);
+    void agregarUnHeroeAlUsuario(Long idHeroe, Usuario usuario);
 
-    Integer getCantidadDeHeroesDisponiblesEnCarruaje(Carruaje carruaje);
+    List<Heroe> getHeroesDisponiblesEnUsuario(Long idUsuario);
 
-    void mostrarListaDeHeroesEnCarruaje(Carruaje carruaje);
+    void setRelacionEntreCarruajeYHeroe(Long idCarruaje, Long idHeroe);
 
-    Carruaje getAsignarCarruajeAUsuario(Usuario usuario);
+    Carruaje asignarOActualizarUnCarrujeAUnUsuario(Long idUsuario);
 
-    Integer getNumeroDeSemanaSegunCarruaje(Carruaje carruaje);
+    Usuario registrarUnUsuario(Usuario usuario);
 
-    Integer getNivelSegunCarruaje(Carruaje carruaje);
+//    CarruajeHeroe reclutarSegunIdHeroe(Long idHeroe);
 
-    Integer getCantidadDeHeroesSemanalesSegunCarruaje(Carruaje carruaje);
+//
+//    void setHeroeEnCarruaje(Heroe heroe, Carruaje carruaje);
 
-    Heroe reclutarUnHeroeAleatorio(Carruaje carruaje);
+//    Integer getCantidadDeHeroesDisponiblesEnCarruaje(Carruaje carruaje);
 
-    void pasarSemana(Carruaje carruaje);
+//    void mostrarListaDeHeroesEnCarruaje(Carruaje carruaje);
+//
+//    Carruaje getAsignarCarruajeAUsuario(Usuario usuario);
+//
+//    Integer getNumeroDeSemanaSegunCarruaje(Carruaje carruaje);
+//
+//    Integer getNivelSegunCarruaje(Carruaje carruaje);
+//
+//    Integer getCantidadDeHeroesSemanalesSegunCarruaje(Carruaje carruaje);
+//
+//    Heroe reclutarUnHeroeAleatorio(Carruaje carruaje);
+//
+//    void pasarSemana(Carruaje carruaje);
+//
+//    void setHeroe(Heroe heroe);
+//
+//    void aumentarNivel(Carruaje carruaje);
+//
+//    Heroe getHeroeSegunID(long l);
+//
+//    void agregarCarruaje(Carruaje carruaje);
+//
+//    void setSemanaEnUsuarioSemanaSegunCarruaje(Carruaje carruaje);
+//
+//    void mostrarListaDeHeroesDelUsuario(Carruaje carruaje);
+//
+//
+//    Integer getCantidadDeHeroesEnUsuarioHeroeSegunCarruaje(Carruaje carruaje);
+//
+//    Carruaje obtenerCarruajePorUsuario(Usuario usuario);
 
-    void setHeroe(Heroe heroe);
-
-    void aumentarNivel(Carruaje carruaje);
-
-    Heroe getHeroeSegunID(long l);
-
-    void agregarCarruaje(Carruaje carruaje);
-
-    void setSemanaEnUsuarioSemanaSegunCarruaje(Carruaje carruaje);
-
-    void mostrarListaDeHeroesDelUsuario(Carruaje carruaje);
+//    Integer getCantidadDeHeroesEnUsuarioHeroeSegunUsuario(Usuario usuario);
 
 
-    Integer getCantidadDeHeroesEnUsuarioHeroeSegunCarruaje(Carruaje carruaje);
-
-    Carruaje obtenerCarruajePorUsuario(Usuario usuario);
-
-    Integer getCantidadDeHeroesEnUsuarioHeroeSegunUsuario(Usuario usuario);
 }

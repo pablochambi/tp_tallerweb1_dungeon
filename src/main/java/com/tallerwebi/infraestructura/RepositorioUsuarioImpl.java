@@ -1,7 +1,7 @@
 package com.tallerwebi.infraestructura;
 
-import com.tallerwebi.dominio.RepositorioUsuario;
-import com.tallerwebi.dominio.Usuario;
+import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
+import com.tallerwebi.dominio.entidades.Usuario;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -43,6 +43,11 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     @Override
     public void modificar(Usuario usuario) {
         sessionFactory.getCurrentSession().update(usuario);
+    }
+
+    @Override
+    public Usuario buscarUsuarioPorId(Long idUsuario) {
+        return sessionFactory.getCurrentSession().get(Usuario.class, idUsuario);
     }
 
 }

@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Taller Web I</title>
+
+    <!-- Boostrap core css -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+
+    <!-- custom style -->
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/css/vista_carruaje.css}"/>
+
+</head>
+
+<body>
+
+<main>
+    <div class="container mt-4">
+        <h1>Carruaje</h1>
+
+        <!-- Mostrar información del carruaje -->
+        <div th:if="${carruaje}" class="card mb-4">
+            <div class="card-header">
+                <h2 th:text="'Carruaje ID: ' +${carruaje.id} ?: 'Carruaje sin ID'">ID</h2>
+            </div>
+            <div class="card-body">
+                <p th:text="'Nivel: ' + ${carruaje.nivel}">Nivel</p>
+            </div>
+        </div>
+
+
+        <!-- Lista de héroes en tarjetas -->
+        <div class="row">
+            <div th:each="heroe : ${heroesEnCarruaje}" class="col-md-4">
+                <div class="card hero-card">
+                    <!-- Imagen del héroe -->
+                    <div class="hero-image">
+                        <img th:src="@{${heroe.urlImagen}}" class="img-fluid" alt="imagen" style="max-width: 100px; height: auto;" >
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="'Lv. ' + ${heroe.getNivel()}">nivels vacio</h5>
+                        <h5 class="card-title" th:text="'Nombre: ' + ${heroe.nombre}">nobreVacio</h5>
+                        <p class="card-text" th:text="'Precio: ' + ${heroe.precio}">precioVacio</p>
+
+<!--                         Botón de reclutar con ID del héroe -->
+<!--                        <form th:action="@{/reclutar}" method="GET">-->
+<!--                            <input type="hidden" name="idHeroe" th:value="${heroe.id}">-->
+<!--                            <button type="submit" class="btn btn-primary w-100">Reclutar</button>-->
+<!--                        </form>-->
+
+                        <a th:href="@{/reclutar/__${heroe.id}__}"
+                           class="btn btn-primary w-100">
+                            Reclutar
+                        </a>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mostrar lista de héroes en el carruaje -->
+<!--        <div th:if="${!heroesEnCarruaje.isEmpty()}">-->
+<!--            <h3>Héroes en el Carruaje</h3>-->
+<!--            <table class="table table-striped">-->
+<!--                <thead>-->
+<!--                <tr>-->
+<!--                    <th>ID</th>-->
+<!--                    <th>Nombre</th>-->
+<!--                </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                <tr th:each="heroe : ${heroesEnCarruaje}">-->
+<!--                    <td th:text="${heroe.id}">1</td>-->
+<!--                    <td th:text="${heroe.nombre}">Heroe1</td>-->
+<!--                </tr>-->
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
+
+        <!-- Mensaje si no hay héroes -->
+        <div th:if="${heroesEnCarruaje.isEmpty()}" class="alert alert-warning">
+            No hay héroes en este carruaje.
+        </div>
+    </div>
+</main>
+<!-- /.container -->
+
+<!-- Boostrap core js -->
+<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{js/main.js}"></script>
+</body>
+</html>
