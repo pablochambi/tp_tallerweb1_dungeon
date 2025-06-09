@@ -23,54 +23,66 @@ public class ControladorTienda {
     // Lista de ítems simulada con IDs
     private List<Item> itemsDisponibles = new ArrayList<>();
 
-    public ControladorTienda() {
+   /* public ControladorTienda() {
         itemsDisponibles.add(new Item(1L, "Poción de vida", "pocion", 50));
         itemsDisponibles.add(new Item(2L, "Espada", "arma", 100));
         itemsDisponibles.add(new Item(3L, "Casco", "armadura", 75));
     }
-
+*/
     @Autowired
     private RepositorioItem repositorioItem;
 
     @GetMapping("/tienda")
-    public String mostrarTienda(Model model, HttpSession session) {
-        Jugador jugador = (Jugador) session.getAttribute("jugador");
+    public String mostrarTienda(Model model) {
+        List<Item> items = repositorioItem.obtenerTodosLosItems();
+        Jugador jugador1 = new Jugador();
+        model.addAttribute("items", items);
+        Object Jugador = null;
+        model.addAttribute("jugador", Jugador);
+        return "tienda";
+    }
 
+    @PostMapping("/comprar")
+    public String comprarItem(
+            @RequestParam Long itemId,
+            RedirectAttributes redirectAttributes,
+            HttpSession session) {
+
+        // 1) Recuperar (o crear) el Jugador en sesión
+        Jugador jugador = (Jugador) session.getAttribute("jugador");
         if (jugador == null) {
             jugador = new Jugador();
             jugador.setOro(1000);
             session.setAttribute("jugador", jugador);
         }
 
-        model.addAttribute("items", repositorioItem.obtenerTodosLosItems());
-        model.addAttribute("jugador", jugador);
-        return "tienda";
-    }
+        // 2) Buscar el ítem seleccionado (tu lista itemsDisponibles o desde BD)
+        Item itemSeleccionado = itemsDisponibles.stream()
+                .filter(i -> i.getId().equals(itemId))
+                .findFirst()
+                .orElse(null);
 
-
-    @PostMapping("/comprar")
-    public String comprarItem(@RequestParam Long itemId, Model model, HttpSession session) {
-        Item item = repositorioItem.obtenerPorId(itemId);
-        Jugador jugador = (Jugador) session.getAttribute("jugador");
-
-        if (jugador == null) {
-            jugador = new Jugador(); // o redirigir a login si es por usuario real
-            jugador.setOro(1000);
-        }
-
-        if (jugador.getOro() >= item.getPrecio()) {
-            jugador.setOro(jugador.getOro() - item.getPrecio());
-            model.addAttribute("mensaje", "Has comprado " + item.getNombre() + " por " + item.getPrecio() + " oro.");
+        // 3) Lógica de compra
+        if (itemSeleccionado != null) {
+            if (jugador.getOro() >= itemSeleccionado.getPrecio()) {
+                jugador.setOro(jugador.getOro() - itemSeleccionado.getPrecio());
+                jugador.getInventario().add(itemSeleccionado);
+                redirectAttributes.addFlashAttribute(
+                        "mensaje",
+                        "¡Compraste " + itemSeleccionado.getNombre() + "!"
+                );
+            } else {
+                redirectAttributes.addFlashAttribute(
+                        "error",
+                        "No tenés suficiente oro."
+                );
+            }
         } else {
-            model.addAttribute("error", "No tenés suficiente oro.");
+            redirectAttributes.addFlashAttribute("error", "Ítem no encontrado.");
         }
 
-        // actualizar la sesión
         session.setAttribute("jugador", jugador);
 
-        // Volver a mostrar la tienda con el nuevo oro
-        model.addAttribute("items", repositorioItem.obtenerTodosLosItems());
-        model.addAttribute("jugador", jugador);
-        return "tienda";
+        return "redirect:/tienda";
     }
 }
