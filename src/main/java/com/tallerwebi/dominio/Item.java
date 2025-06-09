@@ -1,40 +1,34 @@
 package com.tallerwebi.dominio;
-
 import javax.persistence.*;
 
 @Entity
 @Table(name = "items")
-
 public class Item {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
-    private String tipo;  //(pocion, espada, casco...)
+    private String tipo;
     private int precio;
-
-    public Item() {}
-
     @ManyToOne
     @JoinColumn(name = "jugador_id")
     private Jugador jugador;
+    public Item() {}
 
-    public Item(Long id, String nombre, String tipo, int precio) {
-        this.id = id;
-        this.nombre = nombre;
-        this.tipo = tipo;
-        this.precio = precio;
+    public Long getId() {
+        return id;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getNombre() {
+        return nombre;
+    }
 
-    public int getPrecio() { return precio; }
-    public void setPrecio(int precio) { this.precio = precio; }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
     public String getTipo() {
         return tipo;
@@ -44,4 +38,19 @@ public class Item {
         this.tipo = tipo;
     }
 
+    public int getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(int precio) {
+        this.precio = precio;
+    }
+
+    public Jugador getJugador() {
+        return jugador;
+    }
+
+    public void setJugador(Jugador jugador) {
+        this.jugador = jugador;
+    }
 }
