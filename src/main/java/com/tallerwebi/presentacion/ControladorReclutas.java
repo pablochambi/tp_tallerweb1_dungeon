@@ -29,8 +29,7 @@ public class ControladorReclutas {
     public ModelAndView mostrarCarruaje(HttpServletRequest request) {
         agregarUnCarruajeYUsuarioALaSession(request);
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-        Carruaje carruaje = (Carruaje) request.getSession().getAttribute("carruaje");
-
+        Carruaje carruaje = servicioRecluta.getCarruajeDelUsuarioPorId(usuario.getId());
 
         List<Heroe> heroesEnCarruaje  = servicioRecluta.getHeroesDisponiblesEnCarruaje(carruaje);
 
@@ -38,11 +37,12 @@ public class ControladorReclutas {
         ModelMap model = new ModelMap();
         model.put("carruaje", carruaje);
         model.put("usuario", carruaje.getUsuario());
+//        model.put("usuario", usuario);
         model.put("heroesEnCarruaje", heroesEnCarruaje);
 
-        model.put("semana", carruaje.getSemana());
-        model.put("nivel", carruaje.getNivel());
-        model.put("heroesSemanales", carruaje.getCantidadDeHeroesSemanales());
+//        model.put("semana", carruaje.getSemana());
+//        model.put("nivel", carruaje.getNivel());
+//        model.put("heroesSemanales", carruaje.getCantidadDeHeroesSemanales());
 
 
         return new ModelAndView("vista_carruaje",model);
@@ -69,7 +69,7 @@ public class ControladorReclutas {
 
     private  void agregarUnCarruajeYUsuarioALaSession(HttpServletRequest request) {
         // 1. Crear/obtener sesión // 2. Guardar atributos en sesión
-        Usuario usuarioRegistrado = servicioRecluta.registrarUnUsuario(new Usuario(1L,"admin@admin.com"));
+        Usuario usuarioRegistrado = servicioRecluta.getUsuarioRegistradoPorId(2L);//
         HttpSession session = request.getSession(); // Crea sesión si no existe
         session.setAttribute("usuario", usuarioRegistrado);
 

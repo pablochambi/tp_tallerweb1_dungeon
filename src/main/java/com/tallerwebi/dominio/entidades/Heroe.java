@@ -26,12 +26,12 @@ public class Heroe {
         this.nivel = 1;
     }
 
-    public Heroe(Long id, String nombre,Integer precio,String urlImagen) {
+    public Heroe(Long id, String nombre,Integer nivel,Integer precio,String urlImagen) {
         this.id = id;
         this.nombre = nombre;
         this.precio = precio;
         this.urlImagen = urlImagen;
-        this.nivel = 1;
+        this.nivel = nivel;
     }
 
     public Heroe() {

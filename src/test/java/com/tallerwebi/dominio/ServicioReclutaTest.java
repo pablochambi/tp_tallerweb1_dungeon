@@ -67,8 +67,8 @@ public class ServicioReclutaTest {
                 repositorioCarruaje,repositorioHeroe,repositorioUsuario,
                 repositorio_carruajeHeroe,repositorio_usuarioHeroe);
 
-        heroe1 = new Heroe(1L, "Cruzado", 300, "/imagenes/cruzado.webp");
-        heroe2 = new Heroe(2L, "Vestal", 200, "/imagenes/Vestal.webp");
+        heroe1 = new Heroe(1L, "Cruzado",1, 300, "/imagenes/cruzado.webp");
+        heroe2 = new Heroe(2L, "Vestal",1, 200, "/imagenes/Vestal.webp");
         listaDeHeroesMock = List.of(heroe1, heroe2);
     }
 
@@ -81,6 +81,8 @@ public class ServicioReclutaTest {
         // Configuración
         when(repositorioUsuario.buscarUsuarioPorId(usuarioMock.getId())).thenReturn(usuarioMock);
         when(repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(usuarioMock)).thenReturn(null);
+        when(repositorioCarruaje.guardar(any(Carruaje.class))).thenReturn(carruajeMock);
+        when(repositorioHeroe.getListaDeHeroes()).thenReturn(listaDeHeroesMock);
 
         // Ejecución
         Carruaje carruaje  = servicioReclutas.asignarOActualizarUnCarrujeAUnUsuario(usuarioMock.getId());
@@ -101,6 +103,7 @@ public class ServicioReclutaTest {
 
         when(repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(usuarioMock)).thenReturn(null);
         when(repositorioCarruaje.guardar(any(Carruaje.class))).thenReturn(carruajeMock);
+        when(repositorioHeroe.getListaDeHeroes()).thenReturn(listaDeHeroesMock);
         when(repositorio_carruajeHeroe.getListaDeHeroes(carruajeMock.getId())).thenReturn(listaDeHeroesMock);
 
         // Ejecución

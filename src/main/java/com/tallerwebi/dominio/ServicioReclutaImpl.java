@@ -12,14 +12,11 @@ import java.util.*;
 @Transactional
 public class ServicioReclutaImpl implements ServicioRecluta {
 
-//    private final List<UsuarioSemana> usuarioSemanas;
-//    private final List<UsuarioHeroe> usuarioHeroes;
     private final RepositorioCarruaje repositorioCarruaje;
     private final RepositorioHeroe repositorioHeroe;
     private final RepositorioUsuario repositorioUsuario;
     private final Repositorio_carruajeHeroe repositorio_carruajeHeroe;
     private final Repositorio_usuarioHeroe repositorio_usuarioHeroe;
-    private final List<Heroe> listaHeroesExistentes;
 
     @Autowired
     public ServicioReclutaImpl(RepositorioCarruaje repositorioCarruaje,
@@ -33,19 +30,24 @@ public class ServicioReclutaImpl implements ServicioRecluta {
         this.repositorio_carruajeHeroe = repositorio_carruajeHeroe;
         this.repositorio_usuarioHeroe = repositorio_usuarioHeroe;
 
-        //Hice comentario en ServicioReclutaImpl
-
-        Heroe h1 = this.repositorioHeroe.guardar(new Heroe(1L, "Cruzado", 300, "/imagenes/cruzado.webp"));
-        Heroe h2 = this.repositorioHeroe.guardar(new Heroe(2L, "Vestal", 200, "/imagenes/Vestal.webp"));
-
-        this.listaHeroesExistentes = List.of(h1,h2);
-
     }
 
     @Override
     public Usuario registrarUnUsuario(Usuario usuario) {
         repositorioUsuario.guardar(usuario);
         return repositorioUsuario.buscarUsuarioPorId(usuario.getId());
+    }
+
+    @Override
+    public Usuario getUsuarioRegistradoPorId(Long idUsuario) {
+        return repositorioUsuario.buscarUsuarioPorId(idUsuario);
+    }
+
+    @Override
+    public Carruaje getCarruajeDelUsuarioPorId(Long idUsuario) {
+        Usuario usuario = repositorioUsuario.buscarUsuarioPorId(idUsuario);
+        if (usuario == null) throw new RuntimeException("Usuario no encontrado");
+        return repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(usuario);
     }
 
     @Override
@@ -109,7 +111,15 @@ public class ServicioReclutaImpl implements ServicioRecluta {
         Carruaje carruajeBus = repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(usuarioBuscado);
 
         if(carruajeBus == null) {
-            Carruaje carruaje = repositorioCarruaje.guardar(new Carruaje(0,0,0));
+            Carruaje carruaje = repositorioCarruaje.guardar(new Carruaje(0,0,2));
+
+            if (carruaje == null) throw new RuntimeException("No se guardo carruaje");
+            if (carruaje.getId() == null) throw new RuntimeException("El id del carruaje es null");
+
+            List<Heroe> listaHeroesExistentes = repositorioHeroe.getListaDeHeroes();
+
+            if (listaHeroesExistentes.isEmpty()) throw new RuntimeException("La lista esta vacia o nula");
+
             repositorioCarruaje.asignarUsuarioAUnCarruje(carruaje,usuarioBuscado);
             repositorio_carruajeHeroe.agregarRelacion(carruaje,listaHeroesExistentes.get(0));
             repositorio_carruajeHeroe.agregarRelacion(carruaje,listaHeroesExistentes.get(1));
