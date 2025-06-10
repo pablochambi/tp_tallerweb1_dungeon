@@ -36,8 +36,7 @@ public class ControladorReclutas {
 
         ModelMap model = new ModelMap();
         model.put("carruaje", carruaje);
-        model.put("usuario", carruaje.getUsuario());
-//        model.put("usuario", usuario);
+        model.put("usuario", usuario);
         model.put("heroesEnCarruaje", heroesEnCarruaje);
 
 //        model.put("semana", carruaje.getSemana());
