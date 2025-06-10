@@ -73,10 +73,10 @@ public class ControladorReclutas {
         HttpSession session = request.getSession(); // Crea sesión si no existe
         session.setAttribute("usuario", usuarioRegistrado);
 
-        Usuario usuarioDeSession = (Usuario) session.getAttribute("usuario");
+//        Usuario usuarioDeSession = (Usuario) session.getAttribute("usuario");
 
-        if(usuarioDeSession!=null) {
-            Carruaje carruaje = servicioRecluta.asignarOActualizarUnCarrujeAUnUsuario(usuarioDeSession.getId());
+        if(usuarioRegistrado!=null) {
+            Carruaje carruaje = servicioRecluta.asignarOActualizarUnCarrujeAUnUsuario(usuarioRegistrado.getId());
             session.setAttribute("carruaje", carruaje);
         }
 

@@ -126,7 +126,7 @@ public class ServicioReclutaImpl implements ServicioRecluta {
             Carruaje carruaje = repositorioCarruaje.guardar(new Carruaje(0,0,2));
 
             if (carruaje == null) throw new RuntimeException("No se guardo carruaje");
-            if (carruaje.getId() == null) throw new RuntimeException("El id del carruaje es null");
+            if (carruaje.getId() == null) throw new RuntimeException("El carruaje tiene id nulo");
 
             List<Heroe> listaHeroesExistentes = repositorioHeroe.getListaDeHeroes();
 

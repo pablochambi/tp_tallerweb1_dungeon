@@ -78,7 +78,7 @@ public class ServicioReclutaTest {
         // Configuración
         when(repositorioUsuario.buscarUsuarioPorId(usuarioMock.getId())).thenReturn(usuarioMock);
         when(repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(usuarioMock)).thenReturn(null);
-        when(repositorioCarruaje.guardar(any(Carruaje.class))).thenReturn(new Carruaje()); // id es null
+        when(repositorioCarruaje.guardar(any(Carruaje.class))).thenReturn(new Carruaje(null,1,0,2)); // id es null
 
         // Ejecución y Verificación
         Exception exception = assertThrows(RuntimeException.class, () -> {
@@ -118,6 +118,7 @@ public class ServicioReclutaTest {
         when(repositorioUsuario.buscarUsuarioPorId(usuarioMock.getId())).thenReturn(usuarioMock);
         when(repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(usuarioMock)).thenReturn(null);
         when(repositorioCarruaje.guardar(any(Carruaje.class))).thenReturn(carruajeMock); // Devuelve un carruaje válido
+        when(repositorioHeroe.getListaDeHeroes()).thenReturn(listaDeHeroesMock);
 
         // Ejecución
         Carruaje carruaje = servicioReclutas.asignarOActualizarUnCarrujeAUnUsuario(usuarioMock.getId());

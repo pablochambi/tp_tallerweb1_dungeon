@@ -53,9 +53,9 @@ public class RepositorioCarruajeImpl  implements RepositorioCarruaje {
                 .add(Restrictions.eq("usuario", usuarioExistente))
                 .uniqueResult();
 
-        if(carruaje == null) throw new RuntimeException("No se encontro carruaje asignado a un usuario en BD");
-
-        if(carruaje.getId() == null) throw new RuntimeException("El id de carruaje es nulo");
+//        if(carruaje == null) throw new RuntimeException("No se encontro carruaje asignado a un usuario en BD");
+//
+//        if(carruaje.getId() == null) throw new RuntimeException("El id de carruaje es nulo");
 
 
         return carruaje;
@@ -64,6 +64,11 @@ public class RepositorioCarruajeImpl  implements RepositorioCarruaje {
 
     @Override
     public Carruaje asignarUsuarioAUnCarruje(Carruaje carruajeExistente, Usuario usuarioExistente) {
+        Carruaje c = sessionFactory.getCurrentSession().get(Carruaje.class, carruajeExistente.getId());
+        Usuario u = sessionFactory.getCurrentSession().get(Usuario.class, usuarioExistente.getId());
+        if(u == null) throw new RuntimeException("No se encontro usuario en BD");
+        if(c == null) throw new RuntimeException("No se encontro carruaje en BD");
+
         Session session = sessionFactory.getCurrentSession();
 
         // Obtener el carruaje que cumple las condiciones
@@ -83,6 +88,8 @@ public class RepositorioCarruajeImpl  implements RepositorioCarruaje {
         if (carruajeBus != null) {
             carruajeBus.setUsuario(usuarioExistente);
             session.update(carruajeBus);
+        }else {
+            throw new RuntimeException("El carruaje ya tiene un usuario asignado en BD");
         }
 
         return carruajeBus;

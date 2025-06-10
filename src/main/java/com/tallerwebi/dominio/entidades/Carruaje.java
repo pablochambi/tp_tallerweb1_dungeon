@@ -21,6 +21,7 @@ public class Carruaje {
     @OneToOne
     private Usuario usuario;
 
+
     public Carruaje() {
         this.nivel = 0;
         this.semana = 0;
