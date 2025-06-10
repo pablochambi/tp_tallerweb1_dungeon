@@ -3,6 +3,10 @@ INSERT INTO Usuario(id, email, password, rol, activo) VALUES(1, 'test@unlam.edu.
 INSERT INTO jugador (id, nombre, vida, atk, defensa, oro)
   VALUES (1, 'Héroe', 100, 10, FALSE, 1000);
 
+INSERT INTO Heroe (id,nombre,precio,urlImagen)
+VALUES (1, 'Cruzado', 300, '/imagenes/cruzado.webp'),
+       (2, 'Vestal', 200, '/imagenes/Vestal.webp');
+
 INSERT INTO monster (id, nombre, vida, atk) VALUES
   (1, 'Esqueleto', 30, 5),
   (2, 'Goblin',    50, 8),
