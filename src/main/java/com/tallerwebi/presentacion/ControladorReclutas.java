@@ -18,7 +18,7 @@ import java.util.List;
 @Controller
 public class ControladorReclutas {
 
-    private ServicioRecluta servicioRecluta;
+    private final ServicioRecluta servicioRecluta;
 
     @Autowired
     public ControladorReclutas(ServicioRecluta servicioRecluta) {

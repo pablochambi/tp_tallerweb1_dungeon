@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class ControladorLogin {
 
-    private ServicioLogin servicioLogin;
+    private final ServicioLogin servicioLogin;
 
     @Autowired
     public ControladorLogin(ServicioLogin servicioLogin){
