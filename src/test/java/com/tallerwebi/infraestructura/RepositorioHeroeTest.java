@@ -4,16 +4,20 @@ import com.tallerwebi.dominio.entidades.Heroe;
 import com.tallerwebi.dominio.interfaces.RepositorioHeroe;
 import com.tallerwebi.integracion.config.HibernateTestConfig;
 import com.tallerwebi.integracion.config.SpringWebTestConfig;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.transaction.Transactional;
+
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -29,6 +33,9 @@ public class RepositorioHeroeTest {
 
     @Autowired
     private RepositorioHeroe repositorioHeroe;
+
+    @Autowired
+    private SessionFactory sessionFactory;
 
     @BeforeEach
     public void init(){
@@ -48,6 +55,23 @@ public class RepositorioHeroeTest {
         assertThat(h,notNullValue());
         assertThat(h.getId(),notNullValue());
         assertThat(h.getNombre(),equalTo("h2"));
+
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    public void queSePuedaObtenerUnaListaDeHeroes() {
+
+        sessionFactory.getCurrentSession().save(heroe1);
+        sessionFactory.getCurrentSession().save(heroe2);
+
+
+        List<Heroe> heroes = repositorioHeroe.getListaDeHeroes();
+
+        assertThat(heroes,notNullValue());
+        assertThat(heroes.get(0).getId(),notNullValue());
+        assertThat(heroes.get(1).getId(),notNullValue());
 
     }
 

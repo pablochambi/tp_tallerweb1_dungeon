@@ -26,6 +26,10 @@ public interface ServicioRecluta {
 
     Usuario registrarUnUsuario(Usuario usuario);
 
+    Usuario getUsuarioPorId(Long idUsuario);
+
+    Carruaje getCarruajeDelUsuarioId(Long idUsuario);
+
 //    CarruajeHeroe reclutarSegunIdHeroe(Long idHeroe);
 
 //

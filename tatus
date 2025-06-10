@@ -1,0 +1,28 @@
+*   [33m17c23aa[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/PabloAriel[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mPabloAriel[m[33m)[m merge insertado Merge branch 'main' into PabloAriel
+[31m|[m[32m\[m  
+[31m|[m *   [33mb72beb0[m Merge pull request #3 from pablochambi/FinkGuido
+[31m|[m [33m|[m[34m\[m  
+[31m|[m [33m|[m *   [33m8d45bbb[m[33m ([m[1;31morigin/FinkGuido[m[33m)[m Merge branch 'main' into FinkGuido
+[31m|[m [33m|[m [35m|[m[33m\[m  
+[31m|[m [33m|[m [35m|[m[33m/[m  
+[31m|[m [33m|[m[33m/[m[35m|[m   
+[31m|[m * [35m|[m   [33m9b2a75e[m Merge pull request #2 from pablochambi/FinkGuido
+[31m|[m [1;31m|[m[1;32m\[m [35m\[m  
+[31m|[m [1;31m|[m * [35m|[m [33m6523603[m tienda descuenta oro usado
+[31m|[m [1;31m|[m * [35m|[m   [33mcbed97b[m conexion a bdd h2 y primera vista Tienda
+[31m|[m [1;31m|[m [1;33m|[m[1;34m\[m [35m\[m  
+[31m|[m [1;31m|[m [1;33m|[m * [35m|[m [33mba2e453[m conexion bdd y primera vista Tienda
+[31m|[m [1;31m|[m [1;33m|[m  [35m/[m  
+[31m|[m [1;31m|[m [1;33m|[m * [33mca02575[m monstruo,gameSession,jugador( Repo,Servicio e Impl)
+[31m|[m [1;31m|[m [1;33m|[m * [33m224be98[m conec bddh2 y agregar vista tienda
+[31m|[m [1;31m|[m [1;33m|[m * [33m675a714[m init commit
+[31m|[m [1;31m|[m [1;33m|[m[1;33m/[m  
+* [1;31m|[m [1;33m/[m [33mc5262ba[m hice los test del controlador,servicio y repositorio para mostrar dos heroes en carruaje con usuario similado en session
+[1;31m|[m[1;31m/[m [1;33m/[m  
+* [1;33m/[m [33mf789a95[m hice los test de ServicioReclutamiento y le puse mas clases
+[1;33m|[m[1;33m/[m  
+* [33m97e14bd[m servicioReclutaTest
+* [33mf578ee0[m[33m ([m[1;31morigin/santiagochaumeri[m[33m)[m vistas
+* [33m98d1cec[m se arreglo el problema de las imagenes
+* [33m747a75d[m comento los tests del login
+* [33m763c99a[m proyecto inicial

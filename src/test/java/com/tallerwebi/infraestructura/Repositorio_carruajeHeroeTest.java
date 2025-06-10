@@ -83,6 +83,7 @@ public class Repositorio_carruajeHeroeTest {
 
         List<Heroe> listaHeroes =  repositorio_carruajeHeroe.getListaDeHeroes(carruajeGuardado.getId());
 
+        assertThat(carruajeGuardado.getId(), notNullValue());
         assertThat(listaHeroes,notNullValue());
         assertThat(listaHeroes.isEmpty(),equalTo(false));
         assertThat(listaHeroes.size(),equalTo(2));

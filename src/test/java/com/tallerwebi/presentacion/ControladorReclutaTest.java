@@ -47,6 +47,8 @@ public class ControladorReclutaTest {
         listaDeHeroesEnCarruajeMock =  List.of(heroeMock1, heroeMock2);
 
         // Por defecto simulamos que la sesión tiene un carruaje asociado
+//        when(servicioReclutas.getUsuarioPorId(1L)).thenReturn(usuarioMock);
+
         when(servicioReclutas.registrarUnUsuario(usuarioMock)).thenReturn(usuarioMock);
         when(servicioReclutas.asignarOActualizarUnCarrujeAUnUsuario(usuarioMock.getId())).thenReturn(carruajeMock);
 
@@ -55,6 +57,20 @@ public class ControladorReclutaTest {
         when(sessionMock.getAttribute("usuario")).thenReturn(usuarioMock);
 
     }
+
+//    @Test
+//    public void obtenerUsuarioPorId() {
+//
+//        ModelAndView mav = controladorReclutas.mostrarCarruaje(requestMock);
+//
+//        assertThat(mav.getViewName(), is("vista_carruaje"));
+//        assertThat(mav.getModel().get("carruaje"), instanceOf(Carruaje.class));
+//        assertThat(mav.getModel().get("carruaje"), notNullValue());
+//
+//        assertThat(mav.getModel().get("usuario"), instanceOf(Usuario.class));
+//        assertThat(mav.getModel().get("usuario"), notNullValue());
+//
+//    }
 
     @Test
     public void queAlIngresarPorPrimeraVesAlCarruaje_SeLeAsigneUnCarruajeNuevoAlUsuario() {
