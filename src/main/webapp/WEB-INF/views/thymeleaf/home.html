@@ -21,9 +21,11 @@
     <h3 th:text="'Tu rol es: ' + ${rol}" ></h3>
 
     <div class="menu">
-        <a class="button" href="seleccion-heroes.html">Iniciar nueva partida</a>
-        <a class="button" href="mazmorra.html">Continuar partida</a>
-        <a class="button" href="reglas.html">Ver reglas</a>
+
+        <a class="button" th:href="@{seleccion-heroes}" >Iniciar nueva partida</a>
+        <a class="button" th:href="@{mazmorra}">Continuar partida</a>
+        <a class="button" th:href="@{reglas}">Ver reglas</a>
+        <a class="button" th:href="@{carruaje}">Reclutar Heroes nuevos</a>
     </div>
 
     <div class="footer">

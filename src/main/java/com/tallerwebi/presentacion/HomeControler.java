@@ -28,6 +28,12 @@ public class HomeControler {
         return new ModelAndView("home", model);
     }
 
+//    @GetMapping("/carruaje")
+//    public ModelAndView irAReclutar(HttpServletRequest request) {
+//        String rol = (String) request.getSession().getAttribute("ROL");
+//        return new ModelAndView("vista_carruaje");
+//    }
+
 
     @GetMapping("/seleccion-heroes")
     public ModelAndView irAHeroes() {

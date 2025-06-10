@@ -27,6 +27,11 @@ public class ControladorReclutas {
 
     @GetMapping("/carruaje")
     public ModelAndView mostrarCarruaje(HttpServletRequest request) {
+
+        if (request.getSession().getAttribute("usuario") == null) {
+            return new ModelAndView("redirect:/login");
+        }
+
         agregarUnCarruajeYUsuarioALaSession(request);
         Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
         Carruaje carruaje = servicioRecluta.getCarruajeDelUsuarioPorId(usuario.getId());
@@ -39,16 +44,16 @@ public class ControladorReclutas {
         model.put("usuario", usuario);
         model.put("heroesEnCarruaje", heroesEnCarruaje);
 
-//        model.put("semana", carruaje.getSemana());
-//        model.put("nivel", carruaje.getNivel());
-//        model.put("heroesSemanales", carruaje.getCantidadDeHeroesSemanales());
-
 
         return new ModelAndView("vista_carruaje",model);
     }
 
     @GetMapping("/reclutar/{id}")
     public ModelAndView reclutarHeroe(@PathVariable Long id, HttpServletRequest request) {
+
+        if (request.getSession().getAttribute("usuario") == null) {
+            return new ModelAndView("redirect:/login");
+        }
 
         agregarUnCarruajeYUsuarioALaSession(request);
 
@@ -59,6 +64,7 @@ public class ControladorReclutas {
         servicioRecluta.agregarUnHeroeAlUsuario(id, usuario);
         List<Heroe> heroesEnCarruaje = servicioRecluta.getListaDeHeroesEnCarruaje(carruaje);
 
+
         ModelMap model = new ModelMap();
         model.put("carruaje", carruaje);
         model.put("heroesEnCarruaje",heroesEnCarruaje);
@@ -68,38 +74,20 @@ public class ControladorReclutas {
 
     private  void agregarUnCarruajeYUsuarioALaSession(HttpServletRequest request) {
         // 1. Crear/obtener sesión // 2. Guardar atributos en sesión
-        Usuario usuarioRegistrado = servicioRecluta.getUsuarioRegistradoPorId(2L);//
+//        Usuario usuarioRegistrado = servicioRecluta.getUsuarioRegistradoPorId(2L);//
+
         HttpSession session = request.getSession(); // Crea sesión si no existe
-        session.setAttribute("usuario", usuarioRegistrado);
 
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+        session.setAttribute("usuario", usuario);
 //        Usuario usuarioDeSession = (Usuario) session.getAttribute("usuario");
+        Carruaje carruaje = servicioRecluta.asignarOActualizarUnCarrujeAUnUsuario(usuario.getId());
+        session.setAttribute("carruaje", carruaje);
 
-        if(usuarioRegistrado!=null) {
-            Carruaje carruaje = servicioRecluta.asignarOActualizarUnCarrujeAUnUsuario(usuarioRegistrado.getId());
-            session.setAttribute("carruaje", carruaje);
-        }
-
-
-
-//        if (session == null || session.getAttribute("usuario") == null) {
-//            return new ModelAndView("redirect:/login");
-//        }
 
     }
 
 
-//    public ModelAndView aumentarNivel(Carruaje carr) {
-//
-//        ModelMap modelo = new ModelMap();
-//
-//        servicioRecluta.aumentarNivel(carr);
-//
-//        modelo.put("carruaje",carr);
-//        modelo.put("usuario",carr.getUsuario());
-//
-//        return new ModelAndView("carruaje", modelo);
-//
-//    }
 
 
 
