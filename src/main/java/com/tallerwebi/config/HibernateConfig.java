@@ -91,6 +91,7 @@ public class HibernateConfig {
 //        txManager.setSessionFactory(sessionFactory);
 //        return txManager;
 //    }
+    //}
 
 
 }
