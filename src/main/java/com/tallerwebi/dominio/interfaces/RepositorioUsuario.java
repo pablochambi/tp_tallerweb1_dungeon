@@ -1,4 +1,6 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.interfaces;
+
+import com.tallerwebi.dominio.entidades.Usuario;
 
 public interface RepositorioUsuario {
 
@@ -6,5 +8,7 @@ public interface RepositorioUsuario {
     void guardar(Usuario usuario);
     Usuario buscar(String email);
     void modificar(Usuario usuario);
+
+    Usuario buscarUsuarioPorId(Long idUsuario);
 }
 
