@@ -16,12 +16,15 @@ public class Carruaje {
     private Integer nivel;
     private Integer semana;
     private Integer cantidadDeHeroesSemanales;
+    //private Integer cantHeroesDisponibles;Depende de la tabla intermedia carruaje_heroe
 
     @OneToOne
     private Usuario usuario;
 
     public Carruaje() {
-
+        this.nivel = 0;
+        this.semana = 0;
+        this.cantidadDeHeroesSemanales = 2;
     }
 
     public Carruaje(Integer nivel,Integer semana,Integer cantidadDeHeroesSemanales) {

@@ -63,18 +63,13 @@ public class ServicioReclutaTest {
         usuarioHeroe1Mock.setHeroe(heroe1);
         usuarioHeroe1Mock.setUsuario(usuarioMock);
 
-        heroe1 = new Heroe(1L, "Cruzado", 300, "/imagenes/cruzado.webp");
-        heroe2 = new Heroe(2L, "Vestal", 200, "/imagenes/Vestal.webp");
-
-        listaDeHeroesMock = List.of(heroe1, heroe2);
-
-        when(repositorioHeroe.getListaDeHeroes()).thenReturn(listaDeHeroesMock);
-
-
         servicioReclutas = new ServicioReclutaImpl(
                 repositorioCarruaje,repositorioHeroe,repositorioUsuario,
                 repositorio_carruajeHeroe,repositorio_usuarioHeroe);
 
+        heroe1 = new Heroe(1L, "Cruzado",1, 300, "/imagenes/cruzado.webp");
+        heroe2 = new Heroe(2L, "Vestal",1, 200, "/imagenes/Vestal.webp");
+        listaDeHeroesMock = List.of(heroe1, heroe2);
 
     }
 
@@ -143,6 +138,7 @@ public class ServicioReclutaTest {
         when(repositorioUsuario.buscarUsuarioPorId(usuarioMock.getId())).thenReturn(usuarioMock);
         when(repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(usuarioMock)).thenReturn(null);
         when(repositorioCarruaje.guardar(any(Carruaje.class))).thenReturn(carruajeMock);
+        when(repositorioHeroe.getListaDeHeroes()).thenReturn(listaDeHeroesMock);
 
         // Ejecución
         Carruaje carruaje  = servicioReclutas.asignarOActualizarUnCarrujeAUnUsuario(usuarioMock.getId());
@@ -163,6 +159,7 @@ public class ServicioReclutaTest {
 
         when(repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(usuarioMock)).thenReturn(null);
         when(repositorioCarruaje.guardar(any(Carruaje.class))).thenReturn(carruajeMock);
+        when(repositorioHeroe.getListaDeHeroes()).thenReturn(listaDeHeroesMock);
         when(repositorio_carruajeHeroe.getListaDeHeroes(carruajeMock.getId())).thenReturn(listaDeHeroesMock);
 
         // Ejecución
@@ -368,7 +365,7 @@ public class ServicioReclutaTest {
 
     @Test
     public void dadoNivel0_cuandoConsultoHeroesSemanales_entoncesDevuelve2() {
-        Carruaje carruaje = new Carruaje(0,0,2);
+        Carruaje carruaje = new Carruaje();
 
         assertThat(carruaje.getNivel(), is(0));
         assertThat(carruaje.getCantidadDeHeroesSemanales(), is(2));
@@ -376,7 +373,7 @@ public class ServicioReclutaTest {
 
     @Test
     public void dadoNivel1_cuandoConsultoHeroesSemanales_entoncesDevuelve3() {
-        Carruaje carruaje = new Carruaje(0,0,2);
+        Carruaje carruaje = new Carruaje();
         carruaje.aumentarNivel(); // nivel = 1
 
         assertThat(carruaje.getNivel(), is(1));
@@ -385,7 +382,7 @@ public class ServicioReclutaTest {
 
     @Test
     public void dadoNivel2_cuandoConsultoHeroesSemanales_entoncesDevuelve4() {
-        Carruaje carruaje = new Carruaje(0,0,2);
+        Carruaje carruaje = new Carruaje();
         carruaje.aumentarNivel(); // 1
         carruaje.aumentarNivel(); // 2
 
@@ -395,7 +392,7 @@ public class ServicioReclutaTest {
 
     @Test
     public void dadoNivel3_cuandoConsultoHeroesSemanales_entoncesDevuelve5() {
-        Carruaje carruaje = new Carruaje(0,0,2);
+        Carruaje carruaje = new Carruaje();
         carruaje.aumentarNivel(); // 1
         carruaje.aumentarNivel(); // 2
         carruaje.aumentarNivel(); // 3

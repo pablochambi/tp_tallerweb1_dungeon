@@ -32,11 +32,22 @@ public class ServicioReclutaImpl implements ServicioRecluta {
 
     }
 
-
     @Override
     public Usuario registrarUnUsuario(Usuario usuario) {
         repositorioUsuario.guardar(usuario);
         return repositorioUsuario.buscarUsuarioPorId(usuario.getId());
+    }
+
+    @Override
+    public Usuario getUsuarioRegistradoPorId(Long idUsuario) {
+        return repositorioUsuario.buscarUsuarioPorId(idUsuario);
+    }
+
+    @Override
+    public Carruaje getCarruajeDelUsuarioPorId(Long idUsuario) {
+        Usuario usuario = repositorioUsuario.buscarUsuarioPorId(idUsuario);
+        if (usuario == null) throw new RuntimeException("Usuario no encontrado");
+        return repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(usuario);
     }
 
     @Override
@@ -112,21 +123,19 @@ public class ServicioReclutaImpl implements ServicioRecluta {
         Carruaje carruajeBus = repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(usuarioBuscado);
 
         if(carruajeBus == null) {
-//            Carruaje carruaje = repositorioCarruaje.guardar(new Carruaje(0,0,0));
-            Carruaje carruaje = new Carruaje();
-            carruaje.setNivel(0);
-            carruaje.setSemana(0);
-            carruaje.setCantidadDeHeroesSemanales(0);
-            Carruaje guardado = repositorioCarruaje.guardar(carruaje);
-            System.out.println("ID del carruaje persistido: " + guardado.getId()); // debería mostrar un número
+            Carruaje carruaje = repositorioCarruaje.guardar(new Carruaje(0,0,2));
 
-            if(guardado.getId() == null) throw new RuntimeException("El carruaje tiene id nulo");
+            if (carruaje == null) throw new RuntimeException("No se guardo carruaje");
+            if (carruaje.getId() == null) throw new RuntimeException("El id del carruaje es null");
+
+            List<Heroe> listaHeroesExistentes = repositorioHeroe.getListaDeHeroes();
+
+            if (listaHeroesExistentes.isEmpty()) throw new RuntimeException("La lista esta vacia o nula");
 
             repositorioCarruaje.asignarUsuarioAUnCarruje(carruaje,usuarioBuscado);
-            List<Heroe> listaHeroes = repositorioHeroe.getListaDeHeroes();
-            repositorio_carruajeHeroe.agregarRelacion(carruaje,listaHeroes.get(0));
-            repositorio_carruajeHeroe.agregarRelacion(carruaje,listaHeroes.get(1));
-            return guardado;
+            repositorio_carruajeHeroe.agregarRelacion(carruaje,listaHeroesExistentes.get(0));
+            repositorio_carruajeHeroe.agregarRelacion(carruaje,listaHeroesExistentes.get(1));
+            return carruaje;
         }
 
         return carruajeBus;

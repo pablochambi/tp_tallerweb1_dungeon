@@ -42,8 +42,8 @@ public class ControladorReclutaTest {
         carruajeMock = new Carruaje(1L,0,0,0);
         carruajeMock.setUsuario(usuarioMock);
 
-        heroeMock1 = new Heroe(1L,"Cruzado",300,"/imagenes/cruzado.webp");
-        heroeMock2 = new Heroe(2L,"Vestal",200,"/imagenes/Vestal.webp");
+        heroeMock1 = new Heroe(1L,"Cruzado",1,300,"/imagenes/cruzado.webp");
+        heroeMock2 = new Heroe(2L,"Vestal",1,200,"/imagenes/Vestal.webp");
         listaDeHeroesEnCarruajeMock =  List.of(heroeMock1, heroeMock2);
 
         // Por defecto simulamos que la sesión tiene un carruaje asociado
@@ -75,6 +75,8 @@ public class ControladorReclutaTest {
     @Test
     public void queAlIngresarPorPrimeraVesAlCarruaje_SeLeAsigneUnCarruajeNuevoAlUsuario() {
 
+        when(servicioReclutas.getCarruajeDelUsuarioPorId(usuarioMock.getId())).thenReturn(carruajeMock);
+
         ModelAndView mav = controladorReclutas.mostrarCarruaje(requestMock);
 
         assertThat(mav.getViewName(), is("vista_carruaje"));
@@ -87,6 +89,8 @@ public class ControladorReclutaTest {
     }
     @Test
     public void queAlIngresarPorPrimeraVesAlCarruaje_SeMuestre2HeroesEnCarruaje() {
+
+        when(servicioReclutas.getCarruajeDelUsuarioPorId(usuarioMock.getId())).thenReturn(carruajeMock);
 
         when(servicioReclutas.getHeroesDisponiblesEnCarruaje(carruajeMock)).thenReturn(listaDeHeroesEnCarruajeMock);
         when(servicioReclutas.getHeroesObtenidosPorElUsuario(usuarioMock)).thenReturn(List.of());

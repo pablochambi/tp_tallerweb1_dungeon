@@ -3,7 +3,6 @@ package com.tallerwebi.infraestructura;
 import com.tallerwebi.dominio.entidades.Heroe;
 import com.tallerwebi.dominio.interfaces.RepositorioHeroe;
 import org.hibernate.Criteria;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -36,11 +35,8 @@ public class RepositorioHeroeImpl implements RepositorioHeroe {
 
     @Override
     public List<Heroe> getListaDeHeroes() {
-        Session session = sessionFactory.getCurrentSession();
-
-        Criteria criteria = session.createCriteria(Heroe.class);
-
-        return criteria.list(); // Devuelve la lista completa de héroes
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Heroe.class);
+        return (List<Heroe>) criteria.list();
     }
 
 
