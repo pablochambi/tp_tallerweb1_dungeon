@@ -4,4 +4,6 @@ public interface RepositorioSession {
     GameSession startNew();
     GameSession findActive();
     void save(GameSession s);
+
+    void delete(GameSession session);
 }

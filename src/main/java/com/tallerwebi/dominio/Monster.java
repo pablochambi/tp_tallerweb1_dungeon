@@ -7,6 +7,7 @@ public class Monster {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
+    private String imagen;
     private int vida;
     private int atk;
     public Monster() {}
@@ -41,5 +42,13 @@ public class Monster {
 
     public void setAtk(int atk) {
         this.atk = atk;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
     }
 }
