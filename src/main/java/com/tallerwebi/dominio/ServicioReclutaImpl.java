@@ -33,6 +33,8 @@ public class ServicioReclutaImpl implements ServicioRecluta {
         this.repositorio_carruajeHeroe = repositorio_carruajeHeroe;
         this.repositorio_usuarioHeroe = repositorio_usuarioHeroe;
 
+        //Hice comentario en ServicioReclutaImpl
+
         Heroe h1 = this.repositorioHeroe.guardar(new Heroe(1L, "Cruzado", 300, "/imagenes/cruzado.webp"));
         Heroe h2 = this.repositorioHeroe.guardar(new Heroe(2L, "Vestal", 200, "/imagenes/Vestal.webp"));
 
