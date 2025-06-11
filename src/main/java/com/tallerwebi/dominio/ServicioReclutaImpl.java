@@ -202,6 +202,8 @@ public class ServicioReclutaImpl implements ServicioRecluta {
 
         List<Heroe> listaDeHeroes = repositorio_usuarioHeroe.getListaDeHeroes(usuarioBuscado.getId());
 
+        if(listaDeHeroes.isEmpty()) throw new ReclutaException("Todavia no obtuviste ningun heroe");
+
         return listaDeHeroes;
     }
 

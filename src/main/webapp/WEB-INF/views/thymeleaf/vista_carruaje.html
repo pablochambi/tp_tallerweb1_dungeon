@@ -57,19 +57,16 @@
                 </div>
             </div>
 
-            <div th:if="${mensaje1}" class="card mb-4">
+            <!-- Mensaje si no hay héroes -->
+            <div th:if="${mensaje1}" class="alert alert-warning">
                 <p th:text="${mensaje1}"></p>
+                <p th:text="${mensaje2}"></p>
             </div>
 
 
         </div>
 
         <a class="button" th:href="@{/home}">Volver al Home</a>
-
-        <!-- Mensaje si no hay héroes -->
-        <div th:if="${heroesEnCarruaje == null or heroesEnCarruaje.isEmpty()}" class="alert alert-warning">
-            No hay héroes en este carruaje.
-        </div>
 
 
     </div>

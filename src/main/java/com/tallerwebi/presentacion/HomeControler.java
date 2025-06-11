@@ -24,11 +24,11 @@ public class HomeControler {
 
         return new ModelAndView("home");
     }
-
-    @GetMapping("/seleccion-heroes")
-    public ModelAndView irAHeroes() {
-        return new ModelAndView("seleccion-heroes");
-    }
+//seleccion-heroes
+//    @GetMapping("/seleccion-heroes")
+//    public ModelAndView irAHeroes() {
+//        return new ModelAndView("seleccion-heroes");
+//    }
 
     @GetMapping("/mazmorra")
     public ModelAndView irAMazmorra() {

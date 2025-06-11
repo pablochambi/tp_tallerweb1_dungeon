@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
@@ -82,7 +83,10 @@ public class Repositorio_usuarioHeroeImpl implements Repositorio_usuarioHeroe {
         // Ejecutar la consulta
         @SuppressWarnings("unchecked")
         List<Heroe> heroes = criteria.list();
-        if (heroes == null) throw new RuntimeException("No se encontro lista de heroes en el usuario en BD");
+
+        if(heroes == null){
+            heroes = new ArrayList<>();
+        }
 
         return heroes;
     }
