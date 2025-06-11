@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.tallerwebi.dominio.entidades.GameSession;
 import com.tallerwebi.dominio.entidades.Jugador;
 import com.tallerwebi.dominio.entidades.Monster;
+import com.tallerwebi.dominio.entidades.SessionMonster;
 import com.tallerwebi.dominio.interfaces.RepositorioJugador;
 import com.tallerwebi.dominio.interfaces.RepositorioMonster;
 import com.tallerwebi.dominio.interfaces.RepositorioSession;
@@ -53,7 +54,7 @@ public class ServicioJuegoImpl implements ServicioJuego {
         sessionRepo.save(session);
 
         // agregar 3 monstruos random
-        List<Monster> all = monsterRepo.obtenerTodosLosMonstruos();
+        List<Monster> all = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
         Collections.shuffle(all);
         int toSeed = Math.min(3, all.size());
         for (int i = 0; i < toSeed; i++) {
@@ -72,7 +73,7 @@ public class ServicioJuegoImpl implements ServicioJuego {
             // eliminar monstruos viejos
             smRepo.deleteBySession(session);
             // agregar monstruos 3 nuevos
-            List<Monster> all = monsterRepo.obtenerTodosLosMonstruos();
+            List<Monster> all = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
             Collections.shuffle(all);
             int toSeed = Math.min(3, all.size());
             for (int i = 0; i < toSeed; i++) {

@@ -1,6 +1,6 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.entidades;
 
-import com.tallerwebi.dominio.entidades.Monster;
+import com.tallerwebi.dominio.SessionMonsterIDImpl;
 
 import javax.persistence.*;
 
