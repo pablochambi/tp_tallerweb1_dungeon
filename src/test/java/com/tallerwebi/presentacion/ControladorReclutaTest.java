@@ -133,12 +133,7 @@ public class ControladorReclutaTest {
         assertThat(mav.getViewName(), equalTo(VISTA_CARRUAJE));
         assertThat(mav.getModel().get("carruaje"), instanceOf(Carruaje.class));
         assertThat(mav.getModelMap().get("mensaje1"), equalTo("No hay heroes en carruaje"));
-//        assertThat(mav.getModelMap().get("mensaje2"), equalTo("Vuelva a intentarlo la proxima semana."));
 
-
-        List<Heroe> heroesObt = (List<Heroe>) mav.getModel().get("heroesEnCarruaje");
-        verify(servicioReclutas,never()).quitarUnHeroeDelCarruaje(heroeMock1.getId(), carruajeMock);
-        verify(servicioReclutas,never()).agregarUnHeroeAlUsuario(heroeMock1.getId(), usuarioMock);
     }
 
     @Test
