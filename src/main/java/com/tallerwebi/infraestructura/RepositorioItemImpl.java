@@ -1,8 +1,8 @@
 package com.tallerwebi.infraestructura;
 
 
-import com.tallerwebi.dominio.Item;
-import com.tallerwebi.dominio.RepositorioItem;
+import com.tallerwebi.dominio.entidades.Item;
+import com.tallerwebi.dominio.interfaces.RepositorioItem;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -20,6 +20,20 @@ public class RepositorioItemImpl implements RepositorioItem {
     @Override
     public List<Item> obtenerTodosLosItems() {
         return sessionFactory.getCurrentSession()
+                .createQuery("FROM Item", Item.class)
+                .list();
+    }
+
+    @Override
+    public Item buscarPorId(Long id) {
+        return sessionFactory.getCurrentSession()
+                .get(Item.class, id);
+    }
+
+    @Override
+    public List<Item> listarTodos() {
+        return sessionFactory
+                .getCurrentSession()
                 .createQuery("FROM Item", Item.class)
                 .list();
     }

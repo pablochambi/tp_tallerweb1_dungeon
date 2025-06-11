@@ -1,5 +1,7 @@
 package com.tallerwebi.dominio;
 
+import com.tallerwebi.dominio.entidades.Monster;
+
 import javax.persistence.*;
 
 @Entity
@@ -24,7 +26,7 @@ public class SessionMonster {
     @JoinColumn(
             name = "monster_id",
             referencedColumnName = "id",
-            insertable = false,
+            insertable = false, //al poner false le digo a Hibernate q este campo se rellena solo desde SQL
             updatable = false
     )
     private Monster monster;

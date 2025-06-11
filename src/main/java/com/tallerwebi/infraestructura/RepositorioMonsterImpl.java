@@ -1,7 +1,7 @@
 package com.tallerwebi.infraestructura;
 
-import com.tallerwebi.dominio.Monster;
-import com.tallerwebi.dominio.RepositorioMonster;
+import com.tallerwebi.dominio.entidades.Monster;
+import com.tallerwebi.dominio.interfaces.RepositorioMonster;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
