@@ -158,20 +158,16 @@ public class ControladorReclutaTest {
     public void queSePuedaMostrarLosHeroesQueTieneElUsuario() {
 
         when(servicioReclutas.asignarOActualizarUnCarrujeAUnUsuario(usuarioMock.getId())).thenReturn(carruajeMock);
-        when(servicioReclutas.getHeroesDisponiblesEnCarruaje(carruajeMock))
-                .thenThrow(new ReclutaException("No hay heroes en carruaje"));
+        when(servicioReclutas.getHeroesObtenidosPorElUsuario(usuarioMock)).thenReturn(listaDeHeroesEnCarruajeMock);
 
         ModelAndView mav = controladorReclutas.mostrarHeroesObtenidos(requestMock);
 
-        assertThat(mav.getViewName(), equalTo(VISTA_CARRUAJE));
-        assertThat(mav.getModel().get("carruaje"), instanceOf(Carruaje.class));
-        assertThat(mav.getModelMap().get("mensaje1"), equalTo("No hay heroes en carruaje"));
-//        assertThat(mav.getModelMap().get("mensaje2"), equalTo("Vuelva a intentarlo la proxima semana."));
+        assertThat(mav.getViewName(), equalTo(VISTA_HEROES_OBTENIDOS));
 
 
-        List<Heroe> heroesObt = (List<Heroe>) mav.getModel().get("heroesEnCarruaje");
-        verify(servicioReclutas,never()).quitarUnHeroeDelCarruaje(heroeMock1.getId(), carruajeMock);
-        verify(servicioReclutas,never()).agregarUnHeroeAlUsuario(heroeMock1.getId(), usuarioMock);
+        List<Heroe> heroesObt = (List<Heroe>) mav.getModel().get("heroes_obtenidos");
+        assertThat(heroesObt.size(), equalTo(2));
+
     }
 
 //    @Test
