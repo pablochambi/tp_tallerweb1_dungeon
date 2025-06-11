@@ -28,6 +28,8 @@ public class ControladorReclutas {
         this.servicioRecluta = servicioRecluta;
     }
 
+    //Comentario
+
     @GetMapping("/carruaje")
     public ModelAndView mostrarCarruaje(HttpServletRequest request) {
 
