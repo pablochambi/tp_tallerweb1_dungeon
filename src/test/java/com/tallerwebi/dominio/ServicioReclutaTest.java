@@ -257,8 +257,10 @@ public class ServicioReclutaTest {
         Exception exception = assertThrows(RuntimeException.class, () -> {
                                 servicioReclutas.getHeroesDisponiblesEnCarruaje(carruajeMock);
                             });
+
         // Verificación
-        assertThat(exception.getMessage(),equalTo("No hay heroes en carruaje"));
+        assertThat(exception.getClass(), equalTo(ReclutaException.class));
+        assertThat(exception.getMessage(),equalTo("No hay heroes disponibles por hoy"));
     }
     // -------------------- Tests para quitarUnHeroeDelCarruaje --------------------
     @Test
