@@ -70,7 +70,9 @@ public class ServicioReclutaImpl implements ServicioRecluta {
 
         List<Heroe> heroes = repositorio_carruajeHeroe.getListaDeHeroes(carruaje.getId());
 
-        if(heroes == null) throw new RuntimeException("La lista de heroes esta nula");
+        if(heroes == null) {
+            heroes = new ArrayList<>();
+        }
 
         if(heroes.isEmpty()) throw new ReclutaException("No hay heroes disponibles por hoy");
 
@@ -201,6 +203,8 @@ public class ServicioReclutaImpl implements ServicioRecluta {
         if(usuarioBuscado == null)  throw new RuntimeException("No se encontro el usuario");
 
         List<Heroe> listaDeHeroes = repositorio_usuarioHeroe.getListaDeHeroes(usuarioBuscado.getId());
+
+        if(listaDeHeroes == null) {listaDeHeroes = new ArrayList<>();}
 
         if(listaDeHeroes.isEmpty()) throw new ReclutaException("Todavia no obtuviste ningun heroe");
 
