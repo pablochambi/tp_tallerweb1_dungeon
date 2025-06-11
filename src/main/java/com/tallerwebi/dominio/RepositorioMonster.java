@@ -5,4 +5,6 @@ import java.util.List;
 public interface RepositorioMonster {
 
     List<Monster> obtenerTodosLosMonstruos();
+
+    Monster findById(Long monsterId);
 }

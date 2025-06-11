@@ -8,9 +8,11 @@ import javax.persistence.*;
 public class SessionMonster {
 
     @Id
+    @Column(name = "session_id")
     private Long sessionId;
 
     @Id
+    @Column(name = "monster_id")
     private Long monsterId;
 
     @Column(name = "vida_actual")
@@ -18,8 +20,13 @@ public class SessionMonster {
 
     private int orden;
 
-    @ManyToOne
-    @JoinColumn(name = "monsterId", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(
+            name = "monster_id",
+            referencedColumnName = "id",
+            insertable = false,
+            updatable = false
+    )
     private Monster monster;
 
     public SessionMonster() {}
@@ -51,6 +58,15 @@ public class SessionMonster {
     }
     public void setOrden(int orden) {
         this.orden = orden;
+    }
+
+    public String getImagen() {
+        return monster.getImagen();
+    }
+
+
+    public String getNombre() {
+        return monster.getNombre();
     }
 
     public Monster getMonster() {

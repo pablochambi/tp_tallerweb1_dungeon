@@ -50,4 +50,17 @@ public class RepositorioSessionImpl implements RepositorioSession {
     public void save(GameSession s) {
         sessionFactory.getCurrentSession().saveOrUpdate(s);
     }
+
+    @Override
+    public void delete(GameSession session) {
+        // 1) Eliminar primero los SessionMonster asociados a esta sesión
+        sessionFactory
+                .getCurrentSession()
+                .createQuery("delete from SessionMonster sm where sm.sessionId = :sid")
+                .setParameter("sid", session.getSessionId())
+                .executeUpdate();
+
+        // 2) Ahora eliminar la GameSession
+        sessionFactory.getCurrentSession().delete(session);
+    }
 }

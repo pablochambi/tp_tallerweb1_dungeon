@@ -18,10 +18,16 @@ public class RepositorioMonsterImpl implements RepositorioMonster {
 
     @Override
     public List<Monster> obtenerTodosLosMonstruos() {
-        // Esto carga TODOS los monstruos de la tabla Monster
         return sessionFactory
                 .getCurrentSession()
                 .createQuery("FROM Monster", Monster.class)
                 .list();
+    }
+
+    @Override
+    public Monster findById(Long monsterId) {
+        return sessionFactory
+                .getCurrentSession()
+                .get(Monster.class, monsterId);
     }
 }

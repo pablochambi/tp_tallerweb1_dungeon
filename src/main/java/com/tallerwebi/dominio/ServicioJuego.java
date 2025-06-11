@@ -9,4 +9,10 @@ public interface ServicioJuego {
     String atacar(int orden);
     String defender();
     String usarPocion();
+    Object getSession();
+
+
+    void endSession(GameSession current);
+
+
 }

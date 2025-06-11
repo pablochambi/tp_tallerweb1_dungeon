@@ -1,6 +1,7 @@
 package com.tallerwebi.dominio;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,14 +17,11 @@ public class ServicioJuegoImpl implements ServicioJuego {
     @Autowired private RepositorioMonster           repositorioMonster;
     @Autowired private RepositorioJugador           repositorioJugador;
 
-    /**
-     * Recupera la sesión activa; si no existe, crea una nueva Y SEMBRA los monstruos
-     */
+    //manejo de sesiones al arrancar partida
     public GameSession iniciarPartida() {
         GameSession session = repositorioSession.findActive();
         if (session == null) {
-            // 1) Cargar (o crear) al Jugador con ID=1
-            Jugador j = repositorioJugador.findById(1L);
+            Jugador j = repositorioJugador.findById(1L); //carga al jugador con id 1
             if (j == null) {
                 j = new Jugador();
                 j.setNombre("Héroe");
@@ -34,12 +32,10 @@ public class ServicioJuegoImpl implements ServicioJuego {
                 repositorioJugador.save(j);
             }
 
-            // 2) Crear la GameSession y asociar el Jugador persistido
-            session = new GameSession();
+            session = new GameSession(); //carga la gamesession con eljugador en sesion
             session.setJugador(j);
             repositorioSession.save(session);
 
-            // 3) Sembrar los monstruos de la mazmorra
             List<Monster> monsters = repositorioMonster.obtenerTodosLosMonstruos();
             for (Monster m : monsters) {
                 repositorioSessionMonster.add(session, m);
@@ -48,10 +44,20 @@ public class ServicioJuegoImpl implements ServicioJuego {
         return session;
     }
 
+
     @Override
     public List<SessionMonster> getMonstruos() {
-        return repositorioSessionMonster.findBySession(iniciarPartida());
+        //arranca la partida y recupera todos los SessionMonster
+        GameSession session = iniciarPartida();
+        List<SessionMonster> lista = repositorioSessionMonster.findBySession(session);
 
+        //carga los monster uno por uno de la bdd
+        for (SessionMonster sm : lista) {
+            Monster m = repositorioMonster.findById(sm.getMonsterId());
+            sm.setMonster(m);
+        }
+
+        return lista;
     }
 
     @Override
@@ -59,9 +65,6 @@ public class ServicioJuegoImpl implements ServicioJuego {
         return iniciarPartida().getJugador();
     }
 
-    /**
-     * Carga todos los SessionMonster para una sesión dada.
-     */
     private List<SessionMonster> getMonstruos(GameSession session) {
         return repositorioSessionMonster.findBySession(session);
     }
@@ -79,18 +82,21 @@ public class ServicioJuegoImpl implements ServicioJuego {
             return "Monstruo no encontrado.";
         }
 
-        // Jugador ataca
         objetivo.setVidaActual(objetivo.getVidaActual() - jugador.getAtk());
         repositorioSessionMonster.update(objetivo);
 
-        // Monstruos contraatacan
+        // daño aleatorio segun nivel de dificultad
         for (SessionMonster sm : getMonstruos()) {
             if (sm.getVidaActual() > 0) {
-                int dano = sm.getMonster().getAtk();
+                int minDamage = 2, maxDamage = 5;
+                int dano = ThreadLocalRandom.current()
+                        .nextInt(minDamage, maxDamage + 1);
+                //si defiende se reduce a la mitad el daño
                 if (jugador.isDefensa()) {
-                    dano /= 2;
+                    dano = dano / 2;
                     jugador.setDefensa(false);
                 }
+
                 jugador.setVida(jugador.getVida() - dano);
             }
         }
@@ -104,13 +110,16 @@ public class ServicioJuegoImpl implements ServicioJuego {
         GameSession session = iniciarPartida();
         Jugador jugador = session.getJugador();
 
-        // Activa defensa y ataca la mitad
         jugador.setDefensa(true);
         repositorioJugador.save(jugador);
 
         for (SessionMonster sm : getMonstruos(session)) {
             if (sm.getVidaActual() > 0) {
-                int dano = sm.getMonster().getAtk() / 2;
+                int minDamage = 1, maxDamage = 3;
+                int dano = ThreadLocalRandom.current()
+                        .nextInt(minDamage, maxDamage + 1);
+                dano = dano / 2;
+
                 jugador.setVida(jugador.getVida() - dano);
             }
         }
@@ -124,11 +133,22 @@ public class ServicioJuegoImpl implements ServicioJuego {
         GameSession session = iniciarPartida();
         Jugador jugador = session.getJugador();
 
-        // Aplica poción de vida (+30, por ejemplo)
         int nuevaVida = jugador.getVida() + 30;
         jugador.setVida(nuevaVida);
         repositorioJugador.save(jugador);
 
         return "Usaste poción. Vida actual: " + jugador.getVida() + ".";
     }
+
+    @Override
+    public GameSession getSession() {
+        return iniciarPartida();
+    }
+
+    @Override
+    public void endSession(GameSession session) {
+        repositorioSession.delete(session);
+    }
+
+
 }

@@ -75,4 +75,8 @@ public class GameSession {
     public void setNivel(int i) {
         this.nivel = i;
     }
+
+    public Object getSessionId() {
+        return null;
+    }
 }
