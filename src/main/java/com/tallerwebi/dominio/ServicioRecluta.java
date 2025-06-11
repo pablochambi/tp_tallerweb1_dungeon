@@ -34,45 +34,4 @@ public interface ServicioRecluta {
 
     Carruaje getCarruajeDelUsuarioId(Long idUsuario);
 
-//    CarruajeHeroe reclutarSegunIdHeroe(Long idHeroe);
-
-//
-//    void setHeroeEnCarruaje(Heroe heroe, Carruaje carruaje);
-
-//    Integer getCantidadDeHeroesDisponiblesEnCarruaje(Carruaje carruaje);
-
-//    void mostrarListaDeHeroesEnCarruaje(Carruaje carruaje);
-//
-//    Carruaje getAsignarCarruajeAUsuario(Usuario usuario);
-//
-//    Integer getNumeroDeSemanaSegunCarruaje(Carruaje carruaje);
-//
-//    Integer getNivelSegunCarruaje(Carruaje carruaje);
-//
-//    Integer getCantidadDeHeroesSemanalesSegunCarruaje(Carruaje carruaje);
-//
-//    Heroe reclutarUnHeroeAleatorio(Carruaje carruaje);
-//
-//    void pasarSemana(Carruaje carruaje);
-//
-//    void setHeroe(Heroe heroe);
-//
-//    void aumentarNivel(Carruaje carruaje);
-//
-//    Heroe getHeroeSegunID(long l);
-//
-//    void agregarCarruaje(Carruaje carruaje);
-//
-//    void setSemanaEnUsuarioSemanaSegunCarruaje(Carruaje carruaje);
-//
-//    void mostrarListaDeHeroesDelUsuario(Carruaje carruaje);
-//
-//
-//    Integer getCantidadDeHeroesEnUsuarioHeroeSegunCarruaje(Carruaje carruaje);
-//
-//    Carruaje obtenerCarruajePorUsuario(Usuario usuario);
-
-//    Integer getCantidadDeHeroesEnUsuarioHeroeSegunUsuario(Usuario usuario);
-
-
 }
