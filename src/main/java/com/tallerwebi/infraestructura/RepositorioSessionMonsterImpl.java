@@ -1,9 +1,9 @@
 package com.tallerwebi.infraestructura;
 
-import com.tallerwebi.dominio.GameSession;
-import com.tallerwebi.dominio.Monster;
+import com.tallerwebi.dominio.entidades.GameSession;
+import com.tallerwebi.dominio.entidades.Monster;
 import com.tallerwebi.dominio.SessionMonster;
-import com.tallerwebi.dominio.RepositorioSessionMonster;
+import com.tallerwebi.dominio.interfaces.RepositorioSessionMonster;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -30,6 +30,7 @@ public class RepositorioSessionMonsterImpl implements RepositorioSessionMonster 
                 .setParameter("sid", session.getId())
                 .uniqueResult();
         sm.setOrden(count.intValue() + 1);
+        sm.setMonster(monster);
         sessionFactory.getCurrentSession().save(sm);
     }
 
@@ -48,5 +49,13 @@ public class RepositorioSessionMonsterImpl implements RepositorioSessionMonster 
     @Override
     public void update(SessionMonster sessionMonster) {
         sessionFactory.getCurrentSession().update(sessionMonster);
+    }
+
+    @Override
+    public void deleteBySession(GameSession session) {
+        sessionFactory.getCurrentSession()
+                .createQuery("DELETE FROM SessionMonster sm WHERE sm.sessionId = :sid")
+                .setParameter("sid", session.getId())
+                .executeUpdate();
     }
 }

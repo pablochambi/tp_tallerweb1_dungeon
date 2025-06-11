@@ -1,6 +1,7 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.entidades;
 
 import javax.persistence.*;
+
 import org.hibernate.annotations.Type;
 
 @Entity
