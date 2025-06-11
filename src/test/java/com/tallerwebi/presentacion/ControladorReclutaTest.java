@@ -32,6 +32,7 @@ public class ControladorReclutaTest {
     private List<Heroe> listaDeSoloUnHeroeEnCarruajeMock;
     private static final String REDIRECT_VISTA_CARRUAJE = "redirect:/carruaje";
     private static final String VISTA_CARRUAJE = "vista_carruaje";
+    private static final String VISTA_HEROES_OBTENIDOS = "vista_heroes_obtenidos";
 
     @BeforeEach
     public void preparacion() {
@@ -128,6 +129,39 @@ public class ControladorReclutaTest {
                 .thenThrow(new ReclutaException("No hay heroes en carruaje"));
 
         ModelAndView mav = controladorReclutas.reclutarHeroe(heroeMock1.getId(), requestMock);
+
+        assertThat(mav.getViewName(), equalTo(VISTA_CARRUAJE));
+        assertThat(mav.getModel().get("carruaje"), instanceOf(Carruaje.class));
+        assertThat(mav.getModelMap().get("mensaje1"), equalTo("No hay heroes en carruaje"));
+//        assertThat(mav.getModelMap().get("mensaje2"), equalTo("Vuelva a intentarlo la proxima semana."));
+
+
+        List<Heroe> heroesObt = (List<Heroe>) mav.getModel().get("heroesEnCarruaje");
+        verify(servicioReclutas,never()).quitarUnHeroeDelCarruaje(heroeMock1.getId(), carruajeMock);
+        verify(servicioReclutas,never()).agregarUnHeroeAlUsuario(heroeMock1.getId(), usuarioMock);
+    }
+
+    @Test
+    public void queSiNoTieneHeroesObtenidos_MuestreUnMensaje() {
+
+        when(servicioReclutas.getHeroesObtenidosPorElUsuario(usuarioMock))
+                .thenThrow(new ReclutaException("Todavia obtuviste ningun heroe"));
+
+        ModelAndView mav = controladorReclutas.mostrarHeroesObtenidos(requestMock);
+
+        assertThat(mav.getViewName(), equalTo(VISTA_HEROES_OBTENIDOS));
+        assertThat(mav.getModelMap().get("mensaje1"), equalTo("Todavia obtuviste ningun heroe"));
+
+    }
+
+    @Test
+    public void queSePuedaMostrarLosHeroesQueTieneElUsuario() {
+
+        when(servicioReclutas.asignarOActualizarUnCarrujeAUnUsuario(usuarioMock.getId())).thenReturn(carruajeMock);
+        when(servicioReclutas.getHeroesDisponiblesEnCarruaje(carruajeMock))
+                .thenThrow(new ReclutaException("No hay heroes en carruaje"));
+
+        ModelAndView mav = controladorReclutas.mostrarHeroesObtenidos(requestMock);
 
         assertThat(mav.getViewName(), equalTo(VISTA_CARRUAJE));
         assertThat(mav.getModel().get("carruaje"), instanceOf(Carruaje.class));
