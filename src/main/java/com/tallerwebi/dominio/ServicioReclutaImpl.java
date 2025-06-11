@@ -71,7 +71,8 @@ public class ServicioReclutaImpl implements ServicioRecluta {
         List<Heroe> heroes = repositorio_carruajeHeroe.getListaDeHeroes(carruaje.getId());
 
         if(heroes == null) throw new RuntimeException("La lista de heroes esta nula");
-        if(heroes.isEmpty()) throw new RuntimeException("No hay heroes en carruaje");
+
+        if(heroes.isEmpty()) throw new ReclutaException("No hay heroes disponibles por hoy");
 
         return heroes;
     }
@@ -81,11 +82,13 @@ public class ServicioReclutaImpl implements ServicioRecluta {
 
         Heroe heroeBuscado =  repositorioHeroe.buscarHeroePorId(idHeroe);
 
-        Carruaje carruajeBuscado = repositorioCarruaje.buscarCarruajePorId(idHeroe);
+        if(heroeBuscado == null ) throw new RuntimeException("No se encontro heroe");
 
-        if(heroeBuscado == null)  throw new RuntimeException("No se encontro heroe");
+        Carruaje carruajeBuscado = repositorioCarruaje.buscarCarruajePorId(carruaje.getId());
 
-        if(carruajeBuscado == null) throw new RuntimeException("No se encontro carruaje");
+        if(carruajeBuscado == null) {
+            throw new RuntimeException("No se encontro el carruaje");
+        }
 
         CarruajeHeroe carruajeHeroeBuscado  = repositorio_carruajeHeroe.buscarRelacion(carruajeBuscado,heroeBuscado);
 
@@ -99,6 +102,7 @@ public class ServicioReclutaImpl implements ServicioRecluta {
     public void setRelacionEntreCarruajeYHeroe(Long idCarruaje, Long idHeroe) {
 
         Heroe heroeBuscado =  repositorioHeroe.buscarHeroePorId(idHeroe);
+
         Carruaje carruajeBuscado = repositorioCarruaje.buscarCarruajePorId(idCarruaje);
 
         if(heroeBuscado == null)  throw new RuntimeException("No se encontro heroe");
