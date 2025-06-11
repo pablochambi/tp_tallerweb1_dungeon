@@ -29,6 +29,9 @@ public class ControladorReclutaTest {
     private Heroe heroeMock1;
     private Heroe heroeMock2;
     private List<Heroe> listaDeHeroesEnCarruajeMock;
+    private List<Heroe> listaDeSoloUnHeroeEnCarruajeMock;
+    private static final String REDIRECT_VISTA_CARRUAJE = "redirect:/carruaje";
+    private static final String VISTA_CARRUAJE = "vista_carruaje";
 
     @BeforeEach
     public void preparacion() {
@@ -46,6 +49,7 @@ public class ControladorReclutaTest {
         heroeMock1 = new Heroe(1L,"Cruzado",1,300,"/imagenes/cruzado.webp");
         heroeMock2 = new Heroe(2L,"Vestal",1,200,"/imagenes/Vestal.webp");
         listaDeHeroesEnCarruajeMock =  List.of(heroeMock1, heroeMock2);
+        listaDeSoloUnHeroeEnCarruajeMock =  List.of( heroeMock2);
 
         // Por defecto simulamos que la sesión tiene un carruaje asociado
 //        when(servicioReclutas.getUsuarioPorId(1L)).thenReturn(usuarioMock);
@@ -58,20 +62,6 @@ public class ControladorReclutaTest {
         when(sessionMock.getAttribute("usuario")).thenReturn(usuarioMock);
 
     }
-
-//    @Test
-//    public void obtenerUsuarioPorId() {
-//
-//        ModelAndView mav = controladorReclutas.mostrarCarruaje(requestMock);
-//
-//        assertThat(mav.getViewName(), is("vista_carruaje"));
-//        assertThat(mav.getModel().get("carruaje"), instanceOf(Carruaje.class));
-//        assertThat(mav.getModel().get("carruaje"), notNullValue());
-//
-//        assertThat(mav.getModel().get("usuario"), instanceOf(Usuario.class));
-//        assertThat(mav.getModel().get("usuario"), notNullValue());
-//
-//    }
 
     @Test
     public void queAlIngresarPorPrimeraVesAlCarruaje_SeLeAsigneUnCarruajeNuevoAlUsuario() {
@@ -109,6 +99,45 @@ public class ControladorReclutaTest {
         assertThat(heroesObt.get(0), instanceOf(Heroe.class));
         assertThat(heroesObt.get(0).getNombre(), equalTo("Cruzado"));
         assertThat(heroesObt.get(0).getUrlImagen(), equalTo("/imagenes/cruzado.webp"));
+    }
+
+    @Test
+    public void queSePuedaRecluatarUnHeroeEnCarruaje() {
+
+        when(servicioReclutas.asignarOActualizarUnCarrujeAUnUsuario(usuarioMock.getId())).thenReturn(carruajeMock);
+        when(servicioReclutas.getHeroesDisponiblesEnCarruaje(carruajeMock)).thenReturn(listaDeSoloUnHeroeEnCarruajeMock);
+
+        ModelAndView mav = controladorReclutas.reclutarHeroe(heroeMock1.getId(), requestMock);
+
+        assertThat(mav.getViewName(), equalTo(VISTA_CARRUAJE));
+        assertThat(mav.getModel().get("carruaje"), instanceOf(Carruaje.class));
+        assertThat(mav.getModel().get("heroesEnCarruaje"), instanceOf(List.class));
+
+        List<Heroe> heroesObt = (List<Heroe>) mav.getModel().get("heroesEnCarruaje");
+        assertThat(heroesObt.size(), equalTo(1));
+        verify(servicioReclutas).quitarUnHeroeDelCarruaje(heroeMock1.getId(), carruajeMock);
+        verify(servicioReclutas).agregarUnHeroeAlUsuario(heroeMock1.getId(), usuarioMock);
+        assertThat(heroesObt.get(0), instanceOf(Heroe.class));
+    }
+
+    @Test
+    public void queAlReclutarElUltimoHeroe_queMeLanceUnMensajeDeQueNoHayHeroesDisponiblesEnCarruaje() {
+
+        when(servicioReclutas.asignarOActualizarUnCarrujeAUnUsuario(usuarioMock.getId())).thenReturn(carruajeMock);
+        when(servicioReclutas.getHeroesDisponiblesEnCarruaje(carruajeMock))
+                .thenThrow(new ReclutaException("No hay heroes en carruaje"));
+
+        ModelAndView mav = controladorReclutas.reclutarHeroe(heroeMock1.getId(), requestMock);
+
+        assertThat(mav.getViewName(), equalTo(VISTA_CARRUAJE));
+        assertThat(mav.getModel().get("carruaje"), instanceOf(Carruaje.class));
+        assertThat(mav.getModelMap().get("mensaje1"), equalTo("No hay heroes en carruaje"));
+//        assertThat(mav.getModelMap().get("mensaje2"), equalTo("Vuelva a intentarlo la proxima semana."));
+
+
+        List<Heroe> heroesObt = (List<Heroe>) mav.getModel().get("heroesEnCarruaje");
+        verify(servicioReclutas,never()).quitarUnHeroeDelCarruaje(heroeMock1.getId(), carruajeMock);
+        verify(servicioReclutas,never()).agregarUnHeroeAlUsuario(heroeMock1.getId(), usuarioMock);
     }
 
 //    @Test
