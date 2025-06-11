@@ -16,23 +16,14 @@ public class HomeControler {
     @GetMapping("/home")
     public ModelAndView irAMiHome(HttpServletRequest request) {
 
-        String rol = (String) request.getSession().getAttribute("ROL");
+        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
 
-        if (rol == null) {
+        if (usuario == null) {
             return new ModelAndView("redirect:/login");
         }
 
-        ModelMap model = new ModelMap();
-        model.put("rol", rol);
-
-        return new ModelAndView("home", model);
+        return new ModelAndView("home");
     }
-
-//    @GetMapping("/carruaje")
-//    public ModelAndView irAReclutar(HttpServletRequest request) {
-//        String rol = (String) request.getSession().getAttribute("ROL");
-//        return new ModelAndView("vista_carruaje");
-//    }
 
 
     @GetMapping("/seleccion-heroes")

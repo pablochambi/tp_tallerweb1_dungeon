@@ -58,10 +58,14 @@
             </div>
         </div>
 
+        <a class="button" th:href="@{home}">Volver al Home</a>
+
         <!-- Mensaje si no hay héroes -->
         <div th:if="${heroesEnCarruaje.isEmpty()}" class="alert alert-warning">
             No hay héroes en este carruaje.
         </div>
+
+
     </div>
 </main>
 <!-- /.container -->

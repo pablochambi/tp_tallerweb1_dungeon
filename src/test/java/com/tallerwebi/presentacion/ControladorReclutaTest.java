@@ -3,6 +3,7 @@ import com.tallerwebi.dominio.*;
 import com.tallerwebi.dominio.entidades.Carruaje;
 import com.tallerwebi.dominio.entidades.Heroe;
 import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.ServicioReclutaImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
 
