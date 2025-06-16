@@ -1,6 +1,7 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.ReclutaException;
+import com.tallerwebi.dominio.UsuarioNoAutenticadoException;
 import com.tallerwebi.dominio.entidades.Carruaje;
 import com.tallerwebi.dominio.entidades.Heroe;
 import com.tallerwebi.dominio.ServicioRecluta;
@@ -23,8 +24,6 @@ public class ControladorReclutas {
 
     private static final String VISTA_CARRUAJE = "vista_carruaje";
     private static final String REDIRECT_LOGIN = "redirect:/login";
-    private static final String REDIRECT_VISTA_CARRUAJE = "redirect:/carruaje";
-
     private static final String USUARIO = "usuario";
     private static final String CARRUAJE = "carruaje";
     private static final String HEROES = "heroesEnCarruaje";
@@ -40,20 +39,17 @@ public class ControladorReclutas {
 
     @GetMapping("/carruaje")
     public ModelAndView mostrarCarruaje(HttpServletRequest request) {
-        if (!esUsuarioAutenticado(request.getSession())) {
-            return new ModelAndView(REDIRECT_LOGIN);
-        }
-        ModelMap model = new ModelMap();
-        Usuario usuario = obtenerUsuarioDeSesion(request.getSession());
+
+        Usuario usuario = obtenerUsuarioDesdeSesion(request.getSession());
+
+        if (usuario == null) return new ModelAndView(REDIRECT_LOGIN);
+
         Carruaje carruaje = servicioRecluta.asignarOActualizarUnCarrujeAUnUsuario(usuario.getId());
 
+        ModelMap model = new ModelMap();
 
         try {
             List<Heroe> heroesEnCarruaje = servicioRecluta.getHeroesDisponiblesEnCarruaje(carruaje);
-
-            if (heroesEnCarruaje == null) {
-                heroesEnCarruaje = new ArrayList<>();
-            }
 
             model.put(CARRUAJE, carruaje);
             model.put(USUARIO, usuario);
@@ -79,17 +75,14 @@ public class ControladorReclutas {
     @GetMapping("/reclutar/{id}")
     public ModelAndView reclutarHeroe(@PathVariable("id") Long idHeroe, HttpServletRequest request) {
 
-        if (!esUsuarioAutenticado(request.getSession())) {
-            return new ModelAndView(REDIRECT_LOGIN);
-        }
-        ModelMap model = new ModelMap();
-        Usuario usuario = obtenerUsuarioDeSesion(request.getSession());
+        Usuario usuario = obtenerUsuarioDesdeSesion(request.getSession());
+
+        if (usuario == null) return new ModelAndView(REDIRECT_LOGIN);
+
         Carruaje carruaje = servicioRecluta.asignarOActualizarUnCarrujeAUnUsuario(usuario.getId());
+        ModelMap model = new ModelMap();
 
         try {
-
-            List<Heroe> heroesAntes = servicioRecluta.getHeroesDisponiblesEnCarruaje(carruaje);
-
             servicioRecluta.quitarUnHeroeDelCarruaje(idHeroe, carruaje);
             servicioRecluta.agregarUnHeroeAlUsuario(idHeroe, usuario);
 
@@ -119,18 +112,15 @@ public class ControladorReclutas {
     
     @GetMapping("/seleccion-heroes")
     public ModelAndView mostrarHeroesObtenidos(HttpServletRequest request) {
-        if (!esUsuarioAutenticado(request.getSession())) {
-            return new ModelAndView(REDIRECT_LOGIN);
-        }
+
+        Usuario usuario = obtenerUsuarioDesdeSesion(request.getSession());
+
+        if (usuario == null) return new ModelAndView(REDIRECT_LOGIN);
+
         ModelMap model = new ModelMap();
-        Usuario usuario = obtenerUsuarioDeSesion(request.getSession());
 
         try {
             List<Heroe> listaObtenida = servicioRecluta.getHeroesObtenidosPorElUsuario(usuario);
-
-            if (listaObtenida == null) {
-                listaObtenida = new ArrayList<>();
-            }
 
             model.put(HEROES_OBTENIDOS, listaObtenida);
             model.put(USUARIO, usuario);
@@ -153,86 +143,16 @@ public class ControladorReclutas {
 
         
     }
-    
-    
-    private boolean esUsuarioAutenticado(HttpSession session) {
-        return session.getAttribute(USUARIO) != null;
-    }
 
-    private Usuario obtenerUsuarioDeSesion(HttpSession session) {
-        return (Usuario) session.getAttribute(USUARIO);
+    private Usuario obtenerUsuarioDesdeSesion(HttpSession session) {
+        Object usuario = session.getAttribute(USUARIO);
+        if (usuario instanceof Usuario) {
+            return (Usuario) usuario;
+        }
+        return null;
     }
 
     
 }
 
-//@Controller
-//public class ControladorReclutas {
-//
-//    private final ServicioRecluta servicioRecluta;
-//
-//    @Autowired
-//    public ControladorReclutas(ServicioRecluta servicioRecluta) {
-//        this.servicioRecluta = servicioRecluta;
-//    }
-//
-//    //Comentario
-//
-//    @GetMapping("/carruaje")
-//    public ModelAndView mostrarCarruaje(HttpServletRequest request) {
-//
-//        if (request.getSession().getAttribute("usuario") == null) {
-//            return new ModelAndView("redirect:/login");
-//        }
-//
-//        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-//        Carruaje carruaje = servicioRecluta.asignarOActualizarUnCarrujeAUnUsuario(usuario.getId());
-//
-//        List<Heroe> heroesEnCarruaje  = servicioRecluta.getHeroesDisponiblesEnCarruaje(carruaje);
-//
-//
-//        ModelMap model = new ModelMap();
-//        model.put("carruaje", carruaje);
-//        model.put("usuario", usuario);
-//        model.put("heroesEnCarruaje", heroesEnCarruaje);
-//
-//
-//        return new ModelAndView("vista_carruaje",model);
-//    }
-//
-//
-//    @GetMapping("/reclutar/{id}")
-//    public ModelAndView reclutarHeroe(@PathVariable Long id, HttpServletRequest request) {
-//
-//        if (request.getSession().getAttribute("usuario") == null) {
-//            return new ModelAndView("redirect:/login");
-//        }
-//
-//        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-//        Carruaje carruaje = servicioRecluta.asignarOActualizarUnCarrujeAUnUsuario(usuario.getId());
-//
-//        servicioRecluta.quitarUnHeroeDelCarruaje(id,carruaje);
-//        servicioRecluta.agregarUnHeroeAlUsuario(id, usuario);
-//        List<Heroe> heroesEnCarruaje = servicioRecluta.getListaDeHeroesEnCarruaje(carruaje);
-//
-//
-//        ModelMap model = new ModelMap();
-//        model.put("carruaje", carruaje);
-//        model.put("heroesEnCarruaje",heroesEnCarruaje);
-//
-//        return new ModelAndView("vista_carruaje",model);
-//    }
-//}
-
-
-//    private  void agregarUnCarruajeYUsuarioALaSession(HttpServletRequest request) {
-//
-//        HttpSession session = request.getSession(); // Crea sesión si no existe
-//
-//        Usuario usuario = (Usuario) session.getAttribute("usuario");
-//        session.setAttribute("usuario", usuario);
-//    }
-
-
-//
 

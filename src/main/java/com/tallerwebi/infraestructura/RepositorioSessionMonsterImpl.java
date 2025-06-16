@@ -2,7 +2,7 @@ package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.entidades.GameSession;
 import com.tallerwebi.dominio.entidades.Monster;
-import com.tallerwebi.dominio.SessionMonster;
+import com.tallerwebi.dominio.entidades.SessionMonster;
 import com.tallerwebi.dominio.interfaces.RepositorioSessionMonster;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
