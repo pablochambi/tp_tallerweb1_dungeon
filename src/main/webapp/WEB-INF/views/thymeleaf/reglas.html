@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Taller Web I</title>
+
+    <!-- Boostrap core css -->
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
+
+    <!-- custom style -->
+    <link rel="stylesheet" th:href="@{/css/reglas.css}"/>
+
+</head>
+
+<body>
+
+<main>
+    <h1>Reglas del Juego</h1>
+
+    <h2>1. Flujo General</h2>
+    <ul>
+        <li>El player selecciona 4 héroes con habilidades y estadísticas distintas.</li>
+        <li>Se generan mazmorras con combates por turnos y eventos aleatorios.</li>
+        <li>El player enfrenta enemigos, obtiene recompensas y avanza de nivel.</li>
+    </ul>
+
+    <h2>2. Combate por Turnos</h2>
+    <ul>
+        <li>Cada héroe y enemigo actúan por turnos.</li>
+        <li>Se pueden realizar acciones como atacar, defender o usar habilidades.</li>
+    </ul>
+
+    <h2>3. Sistema de Estrés y Salud</h2>
+    <ul>
+        <li>Los héroes acumulan estrés con el tiempo o eventos negativos.</li>
+        <li>Demasiado estrés puede afectar su rendimiento o causar efectos negativos.</li>
+        <li>La salud disminuye en combate. Si llega a cero, el héroe cae.</li>
+    </ul>
+
+    <h2>4. Progresión</h2>
+    <ul>
+        <li>Entre combates se pueden mejorar o cambiar héroes.</li>
+        <li>Al final de cada nivel se otorga una puntuación según rendimiento.</li>
+    </ul>
+
+    <p style="margin-top: 40px; text-align: center;">
+        <a href="home.html">Volver al inicio</a>
+    </p>
+
+</main>
+<!-- /.container -->
+
+<!-- Boostrap core js -->
+<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{js/main.js}"></script>
+</body>
+</html>
