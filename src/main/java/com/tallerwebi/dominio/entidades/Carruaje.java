@@ -78,12 +78,17 @@ public class Carruaje {
     public void setCantidadDeHeroesSemanales(int i) {
     }
 
-    public void setUsuario(Usuario usuarioMock) {
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public Integer getNivel() {
 
         return nivel;
+    }
+
+    public Usuario getUsuario() {
+        return this.usuario;
     }
 
 }

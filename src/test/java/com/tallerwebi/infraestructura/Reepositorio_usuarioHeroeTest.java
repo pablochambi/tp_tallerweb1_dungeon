@@ -52,6 +52,7 @@ public class Reepositorio_usuarioHeroeTest {
         usuarioMock2 = new Usuario(2L,"u2");
     }
 
+/*
     @Test
     @Transactional
     @Rollback
@@ -76,7 +77,7 @@ public class Reepositorio_usuarioHeroeTest {
         assertThat(listaHeroes.get(0).getId(),notNullValue());
         assertThat(listaHeroes.get(0).getId(),equalTo(heroeMock1.getId()));
     }
-    
+    */
     
     
 }

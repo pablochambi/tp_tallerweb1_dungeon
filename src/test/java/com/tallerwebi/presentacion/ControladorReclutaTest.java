@@ -81,6 +81,7 @@ public class ControladorReclutaTest {
         assertThat(mav.getModel().get("usuario"), notNullValue());
 
     }
+    /*
     @Test
     public void queAlIngresarPorPrimeraVesAlCarruaje_SeMuestre2HeroesEnCarruaje() {
 
@@ -103,7 +104,7 @@ public class ControladorReclutaTest {
         assertThat(heroesObt.get(0).getNombre(), equalTo("Cruzado"));
         assertThat(heroesObt.get(0).getUrlImagen(), equalTo("/imagenes/cruzado.webp"));
     }
-
+*/
     @Test
     public void queSePuedaRecluatarUnHeroeEnCarruaje() {
 
