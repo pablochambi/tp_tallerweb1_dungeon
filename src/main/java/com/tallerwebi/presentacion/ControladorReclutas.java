@@ -140,8 +140,11 @@ public class ControladorReclutas {
         }catch (ReclutaException e) {
             // Manejo específico para excepciones
             model.put(USUARIO, usuario);
+
             model.put("mensaje1", e.getMessage());
+
             return new ModelAndView(VISTA_HEROES_OBTENIDOS, model);
+
         }catch (Exception e) {
             // Manejo genérico para otros errores
             model.put("error", "Ocurrió un error inesperado");
