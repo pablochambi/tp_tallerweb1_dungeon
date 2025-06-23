@@ -5,14 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.tallerwebi.dominio.entidades.GameSession;
-import com.tallerwebi.dominio.entidades.Jugador;
-import com.tallerwebi.dominio.entidades.Monster;
-import com.tallerwebi.dominio.entidades.SessionMonster;
-import com.tallerwebi.dominio.interfaces.RepositorioJugador;
-import com.tallerwebi.dominio.interfaces.RepositorioMonster;
-import com.tallerwebi.dominio.interfaces.RepositorioSession;
-import com.tallerwebi.dominio.interfaces.RepositorioSessionMonster;
+import com.tallerwebi.dominio.entidades.*;
+import com.tallerwebi.dominio.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ServicioJuegoImpl implements ServicioJuego {
 
-    @Autowired private RepositorioJugador jugadorRepo;
+    @Autowired private RepositorioUsuario UsuarioRepo;
     @Autowired private RepositorioSession sessionRepo;
     @Autowired private RepositorioMonster monsterRepo;
     @Autowired private RepositorioSessionMonster smRepo;
@@ -37,20 +31,20 @@ public class ServicioJuegoImpl implements ServicioJuego {
    }
     @Override
     public GameSession crearNuevaMazmorra() {
-        // jugador fijo con id 1 (se crea si no existe)
-        Jugador j = jugadorRepo.findById(1L);
-        if (j == null) {
-            j = new Jugador();
-            j.setNombre("Héroe");
-            j.setVida(100);
-            j.setAtk(10);
-            j.setDefensa(false);
-            j.setOro(1000);
-            jugadorRepo.save(j);
+        // User fijo con id 1 (se crea si no existe)
+
+        Usuario u = UsuarioRepo.buscarUsuarioPorId(1L);
+        if (u == null) {
+            u = new Usuario();
+            u.setVida(100);
+            u.setAtk(10);
+            u.setDefensa(false);
+            u.setOro(1000);
+            UsuarioRepo.guardar(u);
         }
 
         GameSession session = new GameSession();
-        session.setJugador(j);
+        session.setUsuario(u);
         sessionRepo.save(session);
 
         // agregar 3 monstruos random
@@ -84,8 +78,8 @@ public class ServicioJuegoImpl implements ServicioJuego {
 
 
     @Override
-    public Jugador getJugador() {
-        return iniciarPartida().getJugador();
+    public Usuario getUsuario() {
+        return iniciarPartida().getUsuario();
     }
 
     @Override
@@ -96,7 +90,7 @@ public class ServicioJuegoImpl implements ServicioJuego {
     @Override
     public String atacar(int orden) {
         GameSession session = iniciarPartida();
-        Jugador jugador = session.getJugador();
+        Usuario usuario = session.getUsuario();
 
         // 1) Atacar al monstruo objetivo
         SessionMonster objetivo = getMonstruos().stream()
@@ -106,7 +100,7 @@ public class ServicioJuegoImpl implements ServicioJuego {
         if (objetivo == null) {
             return "Monstruo no encontrado.";
         }
-        objetivo.setVidaActual(objetivo.getVidaActual() - jugador.getAtk());
+        objetivo.setVidaActual(objetivo.getVidaActual() - usuario.getAtk());
         smRepo.update(objetivo);
 
         // 2) Monstruos vivos contraatacan y registramos sus nombres
@@ -118,13 +112,14 @@ public class ServicioJuegoImpl implements ServicioJuego {
         for (SessionMonster sm : vivos) {
             atacantes.add(sm.getMonster().getNombre());
             int dano = sm.getMonster().getAtk();
-            if (jugador.isDefensa()) {
+            if (usuario.isDefensa()) {
                 dano /= 2;
-                jugador.setDefensa(false);
+                usuario.setDefensa(false);
             }
-            jugador.setVida(jugador.getVida() - dano);
+            usuario.setVida(usuario.getVida() - dano);
         }
-        jugadorRepo.save(jugador);
+
+        UsuarioRepo.guardar(usuario);
 
         // 3) Construimos el texto de quién atacó
         String textoAtacantes;
@@ -143,36 +138,36 @@ public class ServicioJuegoImpl implements ServicioJuego {
         return String.format(
                 "Has atacado. %s y ahora tu vida es %d.",
                 textoAtacantes,
-                jugador.getVida()
+                usuario.getVida()
         );
     }
 
     @Override
     public String defender() {
         GameSession session = iniciarPartida();
-        Jugador jugador = session.getJugador();
+        Usuario usuario = session.getUsuario();
 
-        jugador.setDefensa(true);
-        jugadorRepo.save(jugador);
+        usuario.setDefensa(true);
+        UsuarioRepo.guardar(usuario);
 
         for (SessionMonster sm : getMonstruos()) {
             if (sm.getVidaActual() > 0) {
                 int dano = sm.getMonster().getAtk() / 2;
-                jugador.setVida(jugador.getVida() - dano);
+                usuario.setVida(usuario.getVida() - dano);
             }
         }
-        jugadorRepo.save(jugador);
-        return "Defiendes este turno. Vida restante: " + jugador.getVida() + ".";
+        UsuarioRepo.guardar(usuario);
+        return "Defiendes este turno. Vida restante: " + usuario.getVida() + ".";
     }
 
     @Override
     public String usarPocion() {
         GameSession session = iniciarPartida();
-        Jugador jugador = session.getJugador();
+        Usuario usuario = session.getUsuario();
 
-        jugador.setVida(jugador.getVida() + 30);
-        jugadorRepo.save(jugador);
-        return "Usaste poción. Vida actual: " + jugador.getVida() + ".";
+        usuario.setVida(usuario.getVida() + 30);
+        UsuarioRepo.guardar(usuario);
+        return "Usaste poción. Vida actual: " + usuario.getVida() + ".";
     }
 
     @Override

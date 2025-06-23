@@ -1,9 +1,9 @@
 package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidades.Item;
-import com.tallerwebi.dominio.entidades.Jugador;
+import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.interfaces.RepositorioItem;
-import com.tallerwebi.dominio.interfaces.RepositorioJugador;
+import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +15,7 @@ import java.util.List;
 public class ServicioTiendaImpl implements ServicioTienda {
 
     @Autowired private RepositorioItem itemRepo;
-    @Autowired private RepositorioJugador jugadorRepo;
+    @Autowired private RepositorioUsuario usuarioRepo;
 
     @Override
     public List<Item> obtenerItems() {
@@ -23,19 +23,19 @@ public class ServicioTiendaImpl implements ServicioTienda {
     }
 
     @Override
-    public String comprarItem(Long itemId, Jugador jugador) {
+    public String comprarItem(Long itemId, Usuario usuario) {
         Item item = itemRepo.buscarPorId(itemId);
         if (item == null) {
             return "Ítem no encontrado.";
         }
 
-        if (jugador.getOro() < item.getPrecio()) {
+        if (usuario.getOro() < item.getPrecio()) {
             return "No tenés suficiente oro para comprar " + item.getNombre() + ".";
         }
 
-        jugador.setOro(jugador.getOro() - item.getPrecio());
-        jugador.getInventario().add(item);
-        jugadorRepo.save(jugador);
+        usuario.setOro(usuario.getOro() - item.getPrecio());
+        usuario.getInventario().add(item);
+        usuarioRepo.guardar(usuario);
 
         return "Compraste " + item.getNombre() + " por " + item.getPrecio() + " de oro.";
     }

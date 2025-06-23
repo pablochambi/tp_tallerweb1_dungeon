@@ -10,10 +10,10 @@ import java.util.Collections;
 import java.util.List;
 
 import com.tallerwebi.dominio.entidades.GameSession;
-import com.tallerwebi.dominio.entidades.Jugador;
+import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.entidades.Monster;
 import com.tallerwebi.dominio.entidades.SessionMonster;
-import com.tallerwebi.dominio.interfaces.RepositorioJugador;
+import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
 import com.tallerwebi.dominio.interfaces.RepositorioMonster;
 import com.tallerwebi.dominio.interfaces.RepositorioSession;
 import com.tallerwebi.dominio.interfaces.RepositorioSessionMonster;
@@ -27,7 +27,7 @@ import org.mockito.*;
 class ServicioJuegoImplTest {
 
     @Mock
-    RepositorioJugador jugadorRepo;
+    RepositorioUsuario usuarioRepo;
     @Mock
     RepositorioSession sessionRepo;
     @Mock
@@ -37,7 +37,7 @@ class ServicioJuegoImplTest {
 
     @InjectMocks ServicioJuegoImpl servicio;
 
-    private Jugador jugador;
+    private Usuario usuario;
     private GameSession session;
     private Monster m1, m2, m3;
     private SessionMonster sm1, sm2, sm3;
@@ -46,15 +46,15 @@ class ServicioJuegoImplTest {
     void init() {
         MockitoAnnotations.openMocks(this);
         // Jugador inicial
-        jugador = new Jugador();
-        jugador.setVida(100);
-        jugador.setAtk(10);
-        jugador.setDefensa(false);
-        jugador.setOro(500);
+        usuario = new Usuario();
+        usuario.setVida(100);
+        usuario.setAtk(10);
+        usuario.setDefensa(false);
+        usuario.setOro(500);
 
         // Sesión vacía
         session = new GameSession();
-        session.setJugador(jugador);
+        session.setUsuario(usuario);
 
         // Monstruos base
         m1 = new Monster(); m1.setId(1L); m1.setNombre("Esqueleto"); m1.setVida(30); m1.setAtk(5);
@@ -71,14 +71,14 @@ class ServicioJuegoImplTest {
     void getJugador_creaYDevuelveElJugador() {
         // given
         when(sessionRepo.findActive()).thenReturn(null);
-        when(jugadorRepo.findById(1L)).thenReturn(jugador);
+        when(usuarioRepo.buscarUsuarioPorId(1L)).thenReturn(usuario);
 
         // when
-        Jugador resultado = servicio.getJugador();
+        Usuario resultado = servicio.getUsuario();
 
         // then
-        assertThat(resultado, sameInstance(jugador));
-        verify(jugadorRepo).findById(1L);
+        assertThat(resultado, sameInstance(usuario));
+        verify(usuarioRepo).buscarUsuarioPorId(1L);
         verify(sessionRepo).save(any(GameSession.class));
     }
 
@@ -87,7 +87,7 @@ class ServicioJuegoImplTest {
 
         when(sessionRepo.findActive()).thenReturn(null);
 
-        when(jugadorRepo.findById(1L)).thenReturn(jugador);
+        when(usuarioRepo.buscarUsuarioPorId(1L)).thenReturn(usuario);
 
         when(monsterRepo.obtenerTodosLosMonstruos())
                 .thenReturn(List.of(m1, m2, m3, new Monster(), new Monster()));
@@ -118,7 +118,7 @@ class ServicioJuegoImplTest {
         String msg = servicio.atacar(1);
         // then
         verify(smRepo).update(argThat(s -> s.getVidaActual() == 20));
-        assertThat(jugador.getVida(), is(95));
+        assertThat(usuario.getVida(), is(95));
         assertThat(msg, containsString("Esqueleto"));
     }
 

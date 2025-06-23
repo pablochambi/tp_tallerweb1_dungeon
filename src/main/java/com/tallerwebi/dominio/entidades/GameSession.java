@@ -15,8 +15,8 @@ public class GameSession {
 
 
     @ManyToOne
-    @JoinColumn(name = "jugador_id", nullable = false)
-    private Jugador jugador;
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 
     @Column(nullable = false)
     private int turno = 1;
@@ -36,12 +36,12 @@ public class GameSession {
 
     public Long getId() { return id; }
 
-    public Jugador getJugador() {
-        return jugador;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setJugador(Jugador jugador) {
-        this.jugador = jugador;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public int getTurno() {

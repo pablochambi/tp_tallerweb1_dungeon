@@ -4,6 +4,7 @@ import com.tallerwebi.dominio.entidades.GameSession;
 import com.tallerwebi.dominio.entidades.Jugador;
 import com.tallerwebi.dominio.ServicioJuego;
 import com.tallerwebi.dominio.entidades.SessionMonster;
+import com.tallerwebi.dominio.entidades.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,11 +22,11 @@ public class ControladorJuego {
     @GetMapping("/juego")
     public String mostrarJuego(Model model) {
         GameSession session    = (GameSession) servicioJuego.getSession();
-        Jugador jugador        = session.getJugador();
+        Usuario usuario        = session.getUsuario();
         List<SessionMonster> monstruos = servicioJuego.getMonstruos();
 
         model.addAttribute("session",   session);
-        model.addAttribute("jugador",   jugador);
+        model.addAttribute("usuario",   usuario);
         model.addAttribute("monstruos", monstruos);
         return "juego";
     }

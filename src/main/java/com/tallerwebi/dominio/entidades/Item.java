@@ -11,8 +11,8 @@ public class Item {
     private String tipo;
     private int precio;
     @ManyToOne
-    @JoinColumn(name = "jugador_id")
-    private Jugador jugador;
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
     public Item() {}
 
     public Long getId() {
@@ -47,11 +47,11 @@ public class Item {
         this.precio = precio;
     }
 
-    public Jugador getJugador() {
-        return jugador;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setJugador(Jugador jugador) {
-        this.jugador = jugador;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

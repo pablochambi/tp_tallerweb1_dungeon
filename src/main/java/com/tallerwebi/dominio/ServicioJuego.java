@@ -1,7 +1,7 @@
 package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidades.GameSession;
-import com.tallerwebi.dominio.entidades.Jugador;
+import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.entidades.SessionMonster;
 
 import java.util.List;
@@ -14,7 +14,7 @@ public interface ServicioJuego {
 
     void reiniciarMazmorra();
 
-    Jugador getJugador();
+    Usuario getUsuario();
     String atacar(int orden);
     String defender();
     String usarPocion();

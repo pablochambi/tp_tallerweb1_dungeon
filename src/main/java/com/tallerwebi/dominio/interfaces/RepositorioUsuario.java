@@ -10,5 +10,6 @@ public interface RepositorioUsuario {
     void modificar(Usuario usuario);
 
     Usuario buscarUsuarioPorId(Long idUsuario);
+
 }
 

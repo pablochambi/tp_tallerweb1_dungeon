@@ -1,4 +1,6 @@
+
 package com.tallerwebi.presentacion;
+
 import com.tallerwebi.dominio.*;
 import com.tallerwebi.dominio.entidades.Carruaje;
 import com.tallerwebi.dominio.entidades.Heroe;
@@ -164,6 +166,7 @@ public class ControladorReclutaTest {
         assertThat(heroesObt.size(), equalTo(2));
 
     }
+
 
 //    @Test
 //    public void queSePuedaReclutarUnHeroe() {

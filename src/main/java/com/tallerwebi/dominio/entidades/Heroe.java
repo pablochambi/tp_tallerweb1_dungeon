@@ -17,26 +17,30 @@ public class Heroe {
     private Long id;
     private String nombre;
     private Integer nivel;
-    private Integer precio;
     private String urlImagen;
+    private int precio;
 
-    public Heroe(Long id, String nombre) {
+    public Heroe(Long id, String nombre, int precio) {
         this.id = id;
         this.nombre = nombre;
+        this.precio = precio;
         this.nivel = 1;
     }
 
     public Heroe(Long id, String nombre,Integer nivel,Integer precio,String urlImagen) {
         this.id = id;
         this.nombre = nombre;
-        this.precio = precio;
         this.urlImagen = urlImagen;
         this.nivel = nivel;
+        this.precio = precio;
     }
 
-    public Heroe() {
+    public Heroe(int precio) {
 
+        this.precio = precio;
     }
+    public Heroe() {}
+
 
     public void mostrarHeroe() {
         System.out.print("Heroe\n");

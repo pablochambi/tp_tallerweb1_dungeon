@@ -1,3 +1,12 @@
+INSERT INTO Usuario
+  (id, email, password, rol, activo, nombre, vida, atk, defensa, oro)
+VALUES
+  (1, 'test@unlam.edu.ar', 'test', 'ADMIN', TRUE,
+   'Héroe', 1000, 10, FALSE, 1000),
+  (2, 'otro@ejemplo.com', '1234', 'ADMIN', TRUE,
+   'Aventurero', 800, 8, FALSE, 500);
+
+
 
 INSERT INTO Usuario(id, email, password, rol, activo) VALUES(1, 'test@unlam.edu.ar', 'test', 'ADMIN', true);
 INSERT INTO Usuario(id, email, password, rol, activo) VALUES(2, 'otro', 'otro', 'ADMIN', true);
@@ -5,8 +14,6 @@ INSERT INTO Usuario(id, email, password, rol, activo) VALUES(2, 'otro', 'otro', 
 INSERT INTO Heroe(id,nombre,nivel,precio,urlImagen)VALUES (1,'Cruzado',1,300,'/imagenes/cruzado.webp');
 INSERT INTO Heroe(id,nombre,nivel,precio,urlImagen)VALUES (2,'Vestal',1,200,'/imagenes/Vestal.webp');
 
-INSERT INTO jugador (id, nombre, vida, atk, defensa, oro)
-  VALUES (1, 'Héroe', 1000, 10, FALSE, 1000);
 
 INSERT INTO monster (id, nombre, vida, atk, imagen) VALUES
   (5, 'Orco',       60, 10, '&#x1F9DD;&#x200D;&#x2642;&#xFE0F;'),

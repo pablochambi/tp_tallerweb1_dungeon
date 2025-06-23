@@ -1,6 +1,8 @@
 package com.tallerwebi.dominio.entidades;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Usuario")
@@ -13,6 +15,21 @@ public class Usuario {
     private String password;
     private String rol;
     private Boolean activo = false;
+    @Column(nullable = false)
+    private Integer oro = 1000;
+
+    // nombre,vida,atk,defensa deberian ser de entidad "Heroes"
+    // por ahora queda asi para probar funcionalidad
+    private String nombre;
+    private int vida;
+    private int atk;
+    private boolean defensa;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Item> itemsComprados = new ArrayList<>();
+
+    @ManyToMany
+    private List<Item> inventario = new ArrayList<>();
 
     public Usuario(Long id, String email) {
         this.id = id;
@@ -63,6 +80,43 @@ public class Usuario {
         activo = true;
     }
 
+    public List<Item> getItemsComprados() { return itemsComprados; }
+    public void setItemsComprados(List<Item> l) { this.itemsComprados = l; }
+    public List<Item> getInventario() { return inventario; }
+    public void setInventario(List<Item> l) { this.inventario = l; }
 
 
+    public Integer getOro() {
+        return oro;
+    }
+
+    public void setOro(Integer oro) {
+        this.oro = oro;
+    }
+
+
+    //SETTER Y GETTER QUE DEBERIAN SER DE HEROE
+    public int getVida() {
+        return vida;
+    }
+
+    public void setVida(int vida) {
+        this.vida = vida;
+    }
+
+    public int getAtk() {
+        return atk;
+    }
+
+    public void setAtk(int atk) {
+        this.atk = atk;
+    }
+
+    public boolean isDefensa() {
+        return defensa;
+    }
+
+    public void setDefensa(boolean defensa) {
+        this.defensa = defensa;
+    }
 }

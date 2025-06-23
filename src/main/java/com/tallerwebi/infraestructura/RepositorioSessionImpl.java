@@ -1,9 +1,9 @@
 package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.entidades.GameSession;
-import com.tallerwebi.dominio.entidades.Jugador;
-import com.tallerwebi.dominio.interfaces.RepositorioJugador;
+import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.interfaces.RepositorioSession;
+import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -17,24 +17,23 @@ public class RepositorioSessionImpl implements RepositorioSession {
     private SessionFactory sessionFactory;
 
     @Autowired
-    private RepositorioJugador repositorioJugador;
+    private RepositorioUsuario usuarioRepositorio;
 
     @Override
     public GameSession startNew() {
         // 1) Asegurar Jugador existente en BDD
-        Jugador jugador = repositorioJugador.findById(1L);
-        if (jugador == null) {
-            jugador = new Jugador();
-            jugador.setNombre("Heroe");
-            jugador.setVida(100);
-            jugador.setAtk(10);
-            jugador.setDefensa(false);
-            jugador.setOro(1000);
-            repositorioJugador.save(jugador);
+        Usuario usuario = usuarioRepositorio.buscarUsuarioPorId(1L);
+        if (usuario == null) {
+            usuario = new Usuario();
+            usuario.setVida(100);
+            usuario.setAtk(10);
+            usuario.setDefensa(false);
+            usuario.setOro(1000);
+            usuarioRepositorio.guardar(usuario);
         }
         // 2) Crear y guardar la sesión ya ligada a ese jugador
         GameSession session = new GameSession();
-        session.setJugador(jugador);
+        session.setUsuario(usuario);
         sessionFactory.getCurrentSession().save(session);
         return session;
     }
