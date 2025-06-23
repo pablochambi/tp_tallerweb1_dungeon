@@ -1,4 +1,4 @@
-package com.tallerwebi.dominio.entidades;
+/*package com.tallerwebi.dominio.entidades;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -89,3 +89,4 @@ public class Jugador {
         this.defensa = defensa;
     }
 }
+*/

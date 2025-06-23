@@ -1,4 +1,4 @@
-package com.tallerwebi.infraestructura;
+/*package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.entidades.Jugador;
 import com.tallerwebi.dominio.interfaces.RepositorioJugador;
@@ -23,4 +23,4 @@ public class RepositorioJugadorImpl implements RepositorioJugador {
     public void save(Jugador j) {
         sessionFactory.getCurrentSession().saveOrUpdate(j);
     }
-}
+}*/

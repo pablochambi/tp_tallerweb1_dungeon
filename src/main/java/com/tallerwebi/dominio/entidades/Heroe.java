@@ -35,6 +35,11 @@ public class Heroe {
         this.precio = precio;
     }
 
+    public Heroe(Long id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
+    }
+
     public Heroe(int precio) {
 
         this.precio = precio;

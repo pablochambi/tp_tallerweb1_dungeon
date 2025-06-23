@@ -1,7 +1,6 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.entidades.GameSession;
-import com.tallerwebi.dominio.entidades.Jugador;
 import com.tallerwebi.dominio.ServicioJuego;
 import com.tallerwebi.dominio.entidades.SessionMonster;
 import com.tallerwebi.dominio.entidades.Usuario;
@@ -16,8 +15,12 @@ import java.util.List;
 @Controller
 public class ControladorJuego {
 
+    private final ServicioJuego servicioJuego;
+
     @Autowired
-    private ServicioJuego servicioJuego;
+    public ControladorJuego(ServicioJuego servicioJuego) {
+        this.servicioJuego = servicioJuego;
+    }
 
     @GetMapping("/juego")
     public String mostrarJuego(Model model) {

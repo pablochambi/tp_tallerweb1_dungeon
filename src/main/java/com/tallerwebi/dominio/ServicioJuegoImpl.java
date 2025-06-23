@@ -15,12 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ServicioJuegoImpl implements ServicioJuego {
 
-    @Autowired private RepositorioUsuario UsuarioRepo;
-    @Autowired private RepositorioSession sessionRepo;
-    @Autowired private RepositorioMonster monsterRepo;
-    @Autowired private RepositorioSessionMonster smRepo;
+    private final RepositorioUsuario UsuarioRepo;
+    private final RepositorioSession sessionRepo;
+    private final RepositorioMonster monsterRepo;
+    private final RepositorioSessionMonster smRepo;
 
-   //recupera sesion activa, sino crea una nueva
+    public ServicioJuegoImpl(RepositorioUsuario UsuarioRepo, RepositorioSession sessionRepo, RepositorioMonster monsterRepo, RepositorioSessionMonster smRepo) {
+        this.UsuarioRepo = UsuarioRepo;
+        this.sessionRepo = sessionRepo;
+        this.monsterRepo = monsterRepo;
+        this.smRepo = smRepo;
+    }
+
+    //recupera sesion activa, sino crea una nueva
    @Override
    public GameSession iniciarPartida() {
        GameSession session = sessionRepo.findActive();

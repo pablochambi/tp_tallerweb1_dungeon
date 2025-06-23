@@ -52,6 +52,31 @@ public class Reepositorio_usuarioHeroeTest {
         usuarioMock2 = new Usuario(2L,"u2");
     }
 
+//    @Test
+//    @Transactional
+//    @Rollback
+//    public void queSePuedaPuedaObtenerLaListaDeHeroesDeUnUsuario() {
+//
+//        repositorioHeroe.guardar(heroeMock1);
+//        repositorioHeroe.guardar(heroeMock2);
+//
+//        repositorioUsuario.guardar(usuarioMock1);
+//        repositorioUsuario.guardar(usuarioMock2);
+//
+//        repositorio_usuarioHeroe.agregarRelacion(usuarioMock2,heroeMock1);
+//        repositorio_usuarioHeroe.agregarRelacion(usuarioMock2,heroeMock2);
+//
+//
+//        List<Heroe> listaHeroes =  repositorio_usuarioHeroe.getListaDeHeroes(usuarioMock2.getId());
+//
+//        assertThat(listaHeroes,notNullValue());
+//        assertThat(listaHeroes.isEmpty(),equalTo(false));
+//        assertThat(listaHeroes.size(),equalTo(2));
+//        assertThat(listaHeroes.get(0),notNullValue());
+//        assertThat(listaHeroes.get(0).getId(),notNullValue());
+//        assertThat(listaHeroes.get(0).getId(),equalTo(heroeMock1.getId()));
+//    }
+
     @Test
     @Transactional
     @Rollback

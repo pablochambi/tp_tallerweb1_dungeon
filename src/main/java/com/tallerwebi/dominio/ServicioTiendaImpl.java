@@ -14,8 +14,13 @@ import java.util.List;
 @Transactional
 public class ServicioTiendaImpl implements ServicioTienda {
 
-    @Autowired private RepositorioItem itemRepo;
-    @Autowired private RepositorioUsuario usuarioRepo;
+    private final RepositorioItem itemRepo;
+    private final RepositorioUsuario usuarioRepo;
+
+    public ServicioTiendaImpl(RepositorioItem itemRepo, RepositorioUsuario usuarioRepo) {
+        this.itemRepo = itemRepo;
+        this.usuarioRepo = usuarioRepo;
+    }
 
     @Override
     public List<Item> obtenerItems() {
