@@ -35,7 +35,6 @@ public class RepositorioUsuarioTest {
         repositorioUsuario.guardar(new Usuario(2L,"u2"));
         repositorioUsuario.guardar(new Usuario(3L,"u3"));
 
-
         Usuario usuario = repositorioUsuario.buscarUsuarioPorId(2L);
 
         assertThat(usuario,notNullValue());
