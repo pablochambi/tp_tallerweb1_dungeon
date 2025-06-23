@@ -1,5 +1,6 @@
 package com.tallerwebi.dominio;
 import com.tallerwebi.dominio.entidades.*;
+import com.tallerwebi.dominio.excepcion.ReclutaException;
 import com.tallerwebi.dominio.interfaces.*;
 import com.tallerwebi.infraestructura.*;
 import org.junit.jupiter.api.BeforeEach;

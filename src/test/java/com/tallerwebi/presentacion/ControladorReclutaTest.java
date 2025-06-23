@@ -6,6 +6,7 @@ import com.tallerwebi.dominio.entidades.Carruaje;
 import com.tallerwebi.dominio.entidades.Heroe;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.ServicioReclutaImpl;
+import com.tallerwebi.dominio.excepcion.ReclutaException;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
 
