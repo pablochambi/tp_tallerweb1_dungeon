@@ -1,5 +1,6 @@
 package com.tallerwebi.infraestructura;
 
+import com.tallerwebi.config.HibernateConfig;
 import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.entidades.Carruaje;
@@ -28,7 +29,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {SpringWebTestConfig.class, HibernateTestConfig.class})
+@ContextConfiguration(classes = {
+        SpringWebTestConfig.class,
+        HibernateTestConfig.class,
+        HibernateConfig.class
+})
 public class RepositorioCarruajeTest {
 
     private Carruaje carruajeMock1;
@@ -127,10 +132,5 @@ public class RepositorioCarruajeTest {
         assertThat(carruaje.getUsuario(),notNullValue());
         assertThat(carruaje.getUsuario().getEmail(),equalTo(usuarioMock2.getEmail()));
     }
-
-
-
-
-
 
 }

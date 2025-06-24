@@ -1,4 +1,5 @@
 package com.tallerwebi.infraestructura;
+import com.tallerwebi.config.HibernateConfig;
 import com.tallerwebi.dominio.entidades.Carruaje;
 import com.tallerwebi.dominio.entidades.CarruajeHeroe;
 import com.tallerwebi.dominio.entidades.Heroe;
@@ -25,7 +26,11 @@ import static org.hamcrest.Matchers.notNullValue;
 
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {SpringWebTestConfig.class, HibernateTestConfig.class})
+@ContextConfiguration(classes = {
+        SpringWebTestConfig.class,
+        HibernateTestConfig.class,
+        HibernateConfig.class
+})
 public class Repositorio_carruajeHeroeTest {
 
     private Usuario usuarioMock;
