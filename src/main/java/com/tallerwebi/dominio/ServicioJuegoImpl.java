@@ -47,7 +47,7 @@ public class ServicioJuegoImpl implements ServicioJuego {
             u.setAtk(10);
             u.setDefensa(false);
             u.setOro(1000);
-            UsuarioRepo.guardar(u);
+            UsuarioRepo.modificar(u);
         }
 
         GameSession session = new GameSession();
@@ -126,7 +126,7 @@ public class ServicioJuegoImpl implements ServicioJuego {
             usuario.setVida(usuario.getVida() - dano);
         }
 
-        UsuarioRepo.guardar(usuario);
+        UsuarioRepo.modificar(usuario);
 
         // 3) Construimos el texto de quién atacó
         String textoAtacantes;
@@ -155,7 +155,7 @@ public class ServicioJuegoImpl implements ServicioJuego {
         Usuario usuario = session.getUsuario();
 
         usuario.setDefensa(true);
-        UsuarioRepo.guardar(usuario);
+        UsuarioRepo.modificar(usuario);
 
         for (SessionMonster sm : getMonstruos()) {
             if (sm.getVidaActual() > 0) {
@@ -163,7 +163,7 @@ public class ServicioJuegoImpl implements ServicioJuego {
                 usuario.setVida(usuario.getVida() - dano);
             }
         }
-        UsuarioRepo.guardar(usuario);
+        UsuarioRepo.modificar(usuario);
         return "Defiendes este turno. Vida restante: " + usuario.getVida() + ".";
     }
 
@@ -173,7 +173,7 @@ public class ServicioJuegoImpl implements ServicioJuego {
         Usuario usuario = session.getUsuario();
 
         usuario.setVida(usuario.getVida() + 30);
-        UsuarioRepo.guardar(usuario);
+        UsuarioRepo.modificar(usuario);
         return "Usaste poción. Vida actual: " + usuario.getVida() + ".";
     }
 

@@ -1,51 +1,59 @@
 package com.tallerwebi.dominio.entidades;
 
-import com.tallerwebi.dominio.SessionMonsterIDImpl;
-
 import javax.persistence.*;
 
 @Entity
 @Table(name = "session_monster")
-@IdClass(SessionMonsterIDImpl.class)
 public class SessionMonster {
 
     @Id
-    @Column(name = "session_id")
-    private Long sessionId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Id
-    @Column(name = "monster_id")
-    private Long monsterId;
+    // Relación a la sesión de juego
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "session_id", nullable = false)
+    private GameSession session;
 
-    @Column(name = "vida_actual")
+    // Plantilla de monstruo
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "monster_id", nullable = false)
+    private Monster monster;
+
+    @Column(name = "vida_actual", nullable = false)
     private int vidaActual;
 
-    private int orden;
+    // Para saber en qué expedición y mazmorra está este monstruo:
+    @Column(name = "expedition_number", nullable = false)
+    private int expeditionNumber;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(
-            name = "monster_id",
-            referencedColumnName = "id",
-            insertable = false, //al poner false le digo a Hibernate q este campo se rellena solo desde SQL
-            updatable = false
-    )
-    private Monster monster;
+    @Column(name = "dungeon_number", nullable = false)
+    private int dungeonNumber;
+
+    // Si necesitas ordenar los monstruos (por posición en la vista, por ejemplo)
+    @Column(nullable = false)
+    private int orden;
 
     public SessionMonster() {}
 
+    // --- getters y setters ---
 
-    public Long getSessionId() {
-        return sessionId;
-    }
-    public void setSessionId(Long sessionId) {
-        this.sessionId = sessionId;
+    public Long getId() {
+        return id;
     }
 
-    public Long getMonsterId() {
-        return monsterId;
+    public GameSession getSession() {
+        return session;
     }
-    public void setMonsterId(Long monsterId) {
-        this.monsterId = monsterId;
+    public void setSession(GameSession session) {
+        this.session = session;
+    }
+
+    public Monster getMonster() {
+        return monster;
+    }
+    public void setMonster(Monster monster) {
+        this.monster = monster;
     }
 
     public int getVidaActual() {
@@ -55,6 +63,20 @@ public class SessionMonster {
         this.vidaActual = vidaActual;
     }
 
+    public int getExpeditionNumber() {
+        return expeditionNumber;
+    }
+    public void setExpeditionNumber(int expeditionNumber) {
+        this.expeditionNumber = expeditionNumber;
+    }
+
+    public int getDungeonNumber() {
+        return dungeonNumber;
+    }
+    public void setDungeonNumber(int dungeonNumber) {
+        this.dungeonNumber = dungeonNumber;
+    }
+
     public int getOrden() {
         return orden;
     }
@@ -62,19 +84,16 @@ public class SessionMonster {
         this.orden = orden;
     }
 
+    // Delegados a Monster
+    public String getNombre() {
+        return monster.getNombre();
+    }
     public String getImagen() {
         return monster.getImagen();
     }
 
 
-    public String getNombre() {
-        return monster.getNombre();
-    }
-
-    public Monster getMonster() {
-        return monster;
-    }
-    public void setMonster(Monster monster) {
-        this.monster = monster;
+    public void setId(Long id) {
+        this.id = id;
     }
 }

@@ -119,4 +119,5 @@ public class Usuario {
     public void setDefensa(boolean defensa) {
         this.defensa = defensa;
     }
+
 }
