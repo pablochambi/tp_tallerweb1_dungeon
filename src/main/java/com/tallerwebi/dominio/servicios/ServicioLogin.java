@@ -1,4 +1,4 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.servicios;
 
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;

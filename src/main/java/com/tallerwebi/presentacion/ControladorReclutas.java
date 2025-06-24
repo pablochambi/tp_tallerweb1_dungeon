@@ -1,10 +1,9 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.ReclutaException;
-import com.tallerwebi.dominio.UsuarioNoAutenticadoException;
+import com.tallerwebi.dominio.excepcion.ReclutaException;
 import com.tallerwebi.dominio.entidades.Carruaje;
 import com.tallerwebi.dominio.entidades.Heroe;
-import com.tallerwebi.dominio.ServicioRecluta;
+import com.tallerwebi.dominio.servicios.ServicioRecluta;
 import com.tallerwebi.dominio.entidades.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,7 +12,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;

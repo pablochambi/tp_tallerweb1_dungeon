@@ -1,7 +1,7 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.entidades.GameSession;
-import com.tallerwebi.dominio.ServicioJuego;
+import com.tallerwebi.dominio.servicios.ServicioJuego;
 import com.tallerwebi.dominio.entidades.SessionMonster;
 import com.tallerwebi.dominio.entidades.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;

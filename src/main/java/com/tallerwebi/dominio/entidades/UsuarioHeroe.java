@@ -23,7 +23,7 @@ public class UsuarioHeroe {
     private Integer nivel;
 
     public UsuarioHeroe(Long id, Usuario usuario, Heroe heroe) {
-        this.id = id;
+        //this.id = id;
         this.usuario = usuario;
         this.heroe = heroe;
         this.nivel = heroe.getNivel();
@@ -31,7 +31,7 @@ public class UsuarioHeroe {
 
     public UsuarioHeroe() {
 
-        this.id = id;
+        //this.id = id;
     }
 
     public UsuarioHeroe(Usuario usuarioBuscado, Heroe heroeBuscado) {

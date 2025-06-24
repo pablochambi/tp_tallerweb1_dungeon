@@ -1,5 +1,7 @@
 package com.tallerwebi.dominio.entidades;
 
+import com.tallerwebi.dominio.enums.TipoDeItem;
+
 import javax.persistence.*;
 
 @Entity
@@ -8,11 +10,13 @@ public class Item {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nombre;
-    private String tipo;
-    private int precio;
+    private TipoDeItem tipo;
+    private Integer precio;
+
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    private Inventario inventario;
+
+
     public Item() {}
 
     public Long getId() {
@@ -31,27 +35,27 @@ public class Item {
         this.nombre = nombre;
     }
 
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public int getPrecio() {
+    public Integer getPrecio() {
         return precio;
     }
 
-    public void setPrecio(int precio) {
+    public void setPrecio(Integer precio) {
         this.precio = precio;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public TipoDeItem getTipo() {
+        return tipo;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setTipo(TipoDeItem tipo) {
+        this.tipo = tipo;
+    }
+
+    public Inventario getInventario() {
+        return inventario;
+    }
+
+    public void setInventario(Inventario inventario) {
+        this.inventario = inventario;
     }
 }

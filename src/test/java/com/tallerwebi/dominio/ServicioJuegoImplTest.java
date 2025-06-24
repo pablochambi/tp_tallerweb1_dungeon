@@ -2,11 +2,9 @@ package com.tallerwebi.dominio;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.any;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.tallerwebi.dominio.entidades.GameSession;
@@ -17,10 +15,9 @@ import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
 import com.tallerwebi.dominio.interfaces.RepositorioMonster;
 import com.tallerwebi.dominio.interfaces.RepositorioSession;
 import com.tallerwebi.dominio.interfaces.RepositorioSessionMonster;
-import org.hibernate.SessionFactory;
+import com.tallerwebi.dominio.servicios.Impl.ServicioJuegoImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 
 
@@ -35,7 +32,8 @@ class ServicioJuegoImplTest {
     @Mock
     RepositorioSessionMonster smRepo;
 
-    @InjectMocks ServicioJuegoImpl servicio;
+    @InjectMocks
+    ServicioJuegoImpl servicio;
 
     private Usuario usuario;
     private GameSession session;
