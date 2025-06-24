@@ -142,6 +142,18 @@ public class ControladorReclutas {
         
     }
 
+    @GetMapping("/cerrar_sesion")
+    public ModelAndView cerrarSesion(HttpServletRequest request) {
+        HttpSession session = request.getSession(false); // No crea nueva si no hay
+
+        if (session != null) {
+            session.invalidate(); // Invalida la sesión actual
+        }
+
+        return new ModelAndView(REDIRECT_LOGIN);
+    }
+
+
     private Usuario obtenerUsuarioDesdeSesion(HttpSession session) {
         Object usuario = session.getAttribute(USUARIO);
         if (usuario instanceof Usuario) {
