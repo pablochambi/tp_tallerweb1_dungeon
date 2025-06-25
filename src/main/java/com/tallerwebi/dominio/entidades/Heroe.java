@@ -53,11 +53,12 @@ public class Heroe {
     }
     public Heroe() {}
 
-
+/*
     public void mostrarHeroe() {
         System.out.print("Heroe\n");
         System.out.printf("ID: %d,   Nom: %s,   Niv: %d\n", getId(),getNombre(),getNivel());
     }
+*/
 
     public int getMaxVida() {
         return maxVida;

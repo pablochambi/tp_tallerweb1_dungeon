@@ -25,6 +25,7 @@ public class ControladorReclutaTest {
 
     private ControladorReclutas controladorReclutas;
     private ServicioRecluta servicioReclutas;
+    private ServicioJuego   servicioJuego;
     private HttpServletRequest requestMock;
     private HttpSession sessionMock;
     private Carruaje carruajeMock;
@@ -40,7 +41,9 @@ public class ControladorReclutaTest {
     @BeforeEach
     public void preparacion() {
         servicioReclutas = mock(ServicioReclutaImpl.class);
-        controladorReclutas = new ControladorReclutas(servicioReclutas);
+        servicioJuego   = mock(ServicioJuego.class);
+        controladorReclutas
+                = new ControladorReclutas(servicioReclutas, servicioJuego);
 
         requestMock = mock(HttpServletRequest.class);
         sessionMock = mock(HttpSession.class);

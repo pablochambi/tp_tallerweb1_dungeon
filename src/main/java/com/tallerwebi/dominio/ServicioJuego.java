@@ -9,30 +9,21 @@ import java.util.List;
 
 public interface ServicioJuego {
 
-    GameSession iniciarPartida();
-    GameSession crearNuevaMazmorra();
-    void reiniciarMazmorra();
+    GameSession iniciarPartida(Usuario u);
+    GameSession crearNuevaMazmorra(Usuario u);
+    void reiniciarMazmorra(Usuario u);
+    GameSession getSession(Usuario u);
+    Usuario getUsuario(Usuario u);
 
     GameSession getSession();
 
     Usuario getUsuario();
 
-    List<SessionMonster> getMonstruos();
-
-    List<SessionHero> getHeroesDeSesion();
-
-    /**
-     * Un héroe ataca a un monstruo.
-     * @param heroOrden    la posición del héroe (SessionHero.orden)
-     * @param monsterOrden la posición del monstruo (SessionMonster.orden)
-     * @return un texto con el resultado del turno
-     */
-    String atacar(int heroOrden, int monsterOrden);
-
-    String defender(int heroOrden);
-
-
-    String usarPocion(int heroOrden);
-
+    List<SessionMonster> getMonstruos(Usuario u);
+    List<SessionHero>    getHeroesDeSesion(Usuario u);
+    String atacar(Usuario u, int heroOrden, int monsterOrden);
+    String defender(Usuario u, int heroOrden);
+    String usarPocion(Usuario u, int heroOrden);
+    void siguienteMazmorra(Usuario u);
     void endSession(GameSession current);
 }

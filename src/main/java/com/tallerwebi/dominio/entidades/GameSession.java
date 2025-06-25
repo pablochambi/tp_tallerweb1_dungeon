@@ -2,6 +2,7 @@ package com.tallerwebi.dominio.entidades;
 
 import javax.persistence.*;
 
+import com.tallerwebi.dominio.entidades.Usuario;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -13,12 +14,8 @@ import java.time.LocalDateTime;
 public class GameSession {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    public void setid(Long id) {
-        this.id = id;
-    }
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
@@ -48,12 +45,18 @@ public class GameSession {
 
     public GameSession() {}
 
-    public Long getId() { return id; }
+    // === getters & setters ===
+
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Usuario getUsuario() {
         return usuario;
     }
-
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
@@ -61,7 +64,6 @@ public class GameSession {
     public int getTurno() {
         return turno;
     }
-
     public void setTurno(int turno) {
         this.turno = turno;
     }
@@ -69,11 +71,13 @@ public class GameSession {
     public int getNivel() {
         return nivel;
     }
+    public void setNivel(int nivel) {
+        this.nivel = nivel;
+    }
 
     public boolean isActive() {
         return active;
     }
-
     public void setActive(boolean active) {
         this.active = active;
     }
@@ -81,34 +85,21 @@ public class GameSession {
     public boolean isFinished() {
         return finished;
     }
-
     public void setFinished(boolean finished) {
         this.finished = finished;
-    }
-
-
-    public void setNivel(int i) {
-        this.nivel = i;
-    }
-
-    public Object getSessionId() {
-        return null;
-    }
-
-    public LocalDateTime getEndedAt() {
-        return endedAt;
-    }
-
-    public void setEndedAt(LocalDateTime endedAt) {
-        this.endedAt = endedAt;
     }
 
     public LocalDateTime getStartedAt() {
         return startedAt;
     }
-
     public void setStartedAt(LocalDateTime startedAt) {
         this.startedAt = startedAt;
     }
 
+    public LocalDateTime getEndedAt() {
+        return endedAt;
+    }
+    public void setEndedAt(LocalDateTime endedAt) {
+        this.endedAt = endedAt;
+    }
 }

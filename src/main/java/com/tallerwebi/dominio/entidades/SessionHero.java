@@ -10,11 +10,11 @@ public class SessionHero {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "session_id", nullable = false)
     private GameSession session;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "hero_id", nullable = false)
     private Heroe hero;
 
@@ -29,7 +29,8 @@ public class SessionHero {
 
     public SessionHero() {}
 
-    // Getters & Setters
+    // --- Getters & Setters ---
+
     public Long getId() {
         return id;
     }
@@ -78,16 +79,18 @@ public class SessionHero {
         this.defending = defending;
     }
 
+    // --- Logica de combate ---
 
     public int damageOutput() {
         return hero.getAtk();
     }
 
     public void takeDamage(int damage) {
+        // defensa base que el héroe tiene
         int mitigated = hero.getDefensaBase();
         int dmg = Math.max(0, damage - mitigated);
         if (defending) {
-            dmg = dmg / 2;
+            dmg /= 2;
             defending = false;
         }
         vidaActual = Math.max(0, vidaActual - dmg);

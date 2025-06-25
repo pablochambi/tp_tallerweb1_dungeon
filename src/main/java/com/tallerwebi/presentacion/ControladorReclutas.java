@@ -1,5 +1,6 @@
 package com.tallerwebi.presentacion;
 
+import com.tallerwebi.dominio.ServicioJuego;
 import com.tallerwebi.dominio.ServicioRecluta;
 import com.tallerwebi.dominio.entidades.Carruaje;
 import com.tallerwebi.dominio.entidades.Heroe;
@@ -28,11 +29,14 @@ public class ControladorReclutas {
     private static final String VISTA_HEROES_OBTENIDOS      = "vista_heroes_obtenidos";
     private static final String MODEL_HEROES_OBTENIDOS      = "heroes_obtenidos";
 
-    private final ServicioRecluta servicioRecluta;
+    private final ServicioRecluta  servicioRecluta;
+    private final ServicioJuego    servicioJuego;
 
     @Autowired
-    public ControladorReclutas(ServicioRecluta servicioRecluta) {
+    public ControladorReclutas(ServicioRecluta servicioRecluta,
+                               ServicioJuego servicioJuego) {
         this.servicioRecluta = servicioRecluta;
+        this.servicioJuego   = servicioJuego;
     }
 
     @GetMapping("/carruaje")
@@ -128,6 +132,16 @@ public class ControladorReclutas {
             model.put("mensaje1",    e.getMessage());
             return new ModelAndView(VISTA_HEROES_OBTENIDOS, model);
         }
+    }
+
+    @PostMapping("/seleccion-heroes/comenzar")
+    public String comenzarExpedicion(HttpSession httpSession) {
+        Usuario u = (Usuario) httpSession.getAttribute("usuario");
+        if (u == null) {
+            return "redirect:/login";
+        }
+        servicioJuego.iniciarPartida(u);
+        return "redirect:/juego";
     }
 
     private Usuario obtenerUsuarioDesdeSesion(HttpSession session) {

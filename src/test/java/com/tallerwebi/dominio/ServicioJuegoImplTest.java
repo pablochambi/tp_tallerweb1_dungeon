@@ -2,19 +2,15 @@ package com.tallerwebi.dominio;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.any;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.tallerwebi.dominio.entidades.*;
 import com.tallerwebi.dominio.interfaces.*;
-import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 
 
@@ -80,6 +76,7 @@ class ServicioJuegoImplTest {
         verify(sessionRepo).save(any(GameSession.class));
     }
 
+
     @Test
     void getMonstruos_primeraVez_sembrados3MonstruosAleatorios() {
 
@@ -90,7 +87,7 @@ class ServicioJuegoImplTest {
         when(monsterRepo.obtenerTodosLosMonstruos())
                 .thenReturn(List.of(m1, m2, m3, new Monster(), new Monster()));
 
-        servicio.getMonstruos();
+        servicio.getMonstruos(usuario);
 
         verify(smRepo, times(3))
                 .add(any(GameSession.class), any(Monster.class));
@@ -102,7 +99,7 @@ class ServicioJuegoImplTest {
         when(sessionRepo.findActive()).thenReturn(session);
         when(smRepo.findBySession(session)).thenReturn(List.of(sm1, sm2));
         // when
-        String mensaje = servicio.atacar(1, 99);
+        String mensaje = servicio.atacar(usuario, 1, 99);
         // then
         assertThat(mensaje, is("Monstruo no encontrado."));
     }
@@ -114,7 +111,7 @@ class ServicioJuegoImplTest {
         when(shRepo.findBySession(session)).thenReturn(List.of(sh1));
 
         // when:
-        String msg = servicio.atacar(1, 1);
+        String msg = servicio.atacar(usuario, 1, 1);
 
         // then:
         verify(smRepo).update(argThat(s -> s.getVidaActual() == 20));
@@ -131,7 +128,7 @@ class ServicioJuegoImplTest {
         when(sessionRepo.findActive()).thenReturn(session);
         when(monsterRepo.obtenerTodosLosMonstruos()).thenReturn(List.of(m1,m2,m3));
         // when
-        servicio.reiniciarMazmorra();
+        servicio.reiniciarMazmorra(usuario);
         // then: elimina antiguos y añade 3
         verify(smRepo).deleteBySession(session);
         verify(smRepo, times(3)).add(eq(session), any(Monster.class));

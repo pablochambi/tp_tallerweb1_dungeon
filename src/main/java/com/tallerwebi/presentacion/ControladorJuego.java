@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -24,59 +25,75 @@ public class ControladorJuego {
     }
 
     @GetMapping("/juego")
-    public String mostrarJuego(Model model) {
-        GameSession session = servicioJuego.getSession();
-        List<SessionMonster> monstruos = servicioJuego.getMonstruos();
-        List<SessionHero>    heroes    = servicioJuego.getHeroesDeSesion();
+    public String mostrarJuego(HttpSession httpSession, Model model) {
+        // 0) Obtengo el usuario logueado de la sesión HTTP
+        Usuario usuario = (Usuario) httpSession.getAttribute("usuario");
+        if (usuario == null) {
+            return "redirect:/login";
+        }
 
+        // 1) Inicio o recupero la partida/expedición de ese usuario
+        GameSession session = servicioJuego.iniciarPartida(usuario);
 
-        model.addAttribute("session",   session);
-        model.addAttribute("heroes",    heroes);
-        model.addAttribute("monstruos", monstruos);
+        // 2) Cargo los monstruos y los héroes de esa sesión
+        List<SessionMonster> monstruos    = servicioJuego.getMonstruos(usuario);
+        List<SessionHero>    heroesDeSesion = servicioJuego.getHeroesDeSesion(usuario);
+
+        // 3) Los pongo en el modelo para Thymeleaf
+        model.addAttribute("session",        session);
+        model.addAttribute("usuario",        usuario);
+        model.addAttribute("monstruos",      monstruos);
+        model.addAttribute("heroesDeSesion", heroesDeSesion);
+
         return "juego";
     }
 
     @PostMapping("/juego/atacar")
     public String atacar(
-            @RequestParam("heroOrden")    int heroOrden,
-            @RequestParam("monsterOrden") int monsterOrden,
+            @RequestParam int heroOrden,
+            @RequestParam int monsterOrden,
+            HttpSession httpSession,
             RedirectAttributes ra
     ) {
-        String mensaje = servicioJuego.atacar(heroOrden, monsterOrden);
+        Usuario u = (Usuario) httpSession.getAttribute("usuario");
+        String mensaje = servicioJuego.atacar(u, heroOrden, monsterOrden);
         ra.addFlashAttribute("mensaje", mensaje);
         return "redirect:/juego";
     }
 
     @PostMapping("/juego/defender")
     public String defender(
-            @RequestParam("heroOrden") int heroOrden,
+            @RequestParam int heroOrden,
+            HttpSession httpSession,
             RedirectAttributes ra
     ) {
-        String mensaje = servicioJuego.defender(heroOrden);
+        Usuario u = (Usuario) httpSession.getAttribute("usuario");
+        String mensaje = servicioJuego.defender(u, heroOrden);
         ra.addFlashAttribute("mensaje", mensaje);
         return "redirect:/juego";
     }
 
     @PostMapping("/juego/usarPocion")
     public String usarPocion(
-            @RequestParam("heroOrden") int heroOrden,
+            @RequestParam int heroOrden,
+            HttpSession httpSession,
             RedirectAttributes ra
     ) {
-        String mensaje = servicioJuego.usarPocion(heroOrden);
+        Usuario u = (Usuario) httpSession.getAttribute("usuario");
+        String mensaje = servicioJuego.usarPocion(u, heroOrden);
         ra.addFlashAttribute("mensaje", mensaje);
         return "redirect:/juego";
     }
 
-    @PostMapping("/juego/reiniciar")
-    public String reiniciarMazmorra(RedirectAttributes ra) {
-        ra.addFlashAttribute("mensaje", "Mazmorra reiniciada!");
-        return "redirect:/juego";
-    }
-
     @PostMapping("/juego/siguiente")
-    public String siguienteMazmorra(RedirectAttributes ra) {
-        servicioJuego.reiniciarMazmorra();
+    public String siguienteMazmorra(
+            HttpSession httpSession,
+            RedirectAttributes ra
+    ) {
+        Usuario u = (Usuario) httpSession.getAttribute("usuario");
+        servicioJuego.siguienteMazmorra(u);
         ra.addFlashAttribute("mensaje", "¡Nueva mazmorra generada!");
         return "redirect:/juego";
     }
+
 }

@@ -32,7 +32,7 @@ public class RepositorioHeroSessionImpl implements RepositorioHeroSession {
     }
 
     @Override
-    public void add(GameSession session, Heroe hero) {
+    public void add(GameSession session, Heroe hero, int i) {
         // 1) calcular orden
         Criteria countCrit = session()
                 .createCriteria(SessionHero.class)

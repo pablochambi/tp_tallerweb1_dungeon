@@ -59,7 +59,7 @@ public class RepositorioSessionImpl implements RepositorioSession {
         );
         Long newId = jdbc.queryForObject("CALL IDENTITY()", Long.class);
         GameSession s = new GameSession();
-        s.setid(newId);
+        s.setId(newId);
         s.setUsuario(u);
         s.setTurno(1);
         s.setNivel(1);
@@ -79,7 +79,7 @@ public class RepositorioSessionImpl implements RepositorioSession {
                             "FROM game_session WHERE usuario_id = ? AND active = TRUE",
                     (ResultSet rs, int rn) -> {
                         GameSession s = new GameSession();
-                        s.setid(rs.getLong("id"));
+                        s.setId(rs.getLong("id"));
                         s.setUsuario(u);
                         s.setTurno(rs.getInt("turno"));
                         s.setNivel(rs.getInt("nivel"));

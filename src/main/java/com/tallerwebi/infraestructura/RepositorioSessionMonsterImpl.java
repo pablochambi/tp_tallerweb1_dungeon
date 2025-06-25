@@ -55,6 +55,30 @@ public class RepositorioSessionMonsterImpl
     }
 
     @Override
+    public void add(GameSession session, Monster monster, int dungeonNumber) {
+        // 1) calcular el nuevo orden dentro de esta mazmorra
+        Criteria countCrit = session()
+                .createCriteria(SessionMonster.class)
+                .add(Restrictions.eq("session", session))
+                .add(Restrictions.eq("dungeonNumber", dungeonNumber))
+                .setProjection(Projections.rowCount());
+        Long count = (Long) countCrit.uniqueResult();
+
+        // 2) crear y poblar la nueva entidad
+        SessionMonster sm = new SessionMonster();
+        sm.setSession(session);
+        sm.setMonster(monster);
+        sm.setVidaActual(monster.getVida());
+        // numero de expedicion por defecto 1:
+        // cambiar en un futuro
+        sm.setExpeditionNumber(1);
+        sm.setDungeonNumber(dungeonNumber);
+        sm.setOrden(count.intValue() + 1);
+
+        session().save(sm);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public List<SessionMonster> findBySession(GameSession session) {
         return session()
@@ -70,11 +94,32 @@ public class RepositorioSessionMonsterImpl
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void deleteBySession(GameSession session) {
-        session()
-                .createQuery("DELETE FROM SessionMonster sm WHERE sm.session = :s")
-                .setParameter("s", session)
-                .executeUpdate();
+
+        List<SessionMonster> lista = session()
+                .createCriteria(SessionMonster.class)
+                .add(Restrictions.eq("session", session))
+                .list();
+
+        for (SessionMonster sm : lista) {
+            session().delete(sm);
+        }
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void deleteBySessionAndDungeonNumber(GameSession session, int dungeonNumber) {
+        List<SessionMonster> lista = session()
+                .createCriteria(SessionMonster.class)
+                .add(Restrictions.eq("session", session))
+                .add(Restrictions.eq("dungeonNumber", dungeonNumber))
+                .list();
+
+        for (SessionMonster sm : lista) {
+            session().delete(sm);
+        }
+    }
+
 }
 

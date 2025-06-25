@@ -12,133 +12,92 @@
 <main class="container mediaquery">
     <div class="mi_fondo position-relative">
 
-        <!-- Overlay GAME OVER
-        <div th:if="${session.vida <= 0}"
-             class="position-fixed top-0 start-0 w-100 h-100 d-flex
-            justify-content-center align-items-center"
-             style="background: rgba(0, 0, 0, 0.8); z-index: 1050;">
-            <div class="bg-danger text-white p-5 rounded text-center">
-                <h1>GAME OVER</h1>
-
-                <form th:action="@{/juego/newGame}" method="post">
-                    <button type="submit" class="btn btn-light mt-3">
-                        Nueva Partida
-                    </button>
-                </form>
-            </div>
-        </div>
-        -->
-
-        <!-- Encabezado siempre visible -->
+        <!-- Encabezado -->
         <div class="row mb-4">
             <div class="col-12 text-center text-white">
-                <h1>
-                    Mazmorra Nivel
-                    <span th:text="${session.nivel}">1</span>
-                </h1>
-                <p>
-                    Vida: <strong th:text="${usuario.vida}">100</strong>
-                    &nbsp;|&nbsp;
-                    Oro:  <strong th:text="${usuario.oro}">1000</strong>
-                </p>
+                <h1>Mazmorra Nivel <span th:text="${session.nivel}">1</span></h1>
+                <p>Oro: <strong th:text="${usuario.oro}">1000</strong></p>
             </div>
         </div>
 
         <!-- Mensajes de acción -->
-        <div class="row mt-3">
+        <div class="row">
             <div class="col-12">
-                <div th:if="${mensaje}"
-                     class="alert alert-success"
-                     th:text="${mensaje}"></div>
-                <div th:if="${error}"
-                     class="alert alert-danger"
-                     th:text="${error}"></div>
+                <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+                <div th:if="${error}"   class="alert alert-danger"  th:text="${error}"></div>
             </div>
         </div>
 
-        <!-- Contenido principal: solo si vida > 0 -->
-        <div ><!-- th:unless="${session.vida <= 0}"-->
-            <div class="row gx-3 gy-3">
-                <!-- Héroes -->
-                <div class="col-6">
-                    <div class="row gy-3">
-                        <div class="col-6" th:each="hero : ${heroes}">
-                            <div class="card bg-dark text-white h-100 text-center">
-                                <div class="card-body d-flex flex-column justify-content-center">
-                                    <img th:src="@{${hero.avatarUrl}}"
-                                         alt="Avatar"
-                                         class="mb-2 mx-auto"
-                                         style="width:60px;height:60px;">
-                                    <h5 class="card-title" th:text="${hero.name}">Héroe</h5>
-                                    <p class="card-text">
-                                        HP: <span th:text="${hero.hp}">50</span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- Contenido principal: héroes a la izquierda, monstruos a la derecha -->
+        <div class="row gx-3 gy-3">
 
-                <!-- Monstruos -->
-                <div class="col-6">
-                    <div class="row gy-3">
-                        <div class="col-6 offset-md-6" th:each="sm : ${monstruos}">
-                            <div class="card bg-danger text-white h-100 text-center">
-                                <div class="card-body d-flex flex-column justify-content-center">
-
-                                    <p class="display-4">
-                    <span th:if="${sm.vidaActual > 0}"
-                          th:utext="${sm.imagen}">🧟‍♂️</span>
-                                        <span th:if="${sm.vidaActual <= 0}"
-                                              class="text-danger">&#x274C;</span>
-                                    </p>
-
-                                    <h5 class="card-title" th:text="${sm.monster.nombre}">Zombi</h5>
-                                    <p class="card-text">
-                                        HP: <span th:text="${sm.vidaActual}">50</span>
-                                    </p>
-
-                                    <form th:if="${sm.vidaActual > 0}"
-                                          th:action="@{/juego/atacar}"
-                                          method="post"
-                                          class="mt-auto">
-                                        <input type="hidden" name="orden"
-                                               th:value="${sm.orden}"/>
-                                        <button type="submit" class="btn btn-sm btn-light">
-                                            Atacar
-                                        </button>
-                                    </form>
-                                </div>
+            <!-- Héroes (izquierda) -->
+            <div class="col-6">
+                <div class="row gy-3">
+                    <div class="col-10 offset-1" th:each="sh : ${heroesDeSesion}">
+                        <div class="card bg-dark text-white h-100 text-center">
+                            <div class="card-body d-flex flex-column justify-content-center">
+                                <img th:src="@{${sh.hero.urlImagen}}"
+                                     style="width:60px; height:60px;"
+                                     class="mb-2 mx-auto" alt="Avatar"/>
+                                <h5 th:text="${sh.hero.nombre}">Héroe</h5>
+                                <p>HP: <span th:text="${sh.vidaActual}">0</span> /
+                                    <span th:text="${sh.hero.maxVida}">100</span>
+                                </p>
+                                <form th:action="@{/juego/defender}"
+                                      method="post"
+                                      class="d-inline me-1 mt-auto">
+                                    <input type="hidden" name="heroOrden" th:value="${sh.orden}"/>
+                                    <button class="btn btn-sm btn-secondary">Defender</button>
+                                </form>
+                                <form th:action="@{/juego/usarPocion}"
+                                      method="post"
+                                      class="d-inline mt-2">
+                                    <input type="hidden" name="heroOrden" th:value="${sh.orden}"/>
+                                    <button class="btn btn-sm btn-primary">Poción</button>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row mt-5 text-center"
-                 th:if="${#lists.size(monstruos.?[vidaActual > 0]) == 0}">
-                <div class="col-12">
-                    <form th:action="@{/juego/siguiente}" method="post">
-                        <button type="submit" class="btn btn-success btn-lg">
-                            Siguiente mazmorra
-                        </button>
-                    </form>
+            <!-- Monstruos (derecha) -->
+            <div class="col-6">
+                <div class="row gy-3">
+                    <div class="col-10 offset-1" th:each="sm : ${monstruos}">
+                        <div class="card bg-danger text-white h-100 text-center">
+                            <div class="card-body d-flex flex-column justify-content-center">
+                                <p class="display-4">
+                                    <span th:if="${sm.vidaActual > 0}" th:utext="${sm.imagen}">🧟</span>
+                                    <span th:if="${sm.vidaActual <= 0}" class="text-danger">&#x274C;</span>
+                                </p>
+                                <h5 th:text="${sm.monster.nombre}">Monstruo</h5>
+                                <p>HP: <span th:text="${sm.vidaActual}">0</span></p>
+                                <form th:if="${sm.vidaActual > 0}"
+                                      th:action="@{/juego/atacar}"
+                                      method="post"
+                                      class="mt-auto">
+                                    <input type="hidden" name="monsterOrden" th:value="${sm.orden}"/>
+                                    <!-- aquí podrías cambiar heroOrden según el héroe activo -->
+                                    <input type="hidden" name="heroOrden" value="1"/>
+                                    <button class="btn btn-sm btn-light">Atacar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="row mt-4">
-                <div class="col-12 text-center">
-                    <form th:action="@{/juego/defender}"
-                          method="post"
-                          class="d-inline me-2">
-                        <button class="btn btn-secondary">Defender</button>
-                    </form>
-                    <form th:action="@{/juego/usarPocion}"
-                          method="post"
-                          class="d-inline">
-                        <button class="btn btn-primary">Usar Poción</button>
-                    </form>
-                </div>
+        </div>
+
+        <!-- Botón “Siguiente mazmorra” al eliminar todos los monstruos vivos -->
+        <div class="row mt-5 text-center"
+             th:if="${#lists.size(monstruos.?[vidaActual > 0]) == 0}">
+            <div class="col-12">
+                <form th:action="@{/juego/siguiente}" method="post">
+                    <button class="btn btn-success btn-lg">Siguiente mazmorra</button>
+                </form>
             </div>
         </div>
 
