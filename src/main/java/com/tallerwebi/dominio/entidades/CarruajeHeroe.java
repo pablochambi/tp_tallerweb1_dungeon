@@ -30,5 +30,27 @@ public class CarruajeHeroe {
     }
 
 
+    public Carruaje getCarruaje() {
+        return carruaje;
+    }
 
+    public void setCarruaje(Carruaje carruaje) {
+        this.carruaje = carruaje;
+    }
+
+    public Heroe getHeroe() {
+        return heroe;
+    }
+
+    public void setHeroe(Heroe heroe) {
+        this.heroe = heroe;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -18,6 +19,7 @@ public class ServicioReclutaImpl implements ServicioRecluta {
     private final RepositorioUsuario repositorioUsuario;
     private final Repositorio_carruajeHeroe repositorio_carruajeHeroe;
     private final Repositorio_usuarioHeroe repositorio_usuarioHeroe;
+
 
     @Autowired
     public ServicioReclutaImpl(RepositorioCarruaje repositorioCarruaje,
@@ -31,6 +33,24 @@ public class ServicioReclutaImpl implements ServicioRecluta {
         this.repositorio_carruajeHeroe = repositorio_carruajeHeroe;
         this.repositorio_usuarioHeroe = repositorio_usuarioHeroe;
 
+    }
+
+    @Override
+    public List<Heroe> getHeroesDisponiblesEnCarruaje(Carruaje carruaje) {
+        Carruaje c = repositorioCarruaje
+                .buscarCarruajePorId(carruaje.getId());
+        if (c == null) {
+            throw new ReclutaException("No se encontro el carruaje");
+        }
+
+        List<Heroe> escogidos =
+                repositorio_carruajeHeroe.getListaDeHeroes(c.getId());
+
+        if (escogidos.isEmpty()) {
+            throw new ReclutaException("No hay heroes disponibles por hoy");
+        }
+
+        return escogidos;
     }
 
     @Override
@@ -64,41 +84,14 @@ public class ServicioReclutaImpl implements ServicioRecluta {
     }
 
     @Override
-    public List<Heroe> getHeroesDisponiblesEnCarruaje(Carruaje carruaje) {
-
-        Carruaje encontrado = repositorioCarruaje.buscarCarruajePorId(carruaje.getId());
-        if (encontrado == null)  throw new RuntimeException("No se encontro el carruaje");
-
-        List<Heroe> heroes = repositorio_carruajeHeroe.getListaDeHeroes(carruaje.getId());
-
-        if(heroes == null) {
-            heroes = new ArrayList<>();
+    public void quitarUnHeroeDelCarruaje(Long uid, Long hid) {
+        Usuario u = repositorioUsuario.buscarUsuarioPorId(uid);
+        Carruaje c = repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(u);
+        Heroe h = repositorioHeroe.buscarHeroePorId(hid);
+        CarruajeHeroe rel = repositorio_carruajeHeroe.buscarRelacion(c, h);
+        if (rel != null) {
+            repositorio_carruajeHeroe.removerRelacion(rel);
         }
-
-        if(heroes.isEmpty()) throw new ReclutaException("No hay heroes disponibles por hoy");
-
-        return heroes;
-    }
-
-    @Override
-    public void quitarUnHeroeDelCarruaje(Long idHeroe, Carruaje carruaje) {
-
-        Heroe heroeBuscado =  repositorioHeroe.buscarHeroePorId(idHeroe);
-
-        if(heroeBuscado == null ) throw new RuntimeException("No se encontro heroe");
-
-        Carruaje carruajeBuscado = repositorioCarruaje.buscarCarruajePorId(carruaje.getId());
-
-        if(carruajeBuscado == null) {
-            throw new RuntimeException("No se encontro el carruaje");
-        }
-
-        CarruajeHeroe carruajeHeroeBuscado  = repositorio_carruajeHeroe.buscarRelacion(carruajeBuscado,heroeBuscado);
-
-        if(carruajeHeroeBuscado == null) throw new RuntimeException("No se encontro heroe en este carruaje");
-
-        repositorio_carruajeHeroe.removerRelacion(carruajeHeroeBuscado);
-
     }
 
     @Override
@@ -185,14 +178,10 @@ public class ServicioReclutaImpl implements ServicioRecluta {
 
 
     @Override
-    public List<Heroe> getListaDeHeroesEnCarruaje(Carruaje carruaje) {
-        Carruaje carruajeBus = repositorioCarruaje.buscarCarruajePorId(carruaje.getId());
-
-        if(carruajeBus == null) throw new RuntimeException("No se encontro el carruaje");
-
-        List<Heroe> listaDeHeroes = repositorio_carruajeHeroe.getListaDeHeroes(carruaje.getId());
-
-        return listaDeHeroes;
+    public List<Heroe> getListaDeHeroesEnCarruaje(Long uid) {
+        Usuario u = repositorioUsuario.buscarUsuarioPorId(uid);
+        Carruaje c = repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(u);
+        return repositorio_carruajeHeroe.getListaDeHeroes(c.getId());
     }
 
 
@@ -212,6 +201,51 @@ public class ServicioReclutaImpl implements ServicioRecluta {
         return listaDeHeroes;
     }
 
+    @Override
+    public List<Heroe> getHeroesDisponiblesEnCarruaje(Long uid) {
+        Usuario u = repositorioUsuario.buscarUsuarioPorId(uid);
+        Carruaje c = repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(u);
+        List<Heroe> todos     = repositorioHeroe.getListaDeHeroes();
+        List<Heroe> escogidos = repositorio_carruajeHeroe.getListaDeHeroes(c.getId());
+        return todos.stream()
+                .filter(h -> !escogidos.contains(h))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Heroe> getHeroesEnCarruaje(Long uid) {
+        Usuario u = repositorioUsuario.buscarUsuarioPorId(uid);
+        Carruaje c = repositorioCarruaje
+                .buscarCarruajeAsignadoAUnUsuario(u);
+
+        return repositorio_carruajeHeroe.getListaDeHeroes(c.getId());
+    }
+
+    @Override
+    public void seleccionarHeroe(Long uid, Long hid) {
+        Usuario u = repositorioUsuario.buscarUsuarioPorId(uid);
+        Carruaje c = repositorioCarruaje
+                .buscarCarruajeAsignadoAUnUsuario(u);
+        Heroe h = repositorioHeroe
+                .buscarHeroePorId(hid);
+
+        repositorio_carruajeHeroe.agregarRelacion(c, h);
+    }
+
+    @Override
+    public void quitarHeroe(Long uid, Long hid) {
+        Usuario u = repositorioUsuario.buscarUsuarioPorId(uid);
+        Carruaje c = repositorioCarruaje
+                .buscarCarruajeAsignadoAUnUsuario(u);
+        Heroe h = repositorioHeroe
+                .buscarHeroePorId(hid);
+
+        // localizo la entidad de unión y la borro
+        CarruajeHeroe rel = repositorio_carruajeHeroe.buscarRelacion(c, h);
+        if (rel != null) {
+            repositorio_carruajeHeroe.removerRelacion(rel);
+        }
+    }
 
 
 }

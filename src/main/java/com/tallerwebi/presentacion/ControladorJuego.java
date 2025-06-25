@@ -2,6 +2,7 @@ package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.entidades.GameSession;
 import com.tallerwebi.dominio.ServicioJuego;
+import com.tallerwebi.dominio.entidades.SessionHero;
 import com.tallerwebi.dominio.entidades.SessionMonster;
 import com.tallerwebi.dominio.entidades.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,33 +25,44 @@ public class ControladorJuego {
 
     @GetMapping("/juego")
     public String mostrarJuego(Model model) {
-        GameSession session    = (GameSession) servicioJuego.getSession();
-        Usuario usuario        = session.getUsuario();
+        GameSession session = servicioJuego.getSession();
         List<SessionMonster> monstruos = servicioJuego.getMonstruos();
+        List<SessionHero>    heroes    = servicioJuego.getHeroesDeSesion();
+
 
         model.addAttribute("session",   session);
-        model.addAttribute("usuario",   usuario);
+        model.addAttribute("heroes",    heroes);
         model.addAttribute("monstruos", monstruos);
         return "juego";
     }
 
     @PostMapping("/juego/atacar")
-    public String atacar(@RequestParam int orden, RedirectAttributes ra) {
-        String mensaje = servicioJuego.atacar(orden);
+    public String atacar(
+            @RequestParam("heroOrden")    int heroOrden,
+            @RequestParam("monsterOrden") int monsterOrden,
+            RedirectAttributes ra
+    ) {
+        String mensaje = servicioJuego.atacar(heroOrden, monsterOrden);
         ra.addFlashAttribute("mensaje", mensaje);
         return "redirect:/juego";
     }
 
     @PostMapping("/juego/defender")
-    public String defender(RedirectAttributes ra) {
-        String mensaje = servicioJuego.defender();
+    public String defender(
+            @RequestParam("heroOrden") int heroOrden,
+            RedirectAttributes ra
+    ) {
+        String mensaje = servicioJuego.defender(heroOrden);
         ra.addFlashAttribute("mensaje", mensaje);
         return "redirect:/juego";
     }
 
     @PostMapping("/juego/usarPocion")
-    public String usarPocion(RedirectAttributes ra) {
-        String mensaje = servicioJuego.usarPocion();
+    public String usarPocion(
+            @RequestParam("heroOrden") int heroOrden,
+            RedirectAttributes ra
+    ) {
+        String mensaje = servicioJuego.usarPocion(heroOrden);
         ra.addFlashAttribute("mensaje", mensaje);
         return "redirect:/juego";
     }

@@ -11,6 +11,7 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String nombre;
     private String email;
     private String password;
     private String rol;
@@ -20,10 +21,10 @@ public class Usuario {
 
     // nombre,vida,atk,defensa deberian ser de entidad "Heroes"
     // por ahora queda asi para probar funcionalidad
-    private String nombre;
-    private int vida;
-    private int atk;
-    private boolean defensa;
+    //private String nombre;
+    //private int vida;
+    //private int atk;
+    //private boolean defensa;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Item> itemsComprados = new ArrayList<>();
@@ -36,9 +37,8 @@ public class Usuario {
         this.email = email;
     }
 
-    public Usuario(){
+    public Usuario(){}
 
-    }
 
 
     public Long getId() {
@@ -94,7 +94,20 @@ public class Usuario {
         this.oro = oro;
     }
 
+    public boolean isActivo() {
+        return Boolean.TRUE.equals(activo);
+    }
 
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+
+/*
     //SETTER Y GETTER QUE DEBERIAN SER DE HEROE
     public int getVida() {
         return vida;
@@ -119,5 +132,5 @@ public class Usuario {
     public void setDefensa(boolean defensa) {
         this.defensa = defensa;
     }
-
+*/
 }

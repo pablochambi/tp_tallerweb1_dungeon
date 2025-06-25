@@ -9,14 +9,8 @@ import static org.mockito.ArgumentMatchers.any;
 import java.util.Collections;
 import java.util.List;
 
-import com.tallerwebi.dominio.entidades.GameSession;
-import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.entidades.Monster;
-import com.tallerwebi.dominio.entidades.SessionMonster;
-import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
-import com.tallerwebi.dominio.interfaces.RepositorioMonster;
-import com.tallerwebi.dominio.interfaces.RepositorioSession;
-import com.tallerwebi.dominio.interfaces.RepositorioSessionMonster;
+import com.tallerwebi.dominio.entidades.*;
+import com.tallerwebi.dominio.interfaces.*;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +28,8 @@ class ServicioJuegoImplTest {
     RepositorioMonster monsterRepo;
     @Mock
     RepositorioSessionMonster smRepo;
+    @Mock
+    private RepositorioHeroSession shRepo;
 
     @InjectMocks ServicioJuegoImpl servicio;
 
@@ -41,16 +37,18 @@ class ServicioJuegoImplTest {
     private GameSession session;
     private Monster m1, m2, m3;
     private SessionMonster sm1, sm2, sm3;
+    private SessionHero sh1;
+
 
     @BeforeEach
     void init() {
         MockitoAnnotations.openMocks(this);
-        // Jugador inicial
-        usuario = new Usuario();
-        usuario.setVida(100);
-        usuario.setAtk(10);
-        usuario.setDefensa(false);
-        usuario.setOro(500);
+
+        Heroe plantilla = new Heroe();
+        plantilla.setId(1L);
+        plantilla.setNombre("HéroeTest");
+        plantilla.setMaxVida(100);
+        plantilla.setAtk(10);
 
         // Sesión vacía
         session = new GameSession();
@@ -104,21 +102,26 @@ class ServicioJuegoImplTest {
         when(sessionRepo.findActive()).thenReturn(session);
         when(smRepo.findBySession(session)).thenReturn(List.of(sm1, sm2));
         // when
-        String mensaje = servicio.atacar(99);
+        String mensaje = servicio.atacar(1, 99);
         // then
         assertThat(mensaje, is("Monstruo no encontrado."));
     }
 
     @Test
     void atacar_monstruoVivo_actualizaVidaYMensajeContieneNombre() {
-        // given
-        when(sessionRepo.findActive()).thenReturn(session);
+        when(sessionRepo.findActive(usuario)).thenReturn(session);
         when(smRepo.findBySession(session)).thenReturn(List.of(sm1));
-        // when
-        String msg = servicio.atacar(1);
-        // then
+        when(shRepo.findBySession(session)).thenReturn(List.of(sh1));
+
+        // when:
+        String msg = servicio.atacar(1, 1);
+
+        // then:
         verify(smRepo).update(argThat(s -> s.getVidaActual() == 20));
-        assertThat(usuario.getVida(), is(95));
+
+        verify(shRepo).update(argThat(h -> h.getVidaActual() == 95));
+
+        // el mensaje incluye el nombre del monstruo
         assertThat(msg, containsString("Esqueleto"));
     }
 

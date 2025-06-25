@@ -1,0 +1,14 @@
+package com.tallerwebi.dominio.interfaces;
+
+import com.tallerwebi.dominio.entidades.GameSession;
+import com.tallerwebi.dominio.entidades.Heroe;
+import com.tallerwebi.dominio.entidades.SessionHero;
+
+import java.util.List;
+
+public interface RepositorioHeroSession {
+    void add(GameSession session, Heroe hero);
+    List<SessionHero> findBySession(GameSession session);
+    void update(SessionHero sessionHero);
+    void deleteBySession(GameSession session);
+}

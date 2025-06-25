@@ -7,6 +7,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 @Repository
 public class RepositorioUsuarioImpl implements RepositorioUsuario {
 
@@ -21,7 +24,7 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     public Usuario buscarUsuario(String email, String password) {
         try {
             return jdbc.queryForObject(
-                    "SELECT id, email, password, rol, activo, nombre, vida, atk, defensa, oro " +
+                    "SELECT id, email, password, rol, activo, nombre, oro " +
                             "FROM Usuario WHERE email = ? AND password = ?",
                     this::mapRowToUsuario,
                     email, password
@@ -35,17 +38,15 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     public void guardar(Usuario u) {
         jdbc.update(
                 "INSERT INTO Usuario " +
-                        "(email, password, rol, vida, atk, defensa, oro) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        "(email, password, rol, activo, nombre, oro) " +
+                        "VALUES (?, ?, ?, ?, ?, ?)",
                 u.getEmail(),
                 u.getPassword(),
                 u.getRol(),
-                u.getVida(),
-                u.getAtk(),
-                u.isDefensa(),
+                u.getActivo(),
+                u.getNombre(),
                 u.getOro()
         );
-        // Capturamos el ID generado
         Long newId = jdbc.queryForObject("CALL IDENTITY()", Long.class);
         u.setId(newId);
     }
@@ -54,7 +55,7 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     public Usuario buscar(String email) {
         try {
             return jdbc.queryForObject(
-                    "SELECT id, email, password, rol, activo, nombre, vida, atk, defensa, oro " +
+                    "SELECT id, email, password, rol, activo, nombre, oro " +
                             "FROM Usuario WHERE email = ?",
                     this::mapRowToUsuario,
                     email
@@ -71,17 +72,15 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
                         " email    = ?, " +
                         " password = ?, " +
                         " rol      = ?, " +
-                        " vida     = ?, " +
-                        " atk      = ?, " +
-                        " defensa  = ?, " +
-                        " oro      = ? " +
+                        " activo   = ?, " +
+                        " nombre   = ?, " +
+                        " oro      = ?  " +
                         "WHERE id = ?",
                 u.getEmail(),
                 u.getPassword(),
                 u.getRol(),
-                u.getVida(),
-                u.getAtk(),
-                u.isDefensa(),
+                u.getActivo(),
+                u.getNombre(),
                 u.getOro(),
                 u.getId()
         );
@@ -91,7 +90,7 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     public Usuario buscarUsuarioPorId(Long id) {
         try {
             return jdbc.queryForObject(
-                    "SELECT id, email, password, rol, activo, nombre, vida, atk, defensa, oro " +
+                    "SELECT id, email, password, rol, activo, nombre, oro " +
                             "FROM Usuario WHERE id = ?",
                     this::mapRowToUsuario,
                     id
@@ -101,18 +100,19 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
         }
     }
 
-    // Mapea un ResultSet a la entidad Usuario
-    private Usuario mapRowToUsuario(java.sql.ResultSet rs, int rowNum) throws java.sql.SQLException {
+    // Mapea un ResultSet a la entidad Usuario.
+    // convierte cada fila del ResultSet (el resultado de la consulta SQL)
+    // en una instancia de entidad de dominio Usuario.
+
+    private Usuario mapRowToUsuario(ResultSet rs, int rowNum) throws SQLException {
         Usuario u = new Usuario();
-        u.setId       (rs.getLong   ("id"));
-        u.setEmail    (rs.getString ("email"));
-        u.setPassword (rs.getString ("password"));
-        u.setRol      (rs.getString ("rol"));
-        u.setActivo   (rs.getBoolean("activo"));
-        u.setVida     (rs.getInt    ("vida"));
-        u.setAtk      (rs.getInt    ("atk"));
-        u.setDefensa  (rs.getBoolean("defensa"));
-        u.setOro      (rs.getInt    ("oro"));
+        u.setId    (rs.getLong("id"));
+        u.setEmail (rs.getString("email"));
+        u.setPassword(rs.getString("password"));
+        u.setRol   (rs.getString("rol"));
+        u.setActivo(rs.getBoolean("activo"));
+        u.setNombre(rs.getString("nombre"));
+        u.setOro   (rs.getInt("oro"));
         return u;
     }
 }

@@ -1,80 +1,120 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>Carruaje</title>
 
-    <title>Taller Web I</title>
-
-    <!-- Boostrap core css -->
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
-
-    <!-- custom style -->
+    <!-- tus estilos -->
     <link rel="stylesheet" th:href="@{/css/main.css}"/>
     <link rel="stylesheet" th:href="@{/css/vista_carruaje.css}"/>
-
 </head>
-
 <body>
-
 <main>
     <div class="container mt-4">
 
-        <h1>Carruaje</h1>
+        <h1 class="mb-4">Tu Carruaje</h1>
 
-        <!-- Mostrar información del carruaje -->
+        <!-- Datos del carruaje -->
         <div th:if="${carruaje}" class="card mb-4">
-            <div class="card-header">
-                <p th:text="'Carruaje ID: ' +${carruaje.id} ?: 'Carruaje sin ID'">ID</p>
-            </div>
             <div class="card-body">
-                <p th:text="'Nivel: ' + ${carruaje.nivel}">Nivel</p>
+                <p><strong>ID:</strong> <span th:text="${carruaje.id}">–</span></p>
+                <p><strong>Nivel:</strong> <span th:text="${carruaje.nivel}">–</span></p>
+                <p><strong>Héroes semanales:</strong>
+                    <span th:text="${carruaje.cantidadDeHeroesSemanales}">–</span>
+                </p>
             </div>
         </div>
 
-
-        <!-- Lista de héroes en tarjetas -->
+        <!-- Fila con dos columnas -->
         <div class="row">
-            <div th:each="heroe : ${heroesEnCarruaje}" class="col-md-4">
-                <div class="card hero-card">
-                    <!-- Imagen del héroe -->
-                    <div class="hero-image">
-                        <img th:src="@{${heroe.urlImagen}}" class="img-fluid" alt="imagen" style="max-width: 100px; height: auto;" >
+
+            <!-- Columna héroes disponibles -->
+            <div class="col-md-6">
+                <h3>Héroes disponibles</h3>
+                <div class="row gy-3">
+                    <div class="col-6" th:each="heroe : ${heroesDisponibles}">
+                        <div class="card h-100 text-center">
+                            <img th:src="@{${heroe.urlImagen}}"
+                                 class="card-img-top mx-auto mt-3"
+                                 style="width: 80px; height: 80px; object-fit: contain;"/>
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${heroe.nombre}">Nombre</h5>
+                                <p class="card-text">Lv. <span th:text="${heroe.nivel}">–</span></p>
+                                <p class="card-text">Precio: <span th:text="${heroe.precio}">–</span> oro</p>
+                                <form th:action="@{/carruaje/seleccionar}" method="post">
+                                    <input type="hidden" name="usuarioId" th:value="${usuario.id}"/>
+                                    <input type="hidden" name="heroeId"   th:value="${heroe.id}"/>
+                                    <button type="submit" class="btn btn-sm btn-primary w-100">
+                                        Seleccionar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="'Lv. ' + ${heroe.getNivel()}">nivels vacio</h5>
-                        <h5 class="card-title" th:text="'Nombre: ' + ${heroe.nombre}">nobreVacio</h5>
-                        <p class="card-text" th:text="'Precio: ' + ${heroe.precio}">precioVacio</p>
-
-                        <a th:href="@{/reclutar/__${heroe.id}__}"
-                           class="btn btn-primary w-100">
-                            Reclutar
-                        </a>
+                    <!-- Si no hay disponibles -->
+                    <div class="col-12" th:if="${#lists.isEmpty(heroesDisponibles)}">
+                        <div class="alert alert-warning">
+                            No quedan héroes disponibles por esta semana.
+                        </div>
                     </div>
-
-
                 </div>
             </div>
 
-            <!-- Mensaje si no hay héroes -->
-            <div th:if="${mensaje1}" class="alert alert-warning">
-                <p th:text="${mensaje1}"></p>
-                <p th:text="${mensaje2}"></p>
-            </div>
+            <!-- Columna héroes en el carruaje -->
+            <div class="col-md-6">
+                <h3>Héroes en tu carruaje</h3>
+                <div class="row gy-3">
+                    <div class="col-6" th:each="heroe : ${heroesEnCarruaje}">
+                        <div class="card h-100 border-success text-center">
+                            <img th:src="@{${heroe.urlImagen}}"
+                                 class="card-img-top mx-auto mt-3"
+                                 style="width: 80px; height: 80px; object-fit: contain;"/>
+                            <div class="card-body">
+                                <h5 class="card-title" th:text="${heroe.nombre}">Nombre</h5>
+                                <p class="card-text">Lv. <span th:text="${heroe.nivel}">–</span></p>
+                                <form th:action="@{/carruaje/quitar}" method="post">
+                                    <input type="hidden" name="usuarioId" th:value="${usuario.id}"/>
+                                    <input type="hidden" name="heroeId"   th:value="${heroe.id}"/>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                        Quitar
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Si aún no tienes héroes -->
+                    <div class="col-12" th:if="${#lists.isEmpty(heroesEnCarruaje)}">
+                        <div class="alert alert-info">
+                            Aún no has seleccionado ningún héroe.
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Botón para comenzar expedición -->
+                <div class="mt-4 text-center"
+                     th:if="${heroesEnCarruaje.size()} == ${carruaje.cantidadDeHeroesSemanales}">
+                    <form th:action="@{/seleccion-heroes/comenzar}" method="post">
+                        <input type="hidden" name="usuarioId" th:value="${usuario.id}"/>
+                        <button type="submit" class="btn btn-lg btn-success">
+                            Comenzar Expedición
+                        </button>
+                    </form>
+                </div>
+            </div>
 
         </div>
 
-        <a class="button" th:href="@{/home}">Volver al Home</a>
-
+        <div class="mt-4">
+            <a class="btn btn-secondary" th:href="@{/home}">Volver al Home</a>
+        </div>
 
     </div>
 </main>
-<!-- /.container -->
 
-<!-- Boostrap core js -->
-<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
-<script type="text/javascript" th:src="@{js/main.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/main.js}"></script>
 </body>
 </html>

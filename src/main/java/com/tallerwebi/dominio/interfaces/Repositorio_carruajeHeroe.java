@@ -17,4 +17,9 @@ public interface Repositorio_carruajeHeroe {
     void removerRelacion(CarruajeHeroe carruajeHeroeBuscado);
 
     void agregarRelacion(Carruaje carruaje, Heroe heroe);
+
+    void add(Carruaje carruaje, Heroe heroe);
+    List<CarruajeHeroe> findByCarruaje(Carruaje carruaje);
+    void delete(CarruajeHeroe relacion);
+    List<Heroe> findHeroesByCarruaje(Carruaje carruaje);
 }

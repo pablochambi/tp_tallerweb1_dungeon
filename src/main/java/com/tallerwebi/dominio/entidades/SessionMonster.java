@@ -10,7 +10,7 @@ public class SessionMonster {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relación a la sesión de juego
+    // Relacion a la sesion de juego
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "session_id", nullable = false)
     private GameSession session;
@@ -23,14 +23,13 @@ public class SessionMonster {
     @Column(name = "vida_actual", nullable = false)
     private int vidaActual;
 
-    // Para saber en qué expedición y mazmorra está este monstruo:
+    // Para saber en que expedicion y mazmorra esta este monstruo:
     @Column(name = "expedition_number", nullable = false)
     private int expeditionNumber;
 
     @Column(name = "dungeon_number", nullable = false)
     private int dungeonNumber;
 
-    // Si necesitas ordenar los monstruos (por posición en la vista, por ejemplo)
     @Column(nullable = false)
     private int orden;
 
@@ -95,5 +94,13 @@ public class SessionMonster {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public void takeDamage(int damage) {
+        this.vidaActual = Math.max(0, this.vidaActual - damage);
+    }
+
+    public int getMaxVida() {
+        return monster.getVida();
     }
 }

@@ -1,11 +1,16 @@
 package com.tallerwebi.dominio.interfaces;
 
 import com.tallerwebi.dominio.entidades.GameSession;
+import com.tallerwebi.dominio.entidades.Usuario;
 
 public interface RepositorioSession {
+
     GameSession startNew();
     GameSession findActive();
-    void save(GameSession s);
 
-    void delete(GameSession session);
+    GameSession startNew(Usuario u);
+    GameSession findActive(Usuario u);
+
+    void save(GameSession s);
+    void delete(GameSession s);
 }

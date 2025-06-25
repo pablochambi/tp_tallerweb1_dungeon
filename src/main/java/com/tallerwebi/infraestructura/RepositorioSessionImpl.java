@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 @Repository
 public class RepositorioSessionImpl implements RepositorioSession {
 
@@ -24,29 +27,37 @@ public class RepositorioSessionImpl implements RepositorioSession {
 
     @Override
     public GameSession startNew() {
-        // 1) Asegurar que exista el usuario
         Usuario u = usuarioRepo.buscarUsuarioPorId(1L);
-        if (u == null) {
-            u = new Usuario();
-            u.setVida(100);
-            u.setAtk(10);
-            u.setDefensa(false);
-            u.setOro(1000);
+        if (u == null) throw new IllegalStateException("Usuario 1 no encontrado");
+        return startNew(u);
+    }
+
+    @Override
+    public GameSession findActive() {
+        Usuario u = usuarioRepo.buscarUsuarioPorId(1L);
+        if (u == null) return null;
+        return findActive(u);
+    }
+
+    /**
+     * Inicia una nueva sesión para el usuario dado o retorna la activa si existe.
+     */
+    @Override
+    public GameSession startNew(Usuario u) {
+        // Asegurar que el usuario exista en BD
+        Usuario existente = usuarioRepo.buscarUsuarioPorId(u.getId());
+        if (existente == null) {
             usuarioRepo.guardar(u);
+        } else {
+            u = existente;
         }
-
-        // 2) Insertar la nueva sesión con timestamp de inicio
+        // Crear sesión
         jdbc.update(
-                "INSERT INTO game_session " +
-                        "(usuario_id, turno, nivel, active, finished, started_at) " +
-                        "VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)",
-                u.getId(), 1, 1, 1, 0
+                "INSERT INTO game_session (usuario_id, turno, nivel, active, finished, started_at) " +
+                        "VALUES (?, 1, 1, 1, 0, CURRENT_TIMESTAMP)",
+                u.getId()
         );
-
-        // 3) Recuperar el ID generado (HSQLDB CALL IDENTITY())
         Long newId = jdbc.queryForObject("CALL IDENTITY()", Long.class);
-
-        // 4) Construir el objeto y devolverlo
         GameSession s = new GameSession();
         s.setid(newId);
         s.setUsuario(u);
@@ -57,31 +68,36 @@ public class RepositorioSessionImpl implements RepositorioSession {
         return s;
     }
 
+    /**
+     * Busca la sesión activa del usuario dado, o null.
+     */
     @Override
-    public GameSession findActive() {
-        return jdbc.queryForObject(
-                "SELECT id, usuario_id, turno, nivel, active, finished " +
-                        "FROM game_session WHERE active = TRUE",
-                (rs, rowNum) -> {
-                    GameSession s = new GameSession();
-                    s.setid       (rs.getLong  ("id"));
-                    s.setUsuario  (usuarioRepo.buscarUsuarioPorId(
-                            rs.getLong("usuario_id")));
-                    s.setTurno    (rs.getInt   ("turno"));
-                    s.setNivel    (rs.getInt   ("nivel"));
-                    s.setActive   (rs.getInt   ("active")   == 1);
-                    s.setFinished (rs.getInt   ("finished") == 1);
-                    return s;
-                }
-        );
+    public GameSession findActive(Usuario u) {
+        try {
+            return jdbc.queryForObject(
+                    "SELECT id, usuario_id, turno, nivel, active, finished " +
+                            "FROM game_session WHERE usuario_id = ? AND active = TRUE",
+                    (ResultSet rs, int rn) -> {
+                        GameSession s = new GameSession();
+                        s.setid(rs.getLong("id"));
+                        s.setUsuario(u);
+                        s.setTurno(rs.getInt("turno"));
+                        s.setNivel(rs.getInt("nivel"));
+                        s.setActive(rs.getInt("active") == 1);
+                        s.setFinished(rs.getInt("finished") == 1);
+                        return s;
+                    },
+                    u.getId()
+            );
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
     public void save(GameSession s) {
-        // Actualiza los campos editables y marca ended_at
         jdbc.update(
-                "UPDATE game_session SET " +
-                        " turno = ?, nivel = ?, active = ?, finished = ?, ended_at = CURRENT_TIMESTAMP " +
+                "UPDATE game_session SET turno = ?, nivel = ?, active = ?, finished = ?, ended_at = CURRENT_TIMESTAMP " +
                         "WHERE id = ?",
                 s.getTurno(),
                 s.getNivel(),
@@ -93,15 +109,8 @@ public class RepositorioSessionImpl implements RepositorioSession {
 
     @Override
     public void delete(GameSession s) {
-        // 1) Borra primero los monstruos de la sesión
-        jdbc.update(
-                "DELETE FROM session_monster WHERE session_id = ?",
-                s.getId()
-        );
-        // 2) Luego borra la sesión
-        jdbc.update(
-                "DELETE FROM game_session WHERE id = ?",
-                s.getId()
-        );
+        jdbc.update("DELETE FROM session_monster WHERE session_id = ?", s.getId());
+        jdbc.update("DELETE FROM session_hero    WHERE session_id = ?", s.getId());
+        jdbc.update("DELETE FROM game_session    WHERE id = ?", s.getId());
     }
 }

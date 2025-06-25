@@ -1,167 +1,71 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <title>Taller Web I</title>
-
-    <!-- Boostrap core css -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Seleccionar Héroes</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
-
-    <!-- custom style -->
-    <link rel="stylesheet" th:href="@{/css/seleccion_heroes.css}"/>
-
 </head>
-
 <body>
-<!-- Barra de Navegación -->
-<nav>
-    <a href="instrucciones.html">Instrucciones</a>
-    <a href="mejorar-heroes.html">Mejorar Héroes</a>
-    <a href="puntajes.html">Puntajes</a>
-</nav>
 
-<h1>Selecciona tus 4 Héroes</h1>
+<div class="container py-4">
 
-<div class="heroes-grid">
-    <!-- Héroes -->
-    <div class="heroes-grid">
-        <!-- Cruzado -->
-        <div class="hero-card" onclick="seleccionarHeroe('Cruzado', 33, '6-12')">
-            <img src="https://static.wikia.nocookie.net/darkestdungeon_gamepedia/images/0/0b/Crusader_portrait.png" alt="Cruzado">
-            <div class="hero-name">Cruzado</div>
-            <div class="stats">
-                Salud: 33<br>
-                Daño: 6-12<br>
-                Evasión: 0<br>
-                Protección: 0%<br>
-                Velocidad: 1<br>
-                Crítico: 5%<br>
-                Precisión: 85
+    <h1 class="mb-4">Elige tus héroes</h1>
+
+    <div class="row">
+        <!-- Columna 1: héroes disponibles -->
+        <div class="col-md-6">
+            <h3>Disponibles</h3>
+            <div class="row gy-3">
+                <div class="col-6" th:each="hero : ${heroesDisponibles}">
+                    <div class="card text-center">
+                        <img th:src="@{${hero.urlImagen}}" class="card-img-top" style="height:100px;object-fit:contain"/>
+                        <div class="card-body">
+                            <h5 th:text="${hero.nombre}">Nombre</h5>
+                            <p>Nivel <span th:text="${hero.nivel}">1</span></p>
+                            <form th:action="@{/carruaje/seleccionar}" method="post">
+                                <input type="hidden" name="usuarioId" th:value="${usuario.id}"/>
+                                <input type="hidden" name="heroeId"   th:value="${hero.id}"/>
+                                <button class="btn btn-sm btn-outline-primary">Seleccionar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <button>Seleccionar</button>
         </div>
 
-        <!-- Bandolero -->
-        <div class="hero-card" onclick="seleccionarHeroe('Bandolero', 23, '4-8')">
-            <img src="https://static.wikia.nocookie.net/darkestdungeon_gamepedia/images/5/59/Highwayman_portrait.png" alt="Bandolero">
-            <div class="hero-name">Bandolero</div>
-            <div class="stats">
-                Salud: 23<br>
-                Daño: 4-8<br>
-                Evasión: 10<br>
-                Protección: 0%<br>
-                Velocidad: 7<br>
-                Crítico: 5%<br>
-                Precisión: 90
+        <!-- Columna 2: héroes ya en mi carruaje -->
+        <div class="col-md-6">
+            <h3>En tu carruaje</h3>
+            <div class="row gy-3">
+                <div class="col-6" th:each="hero : ${heroesEnCarruaje}">
+                    <div class="card text-center border-success">
+                        <img th:src="@{${hero.urlImagen}}" class="card-img-top" style="height:100px;object-fit:contain"/>
+                        <div class="card-body">
+                            <h5 th:text="${hero.nombre}">Nombre</h5>
+                            <form th:action="@{/carruaje/quitar}" method="post">
+                                <input type="hidden" name="usuarioId" th:value="${usuario.id}"/>
+                                <input type="hidden" name="heroeId"   th:value="${hero.id}"/>
+                                <button class="btn btn-sm btn-outline-danger">Quitar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <button>Seleccionar</button>
-        </div>
 
-        <!-- Médico de la Peste -->
-        <div class="hero-card" onclick="seleccionarHeroe('Médico de la Peste', 22, '4-7')">
-            <img src="https://static.wikia.nocookie.net/darkestdungeon_gamepedia/images/e/e1/Plague_Doctor_portrait.png" alt="Médico de la Peste">
-            <div class="hero-name">Médico de la Peste</div>
-            <div class="stats">
-                Salud: 22<br>
-                Daño: 4-7<br>
-                Evasión: 2<br>
-                Protección: 0%<br>
-                Velocidad: 7<br>
-                Crítico: 5%<br>
-                Precisión: 95
+            <!-- Cuando ya haya escogido todos, muestro botón para iniciar -->
+            <div class="mt-4 text-center"
+                 th:if="${heroesEnCarruaje.size()} == ${carruaje.cantidadDeHeroesSemanales}">
+                <form th:action="@{/seleccion-heroes/comenzar}" method="post">
+                    <input type="hidden" name="usuarioId" th:value="${usuario.id}"/>
+                    <button class="btn btn-lg btn-success">Comenzar expedición</button>
+                </form>
             </div>
-            <button>Seleccionar</button>
-        </div>
-
-        <!-- Ocultista -->
-        <div class="hero-card" onclick="seleccionarHeroe('Ocultista', 22, '4-7')">
-            <img src="https://static.wikia.nocookie.net/darkestdungeon_gamepedia/images/5/5d/Occultist_portrait.png" alt="Ocultista">
-            <div class="hero-name">Ocultista</div>
-            <div class="stats">
-                Salud: 22<br>
-                Daño: 4-7<br>
-                Evasión: 0<br>
-                Protección: 0%<br>
-                Velocidad: 7<br>
-                Crítico: 5%<br>
-                Precisión: 95
-            </div>
-            <button>Seleccionar</button>
         </div>
     </div>
 
 </div>
 
-
-
-    <div class="selected-container">
-        <h2>Héroes seleccionados:</h2>
-        <div class="selected-list" id="selectedList"></div>
-
-        <button class="continue-button" id="continuarBtn" onclick="continuar()" disabled>Comenzar Expedición</button>
-    </div>
-
-<a class="button" th:href="@{/home}">Volver al inicio</a>
-
-<script>
-    const selectedHeroes = [];
-
-    function seleccionarHeroe(nombre, salud, danio) {
-
-        // Evitar duplicados
-        if (selectedHeroes.find(h => h.nombre === nombre)) return;
-
-        if (selectedHeroes.length >= 4) return;
-
-        const hero = { nombre, salud, danio };
-        selectedHeroes.push(hero);
-
-        actualizarLista();
-    }
-
-    function quitarHeroe(nombre) {
-        const index = selectedHeroes.findIndex(h => h.nombre === nombre);
-        if (index !== -1) {
-            selectedHeroes.splice(index, 1);
-            actualizarLista();
-        }
-    }
-
-    function actualizarLista() {
-        const lista = document.getElementById('selectedList');
-        lista.innerHTML = '';
-
-        selectedHeroes.forEach(hero => {
-            const div = document.createElement('div');
-            div.className = 'selected-hero';
-            div.innerHTML = `
-                    <strong>${hero.nombre}</strong><br>
-                    Salud: ${hero.salud}<br>
-                    Daño: ${hero.danio}<br>
-                    <button class="remove-button" onclick="quitarHeroe('${hero.nombre}')">Quitar</button>
-                `;
-            lista.appendChild(div);
-        });
-
-        document.getElementById('continuarBtn').disabled = selectedHeroes.length !== 4;
-    }
-
-
-
-    function continuar() {
-        localStorage.setItem('heroesSeleccionados', JSON.stringify(selectedHeroes));
-        window.location.href = "mazmorra.html";
-    }
-</script>
-<main>
-
-</main>
-<!-- /.container -->
-
-<!-- Boostrap core js -->
-<script type="text/javascript" th:src="@{webjars/bootstrap/5.2.0/js/bootstrap.min.js}"></script>
-<script type="text/javascript" th:src="@{js/main.js}"></script>
+<script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

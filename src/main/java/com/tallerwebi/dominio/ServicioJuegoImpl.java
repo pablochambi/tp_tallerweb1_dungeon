@@ -1,88 +1,90 @@
 package com.tallerwebi.dominio;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.tallerwebi.dominio.entidades.*;
-import com.tallerwebi.dominio.interfaces.*;
+import com.tallerwebi.dominio.entidades.GameSession;
+import com.tallerwebi.dominio.entidades.Monster;
+import com.tallerwebi.dominio.entidades.SessionHero;
+import com.tallerwebi.dominio.entidades.SessionMonster;
+import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.interfaces.RepositorioHeroSession;
+import com.tallerwebi.dominio.interfaces.RepositorioMonster;
+import com.tallerwebi.dominio.interfaces.RepositorioSession;
+import com.tallerwebi.dominio.interfaces.RepositorioSessionMonster;
+import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class ServicioJuegoImpl implements ServicioJuego {
 
-    private final RepositorioUsuario UsuarioRepo;
     private final RepositorioSession sessionRepo;
-    private final RepositorioMonster monsterRepo;
     private final RepositorioSessionMonster smRepo;
+    private final RepositorioHeroSession shRepo;
+    private final RepositorioMonster monsterRepo;
+    private final RepositorioUsuario usuarioRepo;
 
-    public ServicioJuegoImpl(RepositorioUsuario UsuarioRepo, RepositorioSession sessionRepo, RepositorioMonster monsterRepo, RepositorioSessionMonster smRepo) {
-        this.UsuarioRepo = UsuarioRepo;
+    @Autowired
+    public ServicioJuegoImpl(
+            RepositorioSession sessionRepo,
+            RepositorioSessionMonster smRepo,
+            RepositorioHeroSession shRepo,
+            RepositorioMonster monsterRepo,
+            RepositorioUsuario usuarioRepo
+    ) {
         this.sessionRepo = sessionRepo;
+        this.smRepo      = smRepo;
+        this.shRepo      = shRepo;
         this.monsterRepo = monsterRepo;
-        this.smRepo = smRepo;
+        this.usuarioRepo = usuarioRepo;
     }
 
-    //recupera sesion activa, sino crea una nueva
-   @Override
-   public GameSession iniciarPartida() {
-       GameSession session = sessionRepo.findActive();
-       if (session == null) {
-           session = crearNuevaMazmorra();
-       }
-       return session;
-   }
     @Override
-    public GameSession crearNuevaMazmorra() {
-        // User fijo con id 1 (se crea si no existe)
+    public GameSession iniciarPartida() {
+        // 1) Obtener usuario (por ejemplo ID fijo 1 o contexto de seguridad)
+        Usuario u = usuarioRepo.buscarUsuarioPorId(1L);
+        if (u == null) throw new IllegalStateException("Usuario 1 no encontrado");
 
-        Usuario u = UsuarioRepo.buscarUsuarioPorId(1L);
-        if (u == null) {
-            u = new Usuario();
-            u.setVida(100);
-            u.setAtk(10);
-            u.setDefensa(false);
-            u.setOro(1000);
-            UsuarioRepo.modificar(u);
-        }
-
-        GameSession session = new GameSession();
-        session.setUsuario(u);
-        sessionRepo.save(session);
-
-        // agregar 3 monstruos random
-        List<Monster> all = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
-        Collections.shuffle(all);
-        int toSeed = Math.min(3, all.size());
-        for (int i = 0; i < toSeed; i++) {
-            smRepo.add(session, all.get(i));
+        // 2) Buscar o crear sesión para este usuario
+        GameSession session = sessionRepo.findActive(u);
+        if (session == null) {
+            session = sessionRepo.startNew(u);
+            // Seed inicial de monsters y heroes omitido aquí
         }
         return session;
     }
 
     @Override
-    public void reiniciarMazmorra() {
-        GameSession session = sessionRepo.findActive();
-        if (session == null) {
-            // si no existe la creamos
-            crearNuevaMazmorra();
-        } else {
-            // eliminar monstruos viejos
-            smRepo.deleteBySession(session);
-            // agregar monstruos 3 nuevos
-            List<Monster> all = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
-            Collections.shuffle(all);
-            int toSeed = Math.min(3, all.size());
-            for (int i = 0; i < toSeed; i++) {
-                smRepo.add(session, all.get(i));
-            }
-        }
+    public GameSession crearNuevaMazmorra() {
+        // delegar a startNew también crea sesión si no existe
+        GameSession session = iniciarPartida();
+        // Limpiar estado previo
+        smRepo.deleteBySession(session);
+        shRepo.deleteBySession(session);
+        // Sembrar monsters
+        List<Monster> all = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
+        Collections.shuffle(all);
+        all.stream().limit(3).forEach(m -> smRepo.add(session, m));
+        return session;
     }
 
+    @Override
+    public void reiniciarMazmorra() {
+        GameSession session = iniciarPartida();
+        smRepo.deleteBySession(session);
+        shRepo.deleteBySession(session);
+        List<Monster> all = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
+        Collections.shuffle(all);
+        all.stream().limit(3).forEach(m -> smRepo.add(session, m));
+    }
+
+    @Override
+    public GameSession getSession() {
+        return iniciarPartida();
+    }
 
     @Override
     public Usuario getUsuario() {
@@ -95,96 +97,51 @@ public class ServicioJuegoImpl implements ServicioJuego {
     }
 
     @Override
-    public String atacar(int orden) {
-        GameSession session = iniciarPartida();
-        Usuario usuario = session.getUsuario();
-
-        // 1) Atacar al monstruo objetivo
-        SessionMonster objetivo = getMonstruos().stream()
-                .filter(sm -> sm.getOrden() == orden)
-                .findFirst()
-                .orElse(null);
-        if (objetivo == null) {
-            return "Monstruo no encontrado.";
-        }
-        objetivo.setVidaActual(objetivo.getVidaActual() - usuario.getAtk());
-        smRepo.update(objetivo);
-
-        // 2) Monstruos vivos contraatacan y registramos sus nombres
-        List<SessionMonster> vivos = getMonstruos().stream()
-                .filter(sm -> sm.getVidaActual() > 0)
-                .collect(Collectors.toList());
-
-        List<String> atacantes = new ArrayList<>();
-        for (SessionMonster sm : vivos) {
-            atacantes.add(sm.getMonster().getNombre());
-            int dano = sm.getMonster().getAtk();
-            if (usuario.isDefensa()) {
-                dano /= 2;
-                usuario.setDefensa(false);
-            }
-            usuario.setVida(usuario.getVida() - dano);
-        }
-
-        UsuarioRepo.modificar(usuario);
-
-        // 3) Construimos el texto de quién atacó
-        String textoAtacantes;
-        if (atacantes.isEmpty()) {
-            textoAtacantes = "Nadie";
-        } else if (atacantes.size() == 1) {
-            textoAtacantes = atacantes.get(0) + " te contraataca";
-        } else {
-            // Unir con comas y "y" antes del último
-            String lista = String.join(", ", atacantes.subList(0, atacantes.size()-1))
-                    + " y " + atacantes.get(atacantes.size()-1);
-            textoAtacantes = lista + " te contraatacan";
-        }
-
-        // 4) Devolver mensaje final
-        return String.format(
-                "Has atacado. %s y ahora tu vida es %d.",
-                textoAtacantes,
-                usuario.getVida()
-        );
+    public List<SessionHero> getHeroesDeSesion() {
+        return shRepo.findBySession(iniciarPartida());
     }
 
     @Override
-    public String defender() {
+    public String atacar(int heroOrden, int monsterOrden) {
         GameSession session = iniciarPartida();
-        Usuario usuario = session.getUsuario();
-
-        usuario.setDefensa(true);
-        UsuarioRepo.modificar(usuario);
-
-        for (SessionMonster sm : getMonstruos()) {
-            if (sm.getVidaActual() > 0) {
-                int dano = sm.getMonster().getAtk() / 2;
-                usuario.setVida(usuario.getVida() - dano);
-            }
-        }
-        UsuarioRepo.modificar(usuario);
-        return "Defiendes este turno. Vida restante: " + usuario.getVida() + ".";
+        SessionHero sh = getHeroesDeSesion().stream()
+                .filter(h -> h.getOrden() == heroOrden).findFirst().orElse(null);
+        SessionMonster sm = getMonstruos().stream()
+                .filter(m -> m.getOrden() == monsterOrden).findFirst().orElse(null);
+        if (sh == null || sm == null) return "Entidad no encontrada";
+        sm.takeDamage(sh.damageOutput());
+        smRepo.update(sm);
+        getMonstruos().stream()
+                .filter(m -> m.getVidaActual() > 0)
+                .forEach(m -> { sh.takeDamage(m.getMonster().getAtk()); shRepo.update(sh); });
+        return "Turno procesado";
     }
 
     @Override
-    public String usarPocion() {
+    public String defender(int heroOrden) {
         GameSession session = iniciarPartida();
-        Usuario usuario = session.getUsuario();
-
-        usuario.setVida(usuario.getVida() + 30);
-        UsuarioRepo.modificar(usuario);
-        return "Usaste poción. Vida actual: " + usuario.getVida() + ".";
+        SessionHero sh = getHeroesDeSesion().stream()
+                .filter(h -> h.getOrden() == heroOrden).findFirst().orElse(null);
+        if (sh == null) return "Héroe no encontrado.";
+        sh.defend(); shRepo.update(sh);
+        return "Defensa activa.";
     }
 
     @Override
-    public GameSession getSession() {
-        return iniciarPartida();
+    public String usarPocion(int heroOrden) {
+        GameSession session = iniciarPartida();
+        SessionHero sh = getHeroesDeSesion().stream()
+                .filter(h -> h.getOrden() == heroOrden).findFirst().orElse(null);
+        if (sh == null) return "Héroe no encontrado.";
+        sh.heal(30); shRepo.update(sh);
+        return "Poción usada.";
     }
 
     @Override
     public void endSession(GameSession current) {
         if (current != null) {
+            smRepo.deleteBySession(current);
+            shRepo.deleteBySession(current);
             sessionRepo.delete(current);
         }
     }

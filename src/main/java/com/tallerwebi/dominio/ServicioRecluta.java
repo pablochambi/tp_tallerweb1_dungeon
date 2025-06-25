@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface ServicioRecluta {
 
-    List<Heroe> getListaDeHeroesEnCarruaje(Carruaje carruaje);
+    List<Heroe> getListaDeHeroesEnCarruaje(Long usuarioId);
 
-    List<Heroe> getHeroesDisponiblesEnCarruaje(Carruaje carruaje);
+    List<Heroe> getHeroesDisponiblesEnCarruaje(Long usuarioId);
 
     List<Heroe> getHeroesObtenidosPorElUsuario(Usuario usuario);
 
-    void quitarUnHeroeDelCarruaje(Long idHeroe, Carruaje carruaje);
+    void quitarUnHeroeDelCarruaje(Long usuarioId, Long heroeId);
 
     void agregarUnHeroeAlUsuario(Long idHeroe, Usuario usuario);
 
@@ -23,6 +23,8 @@ public interface ServicioRecluta {
     void setRelacionEntreCarruajeYHeroe(Long idCarruaje, Long idHeroe);
 
     Carruaje asignarOActualizarUnCarrujeAUnUsuario(Long idUsuario);
+
+    List<Heroe> getHeroesDisponiblesEnCarruaje(Carruaje carruaje);
 
     Usuario registrarUnUsuario(Usuario usuario);
 
@@ -33,5 +35,11 @@ public interface ServicioRecluta {
     Usuario getUsuarioPorId(Long idUsuario);
 
     Carruaje getCarruajeDelUsuarioId(Long idUsuario);
+
+    List<Heroe> getHeroesEnCarruaje(Long usuarioId);
+
+    void seleccionarHeroe(Long usuarioId, Long heroeId);
+
+    void quitarHeroe(Long usuarioId, Long heroeId);
 
 }

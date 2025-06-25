@@ -1,13 +1,13 @@
-INSERT INTO Usuario
-  (id, email, password, rol, activo, nombre, vida, atk, defensa, oro)
+INSERT INTO Usuario (id, email, password, rol, activo, nombre, oro)
 VALUES
-  (1, 'test@unlam.edu.ar', 'test', 'ADMIN', TRUE,
-   'Héroe', 1000, 10, FALSE, 1000),
-  (2, 'otro@ejemplo.com', '1234', 'ADMIN', TRUE,
-   'Aventurero', 800, 8, FALSE, 500);
+  (1, 'test@unlam.edu.ar', 'test', 'ADMIN', TRUE,  'Héroe',      1000),
+  (2, 'otro@ejemplo.com',   '1234','ADMIN', TRUE,  'Aventurero',  500);
 
-INSERT INTO Heroe(id,nombre,nivel,precio,urlImagen)VALUES (1,'Cruzado',1,300,'/imagenes/cruzado.webp');
-INSERT INTO Heroe(id,nombre,nivel,precio,urlImagen)VALUES (2,'Vestal',1,200,'/imagenes/Vestal.webp');
+INSERT INTO heroe
+  (id, nombre, nivel, precio, url_imagen, max_vida, atk, defensa_base)
+VALUES
+  (1, 'Cruzado', 1, 300, '/imagenes/cruzado.webp', 100, 20, 5),
+  (2, 'Vestal',   1, 200, '/imagenes/Vestal.webp',   75, 15, 8);
 
 
 INSERT INTO monster (id, nombre, vida, atk, imagen) VALUES
