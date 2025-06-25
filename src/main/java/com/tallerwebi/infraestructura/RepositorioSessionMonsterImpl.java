@@ -69,9 +69,8 @@ public class RepositorioSessionMonsterImpl
         sm.setSession(session);
         sm.setMonster(monster);
         sm.setVidaActual(monster.getVida());
-        // numero de expedicion por defecto 1:
-        // cambiar en un futuro
-        sm.setExpeditionNumber(1);
+
+        sm.setExpeditionNumber(dungeonNumber);
         sm.setDungeonNumber(dungeonNumber);
         sm.setOrden(count.intValue() + 1);
 
@@ -118,6 +117,31 @@ public class RepositorioSessionMonsterImpl
 
         for (SessionMonster sm : lista) {
             session().delete(sm);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<SessionMonster> findBySessionAndExpeditionNumber(GameSession session, int expeditionNumber) {
+        return session()
+                .createCriteria(SessionMonster.class)
+                .add(Restrictions.eq("session", session))
+                .add(Restrictions.eq("expeditionNumber", expeditionNumber))
+                .addOrder(Order.asc("orden"))
+                .list();
+    }
+
+    @Override
+    public void deleteBySessionAndExpeditionNumber(GameSession gameSession, int expeditionNumber) {
+        Session s = session();
+        Criteria crit = s.createCriteria(SessionMonster.class)
+                .add(Restrictions.eq("session", gameSession))
+                .add(Restrictions.eq("expeditionNumber", expeditionNumber));
+
+        @SuppressWarnings("unchecked")
+        List<SessionMonster> monstersToDelete = crit.list();
+        for (SessionMonster sm : monstersToDelete) {
+            s.delete(sm);
         }
     }
 

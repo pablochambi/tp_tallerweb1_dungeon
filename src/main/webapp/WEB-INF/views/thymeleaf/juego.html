@@ -6,6 +6,12 @@
     <title>Mazmorra</title>
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/mazmorra.css}"/>
+    <style>
+        /* Para remarcar el héroe seleccionado */
+        .hero-card.border-primary {
+          box-shadow: 0 0 0.5rem rgba(13,110,253,.5);
+        }
+    </style>
 </head>
 <body class="body_partida">
 
@@ -15,47 +21,53 @@
         <!-- Encabezado -->
         <div class="row mb-4">
             <div class="col-12 text-center text-white">
-                <h1>Mazmorra Nivel <span th:text="${session.nivel}">1</span></h1>
+                <h1>
+                    Mazmorra Nivel <span th:text="${session.nivel}">1</span>
+                </h1>
                 <p>Oro: <strong th:text="${usuario.oro}">1000</strong></p>
             </div>
         </div>
 
-        <!-- Mensajes de acción -->
-        <div class="row">
+        <!-- Mensajes -->
+        <div class="row mb-3">
             <div class="col-12">
                 <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
                 <div th:if="${error}"   class="alert alert-danger"  th:text="${error}"></div>
             </div>
         </div>
 
-        <!-- Contenido principal: héroes a la izquierda, monstruos a la derecha -->
+        <!-- Cartas: héroes a la izquierda, monstruos a la derecha -->
         <div class="row gx-3 gy-3">
 
             <!-- Héroes (izquierda) -->
             <div class="col-6">
                 <div class="row gy-3">
-                    <div class="col-10 offset-1" th:each="sh : ${heroesDeSesion}">
+                    <div class="col-10 offset-1 hero-card"
+                         th:each="sh : ${heroesDeSesion}"
+                         th:attr="data-orden=${sh.orden}">
                         <div class="card bg-dark text-white h-100 text-center">
                             <div class="card-body d-flex flex-column justify-content-center">
                                 <img th:src="@{${sh.hero.urlImagen}}"
-                                     style="width:60px; height:60px;"
-                                     class="mb-2 mx-auto" alt="Avatar"/>
+                                     style="width:60px;height:60px;"
+                                     class="mb-2 mx-auto"
+                                     alt="Avatar"/>
                                 <h5 th:text="${sh.hero.nombre}">Héroe</h5>
-                                <p>HP: <span th:text="${sh.vidaActual}">0</span> /
+                                <p>
+                                    HP: <span th:text="${sh.vidaActual}">0</span>
+                                    /
                                     <span th:text="${sh.hero.maxVida}">100</span>
                                 </p>
-                                <form th:action="@{/juego/defender}"
-                                      method="post"
-                                      class="d-inline me-1 mt-auto">
-                                    <input type="hidden" name="heroOrden" th:value="${sh.orden}"/>
-                                    <button class="btn btn-sm btn-secondary">Defender</button>
-                                </form>
-                                <form th:action="@{/juego/usarPocion}"
-                                      method="post"
-                                      class="d-inline mt-2">
-                                    <input type="hidden" name="heroOrden" th:value="${sh.orden}"/>
-                                    <button class="btn btn-sm btn-primary">Poción</button>
-                                </form>
+                                <!-- Acciones propias -->
+                                <div class="mt-auto">
+                                    <form th:action="@{/juego/defender}" method="post" class="d-inline me-1">
+                                        <input type="hidden" name="heroOrden" th:value="${sh.orden}"/>
+                                        <button class="btn btn-sm btn-secondary">Defender</button>
+                                    </form>
+                                    <form th:action="@{/juego/usarPocion}" method="post" class="d-inline">
+                                        <input type="hidden" name="heroOrden" th:value="${sh.orden}"/>
+                                        <button class="btn btn-sm btn-primary">Poción</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -77,10 +89,10 @@
                                 <form th:if="${sm.vidaActual > 0}"
                                       th:action="@{/juego/atacar}"
                                       method="post"
-                                      class="mt-auto">
+                                      class="atacar-form mt-auto">
                                     <input type="hidden" name="monsterOrden" th:value="${sm.orden}"/>
-                                    <!-- aquí podrías cambiar heroOrden según el héroe activo -->
-                                    <input type="hidden" name="heroOrden" value="1"/>
+                                    <!-- hidden que rellenaremos por JS -->
+                                    <input type="hidden" name="heroOrden" class="hero-orden-input" value=""/>
                                     <button class="btn btn-sm btn-light">Atacar</button>
                                 </form>
                             </div>
@@ -91,7 +103,7 @@
 
         </div>
 
-        <!-- Botón “Siguiente mazmorra” al eliminar todos los monstruos vivos -->
+        <!-- Siguiente mazmorra -->
         <div class="row mt-5 text-center"
              th:if="${#lists.size(monstruos.?[vidaActual > 0]) == 0}">
             <div class="col-12">
@@ -105,5 +117,39 @@
 </main>
 
 <script th:src="@{/webjars/bootstrap/5.2.0/js/bootstrap.bundle.min.js}"></script>
+<script>
+    // 1) Guardamos el héroe seleccionado
+    let selectedHeroOrden = null;
+
+    // 2) Cuando clickeo en la card de un héroe…
+    document.querySelectorAll('.hero-card').forEach(card => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        // 2a) Limpiamos todas
+        document.querySelectorAll('.hero-card')
+                .forEach(c => c.classList.remove('border-primary'));
+        // 2b) Marcamos ésta
+        card.classList.add('border', 'border-primary');
+
+        // 2c) Guardamos su orden
+        selectedHeroOrden = card.getAttribute('data-orden');
+
+        // 2d) Rellenamos TODOS los hidden de cada formulario de ataque
+        document.querySelectorAll('.hero-orden-input')
+          .forEach(input => input.value = selectedHeroOrden);
+      });
+    });
+
+    // 3) Prevenir envío sin héroe seleccionado
+    document.querySelectorAll('.atacar-form').forEach(form => {
+      form.addEventListener('submit', e => {
+        if (!selectedHeroOrden) {
+          e.preventDefault();
+          alert('Por favor seleccioná un héroe antes de atacar.');
+        }
+      });
+    });
+</script>
 </body>
 </html>
+

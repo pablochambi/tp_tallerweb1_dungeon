@@ -4,6 +4,7 @@ import com.tallerwebi.dominio.entidades.SessionMonster;
 import com.tallerwebi.dominio.entidades.GameSession;
 import com.tallerwebi.dominio.entidades.Monster;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface RepositorioSessionMonster {
@@ -14,4 +15,9 @@ public interface RepositorioSessionMonster {
     void deleteBySession(GameSession session);
 
     void deleteBySessionAndDungeonNumber(GameSession session, int dungeonNumber);
+
+    List<SessionMonster> findBySessionAndExpeditionNumber(GameSession session, int expeditionNumber);
+
+
+    void deleteBySessionAndExpeditionNumber(GameSession session, int i);
 }
