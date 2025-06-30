@@ -22,9 +22,12 @@
         <div class="row mb-4">
             <div class="col-12 text-center text-white">
                 <h1>
-                    Mazmorra Nivel <span th:text="${session.nivel}">1</span>
+                    Expedición <span th:text="${expNumber}">1</span> &mdash;
+                    Mazmorra <span th:text="${dungeonLevel}">1</span>
                 </h1>
-                <p>Oro: <strong th:text="${usuario.oro}">1000</strong></p>
+                <p>
+                    Oro: <strong th:text="${usuario.oro}">0</strong>
+                </p>
             </div>
         </div>
 
@@ -103,16 +106,21 @@
 
         </div>
 
-        <!-- Siguiente mazmorra -->
+        <!-- Si aún no has hecho las 3 mazmorras -->
         <div class="row mt-5 text-center"
-             th:if="${#lists.size(monstruos.?[vidaActual > 0]) == 0}">
-            <div class="col-12">
-                <form th:action="@{/juego/siguiente}" method="post">
-                    <button class="btn btn-success btn-lg">Siguiente mazmorra</button>
-                </form>
-            </div>
+             th:if="${expNumber < 3 and #lists.size(monstruos.?[vidaActual > 0]) == 0}">
+            <form th:action="@{/juego/siguiente}" method="post">
+                <button class="btn btn-success btn-lg">Siguiente mazmorra</button>
+            </form>
         </div>
 
+        <!-- Si estás en la mazmorra 3 y ya mataste a todos -->
+        <div class="row mt-5 text-center"
+             th:if="${expNumber == 3 and #lists.size(monstruos.?[vidaActual > 0]) == 0}">
+            <form th:action="@{/juego/terminarExpedicion}" method="post">
+                <button class="btn btn-warning btn-lg">Terminar expedición</button>
+            </form>
+        </div>
     </div>
 </main>
 

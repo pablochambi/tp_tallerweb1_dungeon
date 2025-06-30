@@ -2,6 +2,7 @@ package com.tallerwebi.dominio.interfaces;
 
 import com.tallerwebi.dominio.entidades.GameSession;
 import com.tallerwebi.dominio.entidades.Usuario;
+import org.hibernate.SessionFactory;
 
 public interface RepositorioSession {
 
@@ -13,4 +14,6 @@ public interface RepositorioSession {
 
     void save(GameSession s);
     void delete(GameSession s);
+
+    SessionFactory getSessionFactory();
 }

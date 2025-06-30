@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -140,7 +141,8 @@ public class ServicioJuegoImpl implements ServicioJuego {
     @Override
     public String atacar(Usuario u, int heroOrden, int monsterOrden) {
         GameSession session = iniciarPartida(u);
-        // héroe ataca
+
+        // 1) localiza héroe y monstruo
         SessionHero sh = getHeroesDeSesion(u).stream()
                 .filter(h -> h.getOrden() == heroOrden)
                 .findFirst().orElse(null);
@@ -151,27 +153,31 @@ public class ServicioJuegoImpl implements ServicioJuego {
         if (sh == null) return "Héroe no encontrado.";
         if (sm == null) return "Monstruo no encontrado.";
 
+        // 2) héroe golpea
         sm.takeDamage(sh.damageOutput());
         smRepo.update(sm);
 
-        // monstruos vivos contraatacan
+        // 3) monstruos vivos contraatacan
         List<SessionMonster> vivos = getMonstruos(u).stream()
                 .filter(m -> m.getVidaActual() > 0)
-                .toList();
+                .collect(Collectors.toList());
         for (SessionMonster m : vivos) {
             sh.takeDamage(m.getMonster().getAtk());
             shRepo.update(sh);
         }
 
+        // 4) arma el mensaje final
         String atacantes = vivos.isEmpty()
                 ? "Nadie"
                 : vivos.stream()
                 .map(x -> x.getMonster().getNombre())
-                .reduce((a, b) -> a + ", " + b).orElse("");
+                .collect(Collectors.joining(", "));
         return String.format(
                 "Has atacado. Contraatacan: %s. Tu héroe %s ahora tiene %d/%d HP.",
-                atacantes, sh.getHero().getNombre(),
-                sh.getVidaActual(), sh.getHero().getMaxVida()
+                atacantes,
+                sh.getHero().getNombre(),
+                sh.getVidaActual(),
+                sh.getHero().getMaxVida()
         );
     }
 
@@ -205,6 +211,14 @@ public class ServicioJuegoImpl implements ServicioJuego {
     }
 
     @Override
+    public Expedition getExpedicionActiva(Usuario u) {
+        GameSession s = iniciarPartida(u);
+        return expeditionRepo
+                .findBySessionAndCompletedFalse(s)
+                .orElseThrow(() -> new IllegalStateException("No hay expedición activa"));
+    }
+
+    @Override
     public void endSession(GameSession session) {
         if (session != null) {
             smRepo.deleteBySession(session);
@@ -213,9 +227,39 @@ public class ServicioJuegoImpl implements ServicioJuego {
         }
     }
 
-    // ========================================================================
-    // Métodos auxiliares de seed
-    // ========================================================================
+    @Override
+    public void terminarExpedicion(Usuario u) {
+        GameSession session = iniciarPartida(u);
+
+        // 1) completa la expedición activa
+        Expedition exp = expeditionRepo
+                .findBySessionAndCompletedFalse(session)
+                .orElseThrow(() -> new IllegalStateException("No hay expedición activa"));
+        int oldNumber = exp.getNumber();
+        exp.setCompleted(true);
+        expeditionRepo.save(exp);
+
+        // 2) recompensa de 250 de oro
+        u.setOro(u.getOro() + 250);
+        usuarioRepo.modificar(u);
+
+        // 3) limpia monstruos y héroes de sesión
+        smRepo.deleteBySession(session);
+        shRepo.deleteBySession(session);
+
+        // 4) crea la siguiente expedición N+1
+        Expedition next = crearExpedicion(session, oldNumber + 1);
+
+        // 5) siembra héroes (los que el usuario tiene en su carruaje)
+        seedHeroes(session);
+
+        // 6) siembra los monstruos buffeados de la nueva expedición
+        seedMonstersBuffed(session, next.getNumber());
+    }
+
+
+    // Metodos auxiliares
+
     private Expedition crearExpedicion(GameSession session, int numero) {
         Expedition e = new Expedition();
         e.setSession(session);
@@ -229,13 +273,34 @@ public class ServicioJuegoImpl implements ServicioJuego {
         seedHeroes(session);
     }
 
-    private void seedMonsters(GameSession session, int dungeonNumber) {
+    private void seedMonsters(GameSession session, int expeditionNumber) {
+        // 1) calculamos el factor de buff: 1.0 + 0.1 por cada expedición completada anterior
+        double factor = 1.0 + (expeditionNumber - 1) * 0.10;
+
+        // 2) traemos y barajamos todos los monstruos
         List<Monster> todos = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
         Collections.shuffle(todos);
-        todos.stream()
-                .limit(3)
-                .forEach(m -> smRepo.add(session, m, dungeonNumber));
+
+        // 3) limitamos a 3 y los insertamos
+        int orden = 1;
+        for (Monster m : todos.subList(0, 3)) {
+            SessionMonster sm = new SessionMonster();
+            sm.setSession(session);
+            sm.setMonster(m);
+            sm.setExpeditionNumber(expeditionNumber);
+            sm.setDungeonNumber(1);
+            sm.setOrden(orden++);
+
+            // 4) Vida buffeada
+            int vidaBuffeada = (int) Math.round(m.getVida() * factor);
+            sm.setVidaActual(vidaBuffeada);
+
+            sessionRepo.getSessionFactory()
+                    .getCurrentSession()
+                    .save(sm);
+        }
     }
+
 
     private void seedHeroes(GameSession session) {
         List<Heroe> heroes = servicioRecluta.getHeroesEnCarruaje(session.getUsuario().getId());
@@ -245,9 +310,36 @@ public class ServicioJuegoImpl implements ServicioJuego {
         }
     }
 
-    // ========================================================================
-    // Sobrecargas sin parámetros (para compilar; no las usas desde tu controlador)
-    // ========================================================================
+    private void seedMonstersBuffed(GameSession session, int expeditionNumber) {
+        // factor de buff: +10% por cada expedición pasada
+        double factor = 1.0 + (expeditionNumber - 1) * 0.10;
+
+        // baraja y toma 3
+        List<Monster> todos = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
+        Collections.shuffle(todos);
+
+        int orden = 1;
+        for (Monster base : todos.subList(0, 3)) {
+            // clonar plantilla para no alterar el original
+            Monster buffed = new Monster();
+            buffed.setId     (base.getId());
+            buffed.setNombre (base.getNombre());
+            buffed.setImagen (base.getImagen());
+            // aplicar buff
+            buffed.setVida((int) Math.round(base.getVida() * factor));
+            buffed.setAtk ((int) Math.round(base.getAtk()  * factor));
+            // guarda en la sesión, el repo calculará el orden interno si usas la firma
+            // void add(GameSession, Monster, int dungeonNumber)
+            smRepo.add(session, buffed, expeditionNumber);
+            orden++;
+        }
+    }
+
+    @Override
+    public boolean tieneSesionActiva(Usuario u) {
+        return sessionRepo.findActive(u) != null;
+    }
+
     @Override
     public GameSession getSession() {
         throw new UnsupportedOperationException("Use getSession(Usuario) en su lugar");

@@ -1,9 +1,6 @@
 package com.tallerwebi.dominio;
 
-import com.tallerwebi.dominio.entidades.GameSession;
-import com.tallerwebi.dominio.entidades.SessionHero;
-import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.entidades.SessionMonster;
+import com.tallerwebi.dominio.entidades.*;
 
 import java.util.List;
 
@@ -26,4 +23,11 @@ public interface ServicioJuego {
     String usarPocion(Usuario u, int heroOrden);
     void siguienteMazmorra(Usuario u);
     void endSession(GameSession current);
+
+
+    Expedition getExpedicionActiva(Usuario usuario);
+
+    void terminarExpedicion(Usuario u);
+
+    boolean tieneSesionActiva(Usuario usuario);
 }

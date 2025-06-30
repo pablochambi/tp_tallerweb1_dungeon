@@ -19,13 +19,6 @@ public class Usuario {
     @Column(nullable = false)
     private Integer oro = 1000;
 
-    // nombre,vida,atk,defensa deberian ser de entidad "Heroes"
-    // por ahora queda asi para probar funcionalidad
-    //private String nombre;
-    //private int vida;
-    //private int atk;
-    //private boolean defensa;
-
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Item> itemsComprados = new ArrayList<>();
 
@@ -99,7 +92,7 @@ public class Usuario {
     }
 
     public String getNombre() {
-        return nombre;
+        return this.nombre;
     }
 
     public void setNombre(String nombre) {

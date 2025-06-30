@@ -4,6 +4,7 @@ import com.tallerwebi.dominio.entidades.GameSession;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.interfaces.RepositorioSession;
 import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -16,13 +17,15 @@ public class RepositorioSessionImpl implements RepositorioSession {
 
     private final JdbcTemplate jdbc;
     private final RepositorioUsuario usuarioRepo;
+    private final SessionFactory sessionFactory;
 
     @Autowired
     public RepositorioSessionImpl(
             JdbcTemplate jdbc,
-            RepositorioUsuario usuarioRepo) {
+            RepositorioUsuario usuarioRepo, SessionFactory sessionFactory) {
         this.jdbc = jdbc;
         this.usuarioRepo = usuarioRepo;
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
@@ -112,5 +115,10 @@ public class RepositorioSessionImpl implements RepositorioSession {
         jdbc.update("DELETE FROM session_monster WHERE session_id = ?", s.getId());
         jdbc.update("DELETE FROM session_hero    WHERE session_id = ?", s.getId());
         jdbc.update("DELETE FROM game_session    WHERE id = ?", s.getId());
+    }
+
+    @Override
+    public SessionFactory getSessionFactory() {
+        return this.sessionFactory;
     }
 }

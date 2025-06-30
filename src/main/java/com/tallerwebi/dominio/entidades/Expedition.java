@@ -8,12 +8,15 @@ public class Expedition {
     @Id
     @GeneratedValue
     private Long id;
+
     @ManyToOne(optional=false)
-    @JoinColumn(name = "session_id",  // la columna en expedition
-            referencedColumnName = "id") // la PK en game_session
+    @JoinColumn(name="session_id", nullable=false,
+            foreignKey=@ForeignKey(name="fk_expedition_session"))
     private GameSession session;
+
     @Column(nullable=false)
     private int number;           // 1, 2 o 3
+
     @Column(nullable=false)
     private boolean completed;
 
