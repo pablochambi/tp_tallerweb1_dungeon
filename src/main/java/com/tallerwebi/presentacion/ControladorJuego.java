@@ -27,9 +27,7 @@ public class ControladorJuego {
     @GetMapping("/juego")
     public String mostrarJuego(HttpSession httpSession, Model model) {
         Usuario usuario = (Usuario) httpSession.getAttribute("usuario");
-        if (usuario == null) {
-            return "redirect:/login";
-        }
+        if (usuario == null) return "redirect:/login";
 
         GameSession session = servicioJuego.iniciarPartida(usuario);
 
@@ -37,15 +35,11 @@ public class ControladorJuego {
                 .findBySessionAndCompletedFalse(session)
                 .orElseThrow(() -> new IllegalStateException("No hay expedición activa"));
 
-        List<SessionMonster> monstruos    = servicioJuego.getMonstruos(usuario);
-        List<SessionHero>    heroesDeSes  = servicioJuego.getHeroesDeSesion(usuario);
-
-        model.addAttribute("usuario",        usuario);
-        model.addAttribute("session",        session);
-        model.addAttribute("expNumber",      exp.getNumber());
-        model.addAttribute("dungeonLevel", exp.getNumber());
-        model.addAttribute("monstruos",      monstruos);
-        model.addAttribute("heroesDeSesion", heroesDeSes);
+        model.addAttribute("expNumber",    exp.getNumber());
+        model.addAttribute("dungeonLevel", session.getNivel());
+        model.addAttribute("usuario",      usuario);
+        model.addAttribute("monstruos",    servicioJuego.getMonstruos(usuario));
+        model.addAttribute("heroesDeSesion", servicioJuego.getHeroesDeSesion(usuario));
 
         return "juego";
     }
@@ -99,13 +93,14 @@ public class ControladorJuego {
     }
 
     @PostMapping("/juego/terminarExpedicion")
-    public String terminarExpedicion(HttpSession httpSession) {
+    public String terminarExpedicion(HttpSession httpSession, RedirectAttributes ra) {
         Usuario u = (Usuario) httpSession.getAttribute("usuario");
         if (u == null) return "redirect:/login";
 
         servicioJuego.terminarExpedicion(u);
-        return "redirect:/home";  // o donde tengas tu “lobby”
+        ra.addFlashAttribute("mensaje", "¡Expedición completada! Has recibido 250 de oro.");
+        ra.addFlashAttribute("oro", u.getOro());
+
+        return "redirect:/home";
     }
-
-
 }

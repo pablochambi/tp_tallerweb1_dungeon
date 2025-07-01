@@ -17,7 +17,8 @@ public interface RepositorioSessionMonster {
     void deleteBySessionAndDungeonNumber(GameSession session, int dungeonNumber);
 
     List<SessionMonster> findBySessionAndExpeditionNumber(GameSession session, int expeditionNumber);
-
+    List<SessionMonster> findBySessionAndDungeonNumber(GameSession session, int dungeonNumber);
 
     void deleteBySessionAndExpeditionNumber(GameSession session, int i);
+
 }

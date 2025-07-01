@@ -44,32 +44,27 @@ public class ServicioJuegoImpl implements ServicioJuego {
     public GameSession iniciarPartida(Usuario u) {
         if (u == null) throw new IllegalArgumentException("Usuario nulo");
 
-        // obtengo o creo sesion
         GameSession session = sessionRepo.findActive(u);
-        boolean isNew = false;
         if (session == null) {
             session = sessionRepo.startNew(u);
-            isNew = true;
+            session.setNivel(1);
+            sessionRepo.update(session);
         }
 
-        // obtengo o creo la expedicion activa (mazmorra 1 2 o 3)
         GameSession finalSession = session;
+        GameSession finalSession1 = session;
         Expedition exp = expeditionRepo
                 .findBySessionAndCompletedFalse(session)
-                .orElseGet(() -> crearExpedicion(finalSession, 1));
+                .orElseGet(() -> crearExpedicion(finalSession, finalSession1.getNivel()));
 
-
-        if (isNew) {
-            seedExpedition(session, exp.getNumber());
+        // Sembrar héroes si no existen (mantienen su vida entre sesiones/mazmorras)
+        if (shRepo.findBySession(session).isEmpty()) {
+            seedHeroes(session);
         }
 
-        else {
-            boolean tieneMonstruos = !smRepo
-                    .findBySessionAndExpeditionNumber(session, exp.getNumber())
-                    .isEmpty();
-            if (!tieneMonstruos) {
-                seedMonsters(session, exp.getNumber());
-            }
+        // Sembrar monstruos si no existen para esta mazmorra
+        if (smRepo.findBySessionAndDungeonNumber(session, session.getNivel()).isEmpty()) {
+            seedMonsters(session, session.getNivel(), exp.getNumber());
         }
 
         return session;
@@ -77,27 +72,33 @@ public class ServicioJuegoImpl implements ServicioJuego {
 
     @Override
     public void siguienteMazmorra(Usuario u) {
-        GameSession session = iniciarPartida(u);
+        GameSession session = sessionRepo.findActive(u);
+        if (session == null) {
+            session = sessionRepo.startNew(u);
+            session.setNivel(1);
+            sessionRepo.update(session);
+        }
 
-        Expedition exp = expeditionRepo
-                .findBySessionAndCompletedFalse(session)
-                .orElseThrow(() ->
-                        new IllegalStateException("No hay expedición activa para avanzar"));
+        int nivelAnterior = session.getNivel();
+        if (nivelAnterior < 3) {
+            int nuevoNivel = nivelAnterior + 1;
+            session.setNivel(nuevoNivel);
+            sessionRepo.update(session);
 
-        int next = exp.getNumber() + 1;
-        if (next > 3) {
-            // completa y limpia
-            exp.setCompleted(true);
-            expeditionRepo.save(exp);
-            endSession(session);
+            // Borrar monstruos de la mazmorra anterior y la nueva (por seguridad)
+            smRepo.deleteBySessionAndDungeonNumber(session, nivelAnterior);
+            smRepo.deleteBySessionAndDungeonNumber(session, nuevoNivel);
+
+            // Obtener número de expedición actual
+            Expedition exp = expeditionRepo
+                    .findBySessionAndCompletedFalse(session)
+                    .orElseThrow(() -> new IllegalStateException("No hay expedición activa"));
+
+            // Poblar con monstruos normales o buffeados según expedición
+            seedMonsters(session, nuevoNivel, exp.getNumber());
+
         } else {
-            // avanza mazmorra
-            exp.setNumber(next);
-            expeditionRepo.save(exp);
-
-            // borra monstruos de la mazmorra anterior y siembra la nueva
-            smRepo.deleteBySessionAndExpeditionNumber(session, next - 1);
-            seedMonsters(session, next);
+            throw new IllegalStateException("Usá terminarExpedicion() en mazmorra 3");
         }
     }
 
@@ -105,12 +106,13 @@ public class ServicioJuegoImpl implements ServicioJuego {
     public GameSession crearNuevaMazmorra(Usuario u) {
         GameSession session = iniciarPartida(u);
 
-        // limpia heroes y monster
+        // Limpia héroes y monstruos
         smRepo.deleteBySession(session);
         shRepo.deleteBySession(session);
 
-        // siembra solo monstruos de la mazmorra 1
-        seedMonsters(session, 1);
+        // Nueva expedición (forzada) a mazmorra 1, poblar héroes y monstruos
+        seedHeroes(session);
+        seedMonsters(session, 1, 1);
 
         return session;
     }
@@ -120,16 +122,15 @@ public class ServicioJuegoImpl implements ServicioJuego {
         GameSession session = iniciarPartida(u);
         smRepo.deleteBySession(session);
         shRepo.deleteBySession(session);
-        seedMonsters(session, 1);
+        seedHeroes(session);
+        seedMonsters(session, 1, 1);
     }
 
     @Override
     public List<SessionMonster> getMonstruos(Usuario u) {
         GameSession session = iniciarPartida(u);
-        Expedition exp = expeditionRepo
-                .findBySessionAndCompletedFalse(session)
-                .orElseThrow(() -> new IllegalStateException("No hay expedición activa"));
-        return smRepo.findBySessionAndExpeditionNumber(session, exp.getNumber());
+        // Devuelve solo los monstruos de la mazmorra actual
+        return smRepo.findBySessionAndDungeonNumber(session, session.getNivel());
     }
 
     @Override
@@ -142,7 +143,7 @@ public class ServicioJuegoImpl implements ServicioJuego {
     public String atacar(Usuario u, int heroOrden, int monsterOrden) {
         GameSession session = iniciarPartida(u);
 
-        // 1) localiza héroe y monstruo
+        // 1) Localiza héroe y monstruo
         SessionHero sh = getHeroesDeSesion(u).stream()
                 .filter(h -> h.getOrden() == heroOrden)
                 .findFirst().orElse(null);
@@ -153,11 +154,11 @@ public class ServicioJuegoImpl implements ServicioJuego {
         if (sh == null) return "Héroe no encontrado.";
         if (sm == null) return "Monstruo no encontrado.";
 
-        // 2) héroe golpea
+        // 2) Héroe golpea
         sm.takeDamage(sh.damageOutput());
         smRepo.update(sm);
 
-        // 3) monstruos vivos contraatacan
+        // 3) Monstruos vivos contraatacan
         List<SessionMonster> vivos = getMonstruos(u).stream()
                 .filter(m -> m.getVidaActual() > 0)
                 .collect(Collectors.toList());
@@ -166,7 +167,7 @@ public class ServicioJuegoImpl implements ServicioJuego {
             shRepo.update(sh);
         }
 
-        // 4) arma el mensaje final
+        // 4) Arma el mensaje final
         String atacantes = vivos.isEmpty()
                 ? "Nadie"
                 : vivos.stream()
@@ -229,36 +230,36 @@ public class ServicioJuegoImpl implements ServicioJuego {
 
     @Override
     public void terminarExpedicion(Usuario u) {
-        GameSession session = iniciarPartida(u);
+        GameSession session = sessionRepo.findActive(u);
+        if (session == null) throw new IllegalStateException("No hay sesión activa");
 
-        // 1) completa la expedición activa
         Expedition exp = expeditionRepo
                 .findBySessionAndCompletedFalse(session)
                 .orElseThrow(() -> new IllegalStateException("No hay expedición activa"));
+
         int oldNumber = exp.getNumber();
         exp.setCompleted(true);
         expeditionRepo.save(exp);
 
-        // 2) recompensa de 250 de oro
+        // Recompensa
         u.setOro(u.getOro() + 250);
         usuarioRepo.modificar(u);
 
-        // 3) limpia monstruos y héroes de sesión
-        smRepo.deleteBySession(session);
-        shRepo.deleteBySession(session);
-
-        // 4) crea la siguiente expedición N+1
+        // Nueva expedición N+1
         Expedition next = crearExpedicion(session, oldNumber + 1);
 
-        // 5) siembra héroes (los que el usuario tiene en su carruaje)
-        seedHeroes(session);
+        // Reset mazmorra a 1 y poblar con monstruos buffeados si corresponde
+        session.setNivel(1);
+        sessionRepo.update(session);
 
-        // 6) siembra los monstruos buffeados de la nueva expedición
-        seedMonstersBuffed(session, next.getNumber());
+        // Limpia cualquier monstruo previo del nivel 1
+        smRepo.deleteBySessionAndDungeonNumber(session, 1);
+
+        // Poblar monstruos de nivel 1, usando buff si corresponde
+        seedMonsters(session, 1, next.getNumber());
     }
 
-
-    // Metodos auxiliares
+    // ----------- Métodos auxiliares -----------
 
     private Expedition crearExpedicion(GameSession session, int numero) {
         Expedition e = new Expedition();
@@ -268,39 +269,16 @@ public class ServicioJuegoImpl implements ServicioJuego {
         return expeditionRepo.save(e);
     }
 
-    private void seedExpedition(GameSession session, int dungeonNumber) {
-        seedMonsters(session, dungeonNumber);
-        seedHeroes(session);
-    }
-
-    private void seedMonsters(GameSession session, int expeditionNumber) {
-        // 1) calculamos el factor de buff: 1.0 + 0.1 por cada expedición completada anterior
-        double factor = 1.0 + (expeditionNumber - 1) * 0.10;
-
-        // 2) traemos y barajamos todos los monstruos
-        List<Monster> todos = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
-        Collections.shuffle(todos);
-
-        // 3) limitamos a 3 y los insertamos
-        int orden = 1;
-        for (Monster m : todos.subList(0, 3)) {
-            SessionMonster sm = new SessionMonster();
-            sm.setSession(session);
-            sm.setMonster(m);
-            sm.setExpeditionNumber(expeditionNumber);
-            sm.setDungeonNumber(1);
-            sm.setOrden(orden++);
-
-            // 4) Vida buffeada
-            int vidaBuffeada = (int) Math.round(m.getVida() * factor);
-            sm.setVidaActual(vidaBuffeada);
-
-            sessionRepo.getSessionFactory()
-                    .getCurrentSession()
-                    .save(sm);
+    private void seedMonsters(GameSession session, int dungeonNumber, int expedicionNumber) {
+        if (expedicionNumber > 1) {
+            seedMonstersBuffed(session, expedicionNumber, dungeonNumber);
+        } else {
+            List<Monster> all = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
+            Collections.shuffle(all);
+            all.stream().limit(3)
+                    .forEach(m -> smRepo.add(session, m, dungeonNumber));
         }
     }
-
 
     private void seedHeroes(GameSession session) {
         List<Heroe> heroes = servicioRecluta.getHeroesEnCarruaje(session.getUsuario().getId());
@@ -310,27 +288,22 @@ public class ServicioJuegoImpl implements ServicioJuego {
         }
     }
 
-    private void seedMonstersBuffed(GameSession session, int expeditionNumber) {
+    private void seedMonstersBuffed(GameSession session, int expeditionNumber, int dungeonNumber) {
         // factor de buff: +10% por cada expedición pasada
         double factor = 1.0 + (expeditionNumber - 1) * 0.10;
 
-        // baraja y toma 3
         List<Monster> todos = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
         Collections.shuffle(todos);
 
         int orden = 1;
         for (Monster base : todos.subList(0, 3)) {
-            // clonar plantilla para no alterar el original
             Monster buffed = new Monster();
             buffed.setId     (base.getId());
             buffed.setNombre (base.getNombre());
             buffed.setImagen (base.getImagen());
-            // aplicar buff
-            buffed.setVida((int) Math.round(base.getVida() * factor));
-            buffed.setAtk ((int) Math.round(base.getAtk()  * factor));
-            // guarda en la sesión, el repo calculará el orden interno si usas la firma
-            // void add(GameSession, Monster, int dungeonNumber)
-            smRepo.add(session, buffed, expeditionNumber);
+            buffed.setVida   ((int) Math.round(base.getVida() * factor));
+            buffed.setAtk    ((int) Math.round(base.getAtk()  * factor));
+            smRepo.add(session, buffed, dungeonNumber);
             orden++;
         }
     }

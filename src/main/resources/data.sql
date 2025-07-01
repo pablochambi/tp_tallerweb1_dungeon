@@ -6,9 +6,9 @@ VALUES
 INSERT INTO heroe
   (id, nombre, nivel, precio, url_imagen, max_vida, atk, defensa_base)
 VALUES
-  (1, 'Cruzado', 1, 300, '/imagenes/cruzado.webp', 100, 20, 5),
-  (2, 'Vestal',   1, 200, '/imagenes/Vestal.webp',   75, 15, 8);
-
+  (1, 'Cruzado', 1, 300, '/imagenes/cruzado.webp', 1000, 35, 5),
+  (2, 'Vestal',   1, 200, '/imagenes/Vestal.webp',   750, 25, 8),
+  (3, 'Cazador', 1, 200 ,'/imagenes/Brigand_Hunter.webp', 800, 30, 10);
 
 INSERT INTO monster (id, nombre, vida, atk, imagen) VALUES
   (5, 'Orco',       60, 10, '&#x1F9DD;&#x200D;&#x2642;&#xFE0F;'),

@@ -111,6 +111,20 @@ public class RepositorioSessionImpl implements RepositorioSession {
     }
 
     @Override
+    public void update(GameSession s) {
+        jdbc.update(
+                "UPDATE game_session " +
+                        "   SET turno = ?, nivel = ?, active = ?, finished = ?, ended_at = CURRENT_TIMESTAMP " +
+                        " WHERE id = ?",
+                s.getTurno(),
+                s.getNivel(),
+                s.isActive()   ? 1 : 0,
+                s.isFinished() ? 1 : 0,
+                s.getId()
+        );
+    }
+
+    @Override
     public void delete(GameSession s) {
         jdbc.update("DELETE FROM session_monster WHERE session_id = ?", s.getId());
         jdbc.update("DELETE FROM session_hero    WHERE session_id = ?", s.getId());

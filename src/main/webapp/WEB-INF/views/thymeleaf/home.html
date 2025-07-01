@@ -18,6 +18,10 @@
 
 <main>
     <h1>Dungeon Seekers</h1>
+    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+    <div th:if="${oro}" class="alert alert-info">
+        Tu oro actual: <span th:text="${oro}">0</span>
+    </div>
 
     <div class="menu">
 

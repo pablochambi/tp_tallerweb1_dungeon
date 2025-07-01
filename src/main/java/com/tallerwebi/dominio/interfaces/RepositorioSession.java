@@ -16,4 +16,6 @@ public interface RepositorioSession {
     void delete(GameSession s);
 
     SessionFactory getSessionFactory();
+
+    void update(GameSession session);
 }

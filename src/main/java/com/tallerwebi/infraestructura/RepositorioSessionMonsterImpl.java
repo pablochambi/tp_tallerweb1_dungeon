@@ -3,9 +3,7 @@ package com.tallerwebi.infraestructura;
 import com.tallerwebi.dominio.entidades.GameSession;
 import com.tallerwebi.dominio.entidades.Monster;
 import com.tallerwebi.dominio.entidades.SessionMonster;
-import com.tallerwebi.dominio.interfaces.RepositorioMonster;
 import com.tallerwebi.dominio.interfaces.RepositorioSessionMonster;
-import com.tallerwebi.dominio.interfaces.RepositorioSessionMonsterJPA;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,7 +11,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -127,6 +124,16 @@ public class RepositorioSessionMonsterImpl
                 .createCriteria(SessionMonster.class)
                 .add(Restrictions.eq("session", session))
                 .add(Restrictions.eq("expeditionNumber", expeditionNumber))
+                .addOrder(Order.asc("orden"))
+                .list();
+    }
+
+    @Override
+    public List findBySessionAndDungeonNumber(GameSession session, int dungeonNumber) {
+        return session()
+                .createCriteria(SessionMonster.class)
+                .add(Restrictions.eq("session", session))
+                .add(Restrictions.eq("dungeonNumber", dungeonNumber))
                 .addOrder(Order.asc("orden"))
                 .list();
     }

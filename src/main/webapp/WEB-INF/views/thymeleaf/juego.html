@@ -7,7 +7,6 @@
     <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/mazmorra.css}"/>
     <style>
-        /* Para remarcar el héroe seleccionado */
         .hero-card.border-primary {
           box-shadow: 0 0 0.5rem rgba(13,110,253,.5);
         }
@@ -22,7 +21,8 @@
         <div class="row mb-4">
             <div class="col-12 text-center text-white">
                 <h1>
-                    Expedición <span th:text="${expNumber}">1</span> &mdash;
+                    Expedición <span th:text="${expNumber}">1</span>
+                    &mdash;
                     Mazmorra <span th:text="${dungeonLevel}">1</span>
                 </h1>
                 <p>
@@ -45,18 +45,20 @@
             <!-- Héroes (izquierda) -->
             <div class="col-6">
                 <div class="row gy-3">
-                    <div class="col-10 offset-1 hero-card"
+                    <div class="col-12 d-flex justify-content-center mb-3 hero-card"
                          th:each="sh : ${heroesDeSesion}"
                          th:attr="data-orden=${sh.orden}">
-                        <div class="card bg-dark text-white h-100 text-center">
-                            <div class="card-body d-flex flex-column justify-content-center">
+                        <div class="card bg-dark text-white text-center"
+                             style="width: 370px; min-height: 170px; margin: 0 auto;">
+                            <div class="card-body d-flex flex-column justify-content-center p-3">
                                 <img th:src="@{${sh.hero.urlImagen}}"
                                      style="width:60px;height:60px;"
                                      class="mb-2 mx-auto"
                                      alt="Avatar"/>
                                 <h5 th:text="${sh.hero.nombre}">Héroe</h5>
                                 <p>
-                                    HP: <span th:text="${sh.vidaActual}">0</span>
+                                    <img th:src="@{/imagenes/corazon.webp}" alt="HP" style="width:22px;height:22px;vertical-align:middle;"/>
+                                    <span th:text="${sh.vidaActual}">0</span>
                                     /
                                     <span th:text="${sh.hero.maxVida}">100</span>
                                 </p>
@@ -80,15 +82,20 @@
             <!-- Monstruos (derecha) -->
             <div class="col-6">
                 <div class="row gy-3">
-                    <div class="col-10 offset-1" th:each="sm : ${monstruos}">
-                        <div class="card bg-danger text-white h-100 text-center">
-                            <div class="card-body d-flex flex-column justify-content-center">
+                    <div class="col-12 d-flex justify-content-center mb-3"
+                         th:each="sm : ${monstruos}">
+                        <div class="card bg-danger text-white text-center"
+                             style="width: 370px; min-height: 170px; margin: 0 auto;">
+                            <div class="card-body d-flex flex-column justify-content-center p-3">
                                 <p class="display-4">
                                     <span th:if="${sm.vidaActual > 0}" th:utext="${sm.imagen}">🧟</span>
                                     <span th:if="${sm.vidaActual <= 0}" class="text-danger">&#x274C;</span>
                                 </p>
                                 <h5 th:text="${sm.monster.nombre}">Monstruo</h5>
-                                <p>HP: <span th:text="${sm.vidaActual}">0</span></p>
+                                <p>
+                                    <img th:src="@{/imagenes/corazon.webp}" alt="HP" style="width:22px;height:22px;vertical-align:middle;"/>
+                                    <span th:text="${sm.vidaActual}">0</span>
+                                </p>
                                 <form th:if="${sm.vidaActual > 0}"
                                       th:action="@{/juego/atacar}"
                                       method="post"
@@ -106,17 +113,17 @@
 
         </div>
 
-        <!-- Si aún no has hecho las 3 mazmorras -->
+        <!-- BOTON SIGUIENTE MAZMORRA -->
         <div class="row mt-5 text-center"
-             th:if="${expNumber < 3 and #lists.size(monstruos.?[vidaActual > 0]) == 0}">
+             th:if="${dungeonLevel < 3 and #lists.size(monstruos.?[vidaActual > 0]) == 0}">
             <form th:action="@{/juego/siguiente}" method="post">
                 <button class="btn btn-success btn-lg">Siguiente mazmorra</button>
             </form>
         </div>
 
-        <!-- Si estás en la mazmorra 3 y ya mataste a todos -->
+        <!-- BOTON TERMINAR EXPEDICION -->
         <div class="row mt-5 text-center"
-             th:if="${expNumber == 3 and #lists.size(monstruos.?[vidaActual > 0]) == 0}">
+             th:if="${dungeonLevel == 3 and #lists.size(monstruos.?[vidaActual > 0]) == 0}">
             <form th:action="@{/juego/terminarExpedicion}" method="post">
                 <button class="btn btn-warning btn-lg">Terminar expedición</button>
             </form>
