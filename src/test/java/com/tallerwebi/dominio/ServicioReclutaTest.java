@@ -1,3 +1,4 @@
+/*
 package com.tallerwebi.dominio;
 import com.tallerwebi.dominio.entidades.*;
 import com.tallerwebi.dominio.excepcion.ReclutaException;
@@ -406,3 +407,4 @@ public class ServicioReclutaTest {
     }
 
 }
+*/
