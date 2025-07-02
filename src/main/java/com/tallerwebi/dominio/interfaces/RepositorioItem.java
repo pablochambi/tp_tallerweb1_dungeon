@@ -13,4 +13,6 @@ public interface RepositorioItem {
     void guardarItem(Item item);
 
     List<Item> obtenerLosItemsByInventario(Long idInventario);
+
+    List<Item> obtenerItemsSinInventario();
 }

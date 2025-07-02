@@ -5,6 +5,7 @@ import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.interfaces.RepositorioItem;
 import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
 import com.tallerwebi.dominio.servicios.Impl.ServicioTiendaImpl;
+import com.tallerwebi.dominio.interfaces.RepositorioInventario;
 import com.tallerwebi.dominio.servicios.ServicioTienda;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,8 @@ public class ServicioTiendaImplTest {
 
     RepositorioItem repositorioItem = mock(RepositorioItem.class);
     RepositorioUsuario repositorioUsuario = mock(RepositorioUsuario.class);
-    ServicioTienda servicioTienda = new ServicioTiendaImpl(repositorioItem, repositorioUsuario);
+    RepositorioInventario repositorioInventario = mock(RepositorioInventario.class);
+    ServicioTienda servicioTienda = new ServicioTiendaImpl(repositorioItem, repositorioUsuario, repositorioInventario);
 
 
 

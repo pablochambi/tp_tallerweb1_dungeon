@@ -30,18 +30,5 @@ public class CarruajeHeroe {
     }
 
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setHeroe(Heroe heroe1) {
-    }
-
-    public void setCarruaje(Carruaje carruajeMock) {
-
-    }
 }

@@ -46,4 +46,11 @@ public class RepositorioItemImpl implements RepositorioItem {
                 .list();
     }
 
+    @Override
+    public List<Item> obtenerItemsSinInventario() {
+        return sessionFactory.getCurrentSession().createCriteria(Item.class)
+                .add(Restrictions.isNull("inventario"))
+                .list();
+    }
+
 }

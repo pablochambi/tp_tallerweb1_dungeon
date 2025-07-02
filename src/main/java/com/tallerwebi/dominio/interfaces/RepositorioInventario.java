@@ -1,4 +1,4 @@
-package com.tallerwebi.dominio.servicios;
+package com.tallerwebi.dominio.interfaces;
 
 import com.tallerwebi.dominio.entidades.Inventario;
 

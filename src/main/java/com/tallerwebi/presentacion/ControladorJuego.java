@@ -15,8 +15,12 @@ import java.util.List;
 @Controller
 public class ControladorJuego {
 
+    private final ServicioJuego servicioJuego;
+
     @Autowired
-    private ServicioJuego servicioJuego;
+    public ControladorJuego(ServicioJuego servicioJuego) {
+        this.servicioJuego = servicioJuego;
+    }
 
     @GetMapping("/juego")
     public String mostrarJuego(Model model) {

@@ -22,8 +22,7 @@ public class UsuarioHeroe {
 
     private Integer nivel;
 
-    public UsuarioHeroe(Long id, Usuario usuario, Heroe heroe) {
-        //this.id = id;
+    public UsuarioHeroe(Usuario usuario, Heroe heroe) {
         this.usuario = usuario;
         this.heroe = heroe;
         this.nivel = heroe.getNivel();
@@ -31,18 +30,5 @@ public class UsuarioHeroe {
 
     public UsuarioHeroe() {
 
-        //this.id = id;
-    }
-
-    public UsuarioHeroe(Usuario usuarioBuscado, Heroe heroeBuscado) {
-    }
-
-    public void setId(long l) {
-    }
-
-    public void setHeroe(Heroe heroe1) {
-    }
-
-    public void setUsuario(Usuario usuarioMock) {
     }
 }

@@ -56,39 +56,4 @@ public class Carruaje {
     }
 
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getSemana() {
-        return semana;
-    }
-
-    public void setSemana(Integer semana) {
-        this.semana = semana;
-    }
-
-    public void setNivel(int i) {
-    }
-
-    public void setCantidadDeHeroesSemanales(int i) {
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
-
-    public Integer getNivel() {
-
-        return nivel;
-    }
-
-    public Usuario getUsuario() {
-        return this.usuario;
-    }
-
 }

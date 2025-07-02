@@ -11,4 +11,8 @@ public interface ServicioTienda {
     List<Item> obtenerItemsPorInventario(Long idInventario);
 
     List<Item> obtenerItemsDeUsuario(Usuario usuario);
+
+    List<Item> obtenerTodosLosItems();
+
+    List<Item> obtenerItemsDeTienda();
 }

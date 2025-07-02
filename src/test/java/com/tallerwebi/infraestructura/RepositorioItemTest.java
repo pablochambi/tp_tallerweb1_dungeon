@@ -5,7 +5,7 @@ import com.tallerwebi.dominio.entidades.Item;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.interfaces.RepositorioItem;
 import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
-import com.tallerwebi.dominio.servicios.RepositorioInventario;
+import com.tallerwebi.dominio.interfaces.RepositorioInventario;
 import com.tallerwebi.integracion.config.HibernateTestConfig;
 import com.tallerwebi.integracion.config.SpringWebTestConfig;
 import org.junit.jupiter.api.Test;
