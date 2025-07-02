@@ -35,17 +35,31 @@ public class RepositorioUsuarioTest {
     @Test
     @Transactional
     @Rollback
-    public void queSePuedaBuscarUnHeroePorId() {
-        repositorioUsuario.guardar(new Usuario(1L,"u1"));
-        repositorioUsuario.guardar(new Usuario(2L,"u2"));
-        repositorioUsuario.guardar(new Usuario(3L,"u3"));
+    public void queSePuedaBuscarUnUsuarioPorId() {
+        Usuario u1 = new Usuario();
+        u1.setEmail("u1@fake.com");
+        u1.setPassword("pw1");
 
-        Usuario usuario = repositorioUsuario.buscarUsuarioPorId(2L);
+        Usuario u2 = new Usuario();
+        u2.setEmail("u2@fake.com");
+        u2.setPassword("pw2");
 
-        assertThat(usuario,notNullValue());
-        assertThat(usuario.getId(),notNullValue());
-        assertThat(usuario.getEmail(),equalTo("u2"));
+        Usuario u3 = new Usuario();
+        u3.setEmail("u3@fake.com");
+        u3.setPassword("pw3");
 
+
+        repositorioUsuario.guardar(u1);
+        repositorioUsuario.guardar(u2);
+        repositorioUsuario.guardar(u3);
+
+        Long idU2 = u2.getId();
+
+        Usuario usuario = repositorioUsuario.buscarUsuarioPorId(idU2);
+
+        assertThat(usuario, notNullValue());
+        assertThat(usuario.getId(), equalTo(idU2));
+        assertThat(usuario.getEmail(), equalTo("u2@fake.com"));
     }
 
 }
