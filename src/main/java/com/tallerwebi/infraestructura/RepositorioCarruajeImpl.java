@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-
 @Transactional
 @Repository
 public class RepositorioCarruajeImpl  implements RepositorioCarruaje {
@@ -43,9 +42,8 @@ public class RepositorioCarruajeImpl  implements RepositorioCarruaje {
     //WHERE usuario_id = [usuarioExistente.id];
     @Override
     public Carruaje buscarCarruajeAsignadoAUnUsuario(Usuario usuarioExistente) {
-
         Usuario usuario = repositorioUsuario.buscarUsuarioPorId(usuarioExistente.getId());
-        if(usuario == null) throw new RuntimeException("No se encontro usuario en BD");
+        if (usuario == null) throw new RuntimeException("No se encontró usuario en BD");
 
         Session session = sessionFactory.getCurrentSession();
 
@@ -53,13 +51,16 @@ public class RepositorioCarruajeImpl  implements RepositorioCarruaje {
                 .add(Restrictions.eq("usuario", usuarioExistente))
                 .uniqueResult();
 
-//        if(carruaje == null) throw new RuntimeException("No se encontro carruaje asignado a un usuario en BD");
-//
-//        if(carruaje.getId() == null) throw new RuntimeException("El id de carruaje es nulo");
-
+        // Si no existe, lo crea y lo asigna
+        if (carruaje == null) {
+            carruaje = new Carruaje();
+            carruaje.setUsuario(usuario);
+            carruaje.setNivel(1); // o el nivel que uses por defecto
+            // ... otros campos por defecto si tenés
+            session.save(carruaje);
+        }
 
         return carruaje;
-
     }
 
     @Override
@@ -104,3 +105,4 @@ public class RepositorioCarruajeImpl  implements RepositorioCarruaje {
         return  criteria.list();
     }
 }
+

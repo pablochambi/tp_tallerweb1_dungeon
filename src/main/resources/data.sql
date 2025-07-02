@@ -1,14 +1,28 @@
-INSERT INTO Usuario (id, email, password, rol, activo, nombre, oro)
+INSERT INTO Usuario (email, password, rol, activo, nombre, oro, expedicionActual, mazmorraActual)
 VALUES
-  (1, 'test@unlam.edu.ar', 'test', 'ADMIN', TRUE,  'Héroe',      1000),
-  (2, 'otro@ejemplo.com',   '1234','ADMIN', TRUE,  'Aventurero',  500);
+  ('test@unlam.edu.ar', 'test', 'ADMIN', TRUE,  'Héroe',      1000, 1, 3),
+  ('otro@ejemplo.com',   '1234','ADMIN', TRUE,  'Aventurero',  500, 1, 2),
+  ('jugador3@game.com',  '123','USER',  TRUE,  'Usuario 3', 1000, 3, 1),
+  ('jugador4@game.com',  '123','USER',  TRUE,  'Usuario 4', 3000, 2, 3);
+
+INSERT INTO game_session (usuario_id, turno, nivel, active, finished, started_at, ended_at)
+VALUES
+  (1, 1, 3, 1, 0, '2025-06-24 13:00:00', NULL),
+  (2, 1, 2, 1, 0, '2025-06-24 13:05:00', NULL),
+  (3, 1, 1, 1, 0, '2025-06-24 13:10:00', NULL),
+  (4, 1, 3, 1, 0, '2025-06-24 13:15:00', NULL);
+
+INSERT INTO expedition (session_id, number, completed)
+VALUES (1, 2, FALSE), (2, 3, FALSE), (3, 3, FALSE), (4, 1, FALSE);
+
 
 INSERT INTO heroe
   (id, nombre, nivel, precio, url_imagen, max_vida, atk, defensa_base)
 VALUES
-  (1, 'Cruzado', 1, 300, '/imagenes/cruzado.webp', 1000, 35, 5),
-  (2, 'Vestal',   1, 200, '/imagenes/Vestal.webp',   750, 25, 8),
-  (3, 'Cazador', 1, 200 ,'/imagenes/Brigand_Hunter.webp', 800, 30, 10);
+  (1, 'Cruzado', 1, 300, '/imagenes/cruzado.webp', 300, 35, 5),
+  (2, 'Vestal',   1, 200, '/imagenes/Vestal.webp',   200, 25, 8),
+  (3, 'Cazador', 1, 200 ,'/imagenes/Brigand_Hunter.webp', 250, 30, 10),
+  (4, 'HeroeDios', 1, 200 ,'/imagenes/heroeDios.webp', 800, 1000, 1000);
 
 INSERT INTO monster (id, nombre, vida, atk, imagen) VALUES
   (5, 'Orco',       60, 10, '&#x1F9DD;&#x200D;&#x2642;&#xFE0F;'),
@@ -24,19 +38,6 @@ INSERT INTO items (id, nombre, tipo, precio) VALUES
   (3, 'Espada Rota',     'ataque',  150),
   (4, 'Armadura Ligera', 'defensa', 120);
 
-INSERT INTO game_session
-  (id, usuario_id, turno, nivel, active, finished, started_at, ended_at)
-VALUES
-  (
-    1,       -- id
-    1,       -- usuario_id (debe existir en Usuario)
-    1,       -- turno
-    1,       -- nivel
-    1,       -- active  (TRUE)
-    0,       -- finished (FALSE)
-    '2025-06-24 13:00:00',
-    NULL
-  );
 
 -- estado de monstruos en la mazmorra 1 de la expedición 1
 INSERT INTO session_monster

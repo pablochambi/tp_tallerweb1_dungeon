@@ -15,6 +15,8 @@ public class Usuario {
     private String email;
     private String password;
     private String rol;
+    private int expedicionActual;
+    private int mazmorraActual;
     private Boolean activo = false;
     @Column(nullable = false)
     private Integer oro = 1000;
@@ -97,6 +99,22 @@ public class Usuario {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public int getExpedicionActual() {
+        return expedicionActual;
+    }
+
+    public void setExpedicionActual(int expedicionActual) {
+        this.expedicionActual = expedicionActual;
+    }
+
+    public int getMazmorraActual() {
+        return mazmorraActual;
+    }
+
+    public void setMazmorraActual(int mazmorraActual) {
+        this.mazmorraActual = mazmorraActual;
     }
 
 

@@ -2,6 +2,8 @@ package com.tallerwebi.dominio.interfaces;
 
 import com.tallerwebi.dominio.entidades.Usuario;
 
+import java.util.List;
+
 public interface RepositorioUsuario {
 
     Usuario buscarUsuario(String email, String password);
@@ -10,6 +12,8 @@ public interface RepositorioUsuario {
     void modificar(Usuario usuario);
 
     Usuario buscarUsuarioPorId(Long idUsuario);
+
+    List<Usuario> obtenerRankingJugadores();
 
 }
 

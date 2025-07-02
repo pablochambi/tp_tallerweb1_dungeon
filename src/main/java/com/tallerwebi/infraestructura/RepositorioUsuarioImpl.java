@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @Repository
 public class RepositorioUsuarioImpl implements RepositorioUsuario {
@@ -38,14 +39,16 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     public void guardar(Usuario u) {
         jdbc.update(
                 "INSERT INTO Usuario " +
-                        "(email, password, rol, activo, nombre, oro) " +
-                        "VALUES (?, ?, ?, ?, ?, ?)",
+                        "(email, password, rol, activo, nombre, oro,expedicionActual, mazmorraActual) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 u.getEmail(),
                 u.getPassword(),
                 u.getRol(),
                 u.getActivo(),
                 u.getNombre(),
-                u.getOro()
+                u.getOro(),
+                1,
+                1
         );
         Long newId = jdbc.queryForObject("CALL IDENTITY()", Long.class);
         u.setId(newId);
@@ -98,6 +101,23 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
         } catch (EmptyResultDataAccessException ex) {
             return null;
         }
+    }
+
+    @Override
+    public List<Usuario> obtenerRankingJugadores() {
+        String sql =
+                "SELECT u.*, gs.nivel as mazmorra_actual, e.number as expedicion_actual " +
+                        "FROM Usuario u " +
+                        "JOIN game_session gs ON u.id = gs.usuario_id " +
+                        "JOIN expedition e ON gs.id = e.session_id " +
+                        "WHERE gs.active = TRUE AND e.completed = FALSE " +
+                        "ORDER BY e.number DESC, gs.nivel DESC, u.oro DESC";
+        return jdbc.query(sql, (rs, rowNum) -> {
+            Usuario u = mapRowToUsuario(rs, rowNum);
+            u.setExpedicionActual(rs.getInt("expedicion_actual"));
+            u.setMazmorraActual(rs.getInt("mazmorra_actual"));
+            return u;
+        });
     }
 
     // Mapea un ResultSet a la entidad Usuario.
