@@ -1,52 +1,96 @@
+
+
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head><title>Tienda</title></head>-->
+<!--<body>-->
+<!--<h1>Tienda del jugador</h1>-->
+<!--<p th:text="${mensaje}"></p>-->
+
+<!--<h3>Oro disponible: <span th:text="${usuario.oro}"></span></h3>-->
+
+<!--<form th:action="@{/tienda/comprar}" method="post">-->
+<!--  <label>Comprar Items:-->
+<!--    <select name="itemId">-->
+<!--      <option value="" disabled selected>Selecciona un ítem</option>-->
+<!--      <option th:each="item : ${items}"-->
+<!--              th:value="${item.id}"-->
+<!--              th:text="${item.nombre + ' - Precio: ' + item.precio}"></option>-->
+<!--    </select>-->
+<!--  </label>-->
+<!--  <button type="submit">Comprar</button>-->
+
+<!--  <h3>Inventario del jugador:</h3>-->
+<!--  <ul>-->
+<!--    <li th:if="${#lists.isEmpty(itemsDeInventario)}">No hay ítems en el inventario.</li>-->
+<!--    <li th:each="item : ${itemsDeInventario}" th:unless="${#lists.isEmpty(itemsDeInventario)}">-->
+<!--      <span th:text="${item.nombre}"></span>-->
+<!--    </li>-->
+<!--  </ul>-->
+
+<!--</form>-->
+<!--</body>-->
+<!--</html>-->
+
+
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Tienda</title>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}">
+  <meta charset="UTF-8">
+  <title>Tienda</title>
+  <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
+  <link rel="stylesheet" th:href="@{/css/tienda.css}" />
 </head>
-<body class="container">
-<h1 class="mt-4">Tienda del Aventurero</h1>
-<p>Oro disponible: <strong th:text="${jugador.oro}"></strong></p>
-<div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
-<div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-<!--
-<div class="row">
-    <div class="col-md-4" th:each="item : ${items}">
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title" th:text="${item.nombre}"></h5>
-                <p class="card-text">Tipo: <span th:text="${item.tipo}"></span></p>
-                <p class="card-text">Precio: <span th:text="${item.precio}"></span> oro</p>
-                <form method="post" th:action="@{/comprar}">
-                    <input type="hidden" name="itemId" th:value="${item.id}" />
-                    <button type="submit">Comprar</button>
-                </form>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="#">DUNGEON SHOP</a>
+</nav>
+
+<main role="main" class="container text-light mt-5">
+  <div class="tienda-box">
+    <h1 class="titulo">Tienda del jugador</h1>
+
+    <p th:text="${mensaje}" class="mensaje text-info"></p>
+
+    <h3>Oro disponible: <span th:text="${usuario.oro}"></span></h3>
+
+    <form th:action="@{/tienda/comprar}" method="post">
+      <div class="form-group">
+        <label for="itemId">Comprar Items:</label>
+        <select id="itemId" name="itemId" class="form-select" required>
+          <option value="" disabled selected>Selecciona un ítem</option>
+          <option th:each="item : ${items}"
+                  th:value="${item.id}"
+                  th:text="${item.nombre + ' - Precio: ' + item.precio}">
+          </option>
+        </select>
+      </div>
+      <div class="d-grid mt-3">
+        <button type="submit" class="btn btn-success">Comprar</button>
+      </div>
+    </form>
+
+    <h3 class="mt-4">Inventario del jugador:</h3>
+    <ul class="inventario-list">
+      <li th:if="${#lists.isEmpty(itemsDeInventario)}">No hay ítems en el inventario.</li>
+      <li th:each="item : ${itemsDeInventario}" th:unless="${#lists.isEmpty(itemsDeInventario)}">
+        <span th:text="${item.nombre}"></span>
+      </li>
+    </ul>
+
+    <div class="d-grid mt-3">
+      <a class="button" th:href="@{/comprar-oro}">Comprar Oro</a>
+    </div>
+
+    <div class="d-grid mt-3">
+      <a class="button" th:href="@{/home}">Ir al home</a>
+    </div>
 
 
-            </div>
-        </div>
-    </div>
-</div>
--->
-<div class="container mt-4">
-    <h2>Tienda de Ítems</h2>
-    <div class="row">
-        <div class="col-md-4" th:each="item : ${items}">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${item.nombre}">Nombre</h5>
-                    <p class="card-text">Tipo: <span th:text="${item.tipo}"></span></p>
-                    <p class="card-text">Precio: <span th:text="${item.precio}"></span> oro</p>
-                    <form method="post" th:action="@{/comprar}" th:object="${item}">
-                        <input type="hidden" th:value="${item.id}" name="itemId"/>
-                        <button class="btn btn-primary" type="submit">Comprar</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+  </div>
+</main>
 
 </body>
 </html>

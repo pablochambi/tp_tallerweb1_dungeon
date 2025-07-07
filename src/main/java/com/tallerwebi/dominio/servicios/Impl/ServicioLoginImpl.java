@@ -1,8 +1,9 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.servicios.Impl;
 
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
 import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
+import com.tallerwebi.dominio.servicios.ServicioLogin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,10 @@ public class ServicioLoginImpl implements ServicioLogin {
             throw new UsuarioExistente();
         }
         repositorioUsuario.guardar(usuario);
+    }
+    @Override
+    public Usuario buscarUsuario(Long idUsuario) {
+        return repositorioUsuario.buscarUsuarioPorId(idUsuario);
     }
 
 }

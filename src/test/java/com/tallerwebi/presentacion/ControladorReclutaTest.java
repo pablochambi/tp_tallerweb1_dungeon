@@ -1,12 +1,12 @@
 /*
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.*;
 import com.tallerwebi.dominio.entidades.Carruaje;
 import com.tallerwebi.dominio.entidades.Heroe;
 import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.ServicioReclutaImpl;
 import com.tallerwebi.dominio.excepcion.ReclutaException;
+import com.tallerwebi.dominio.servicios.Impl.ServicioReclutaImpl;
+import com.tallerwebi.dominio.servicios.ServicioRecluta;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -85,6 +85,7 @@ public class ControladorReclutaTest {
         assertThat(mav.getModel().get("usuario"), notNullValue());
 
     }
+    /*
     @Test
     public void queAlIngresarPorPrimeraVesAlCarruaje_SeMuestre2HeroesEnCarruaje() {
 
@@ -107,7 +108,7 @@ public class ControladorReclutaTest {
         assertThat(heroesObt.get(0).getNombre(), equalTo("Cruzado"));
         assertThat(heroesObt.get(0).getUrlImagen(), equalTo("/imagenes/cruzado.webp"));
     }
-
+*/
     @Test
     public void queSePuedaRecluatarUnHeroeEnCarruaje() {
 

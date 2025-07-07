@@ -32,11 +32,17 @@ INSERT INTO monster (id, nombre, vida, atk, imagen) VALUES
   (9, 'Dragón',     100,20, '&#x1F409;'),
   (10,'Demonio',    70, 18, '&#x1F47F;');
 
-INSERT INTO items (id, nombre, tipo, precio) VALUES
-  (1, 'Poción de Vida',  'cura',    100),
-  (2, 'Poción de Estrés','estrés',   80),
-  (3, 'Espada Rota',     'ataque',  150),
-  (4, 'Armadura Ligera', 'defensa', 120);
+
+INSERT INTO Item (id, nombre, tipo, precio) VALUES
+                                                (1, 'Poción de Vida',  'POCION',    100),
+                                                (2, 'Poción de Estrés','POCION',   80),
+                                                (3, 'Espada Rota',     'ARMA',  150),
+                                                (4, 'Armadura Ligera', 'ARMA', 120);
+
+
+INSERT INTO Inventario (id, usuario_id) VALUES (1, 1), (2, 2);
+UPDATE Usuario SET inventario_id = 1 WHERE id = 1;
+UPDATE Usuario SET inventario_id = 2 WHERE id = 2;
 
 
 -- estado de monstruos en la mazmorra 1 de la expedición 1
@@ -46,3 +52,4 @@ VALUES
   (1, 5,  60, 1, 1, 1),  -- Orco
   (1, 6,  35, 1, 1, 2),  -- Mago
   (1, 7,  55, 1, 1, 3);  -- Vampiro
+

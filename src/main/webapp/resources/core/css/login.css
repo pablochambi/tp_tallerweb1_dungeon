@@ -1,0 +1,109 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #111;
+    margin: 0;
+}
+
+
+/* Título principal */
+h3.form-signin-heading {
+    font-size: 2em;
+    color: #7ed6df;
+    text-align: center;
+}
+
+/* Inputs con fondo oscuro y texto claro */
+input.form-control {
+    background-color: #333;
+    color: #eee;
+    border: 1px solid #555;
+    margin-bottom: 15px;
+}
+
+button{
+    display: block;
+    align-items: center;
+}
+
+/* Estilo para botón de login */
+#btn-login {
+    background-color: #30336b;
+    border: none;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+#btn-login:hover {
+    background-color: #535c91;
+}
+
+/* Link a registrarse */
+#ir-a-registrarme {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #7ed6df;
+    text-decoration: none;
+}
+
+#ir-a-registrarme:hover {
+    text-decoration: underline;
+}
+
+/* Contenedor principal del login */
+#loginbox {
+    background-color: #222;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(126, 214, 223, 0.2);
+    margin: auto;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Centrar contenido dentro del formulario */
+#loginbox form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Inputs ocupan todo el ancho disponible */
+#loginbox input.form-control {
+    width: 100%;
+}
+
+/* Centrar el botón login */
+#btn-login {
+    background-color: #30336b;
+    border: none;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    width: 100%; /* botón ocupa todo el ancho del form */
+    margin-top: 10px;
+}
+
+/* Línea decorativa */
+hr.colorgraph {
+    height: 5px;
+    border: 0;
+    background: linear-gradient(to right, #30336b, #7ed6df);
+    margin-bottom: 20px;
+}
+
+/* Estilo para mensaje de error */
+.alert-danger {
+    background-color: #a94442;
+    border-color: #a94442;
+    color: white;
+}
