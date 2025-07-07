@@ -1,7 +1,9 @@
 package com.tallerwebi.dominio.servicios.Impl;
 
+import com.tallerwebi.dominio.entidades.Inventario;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.UsuarioExistente;
+import com.tallerwebi.dominio.interfaces.RepositorioInventario;
 import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
 import com.tallerwebi.dominio.servicios.ServicioLogin;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class ServicioLoginImpl implements ServicioLogin {
         this.repositorioUsuario = repositorioUsuario;
     }
 
+    @Autowired
+    private RepositorioInventario repositorioInventario;
+
     @Override
     public Usuario consultarUsuario (String email, String password) {
         return repositorioUsuario.buscarUsuario(email, password);
@@ -31,6 +36,9 @@ public class ServicioLoginImpl implements ServicioLogin {
         if(usuarioEncontrado != null){
             throw new UsuarioExistente();
         }
+        Inventario inventario = new Inventario();
+        repositorioInventario.guardar(inventario);
+        usuario.setInventario(inventario);
         repositorioUsuario.guardar(usuario);
     }
     @Override

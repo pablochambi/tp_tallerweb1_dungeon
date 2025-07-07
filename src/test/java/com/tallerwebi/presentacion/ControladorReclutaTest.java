@@ -108,7 +108,7 @@ public class ControladorReclutaTest {
         assertThat(heroesObt.get(0).getNombre(), equalTo("Cruzado"));
         assertThat(heroesObt.get(0).getUrlImagen(), equalTo("/imagenes/cruzado.webp"));
     }
-*/
+
     @Test
     public void queSePuedaRecluatarUnHeroeEnCarruaje() {
 

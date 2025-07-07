@@ -1,7 +1,7 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.ServicioJuego;
-import com.tallerwebi.dominio.ServicioRecluta;
+import com.tallerwebi.dominio.servicios.ServicioRecluta;
 import com.tallerwebi.dominio.entidades.Carruaje;
 import com.tallerwebi.dominio.entidades.Heroe;
 import com.tallerwebi.dominio.entidades.Usuario;

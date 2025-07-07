@@ -1,6 +1,7 @@
 package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.interfaces.RepositorioInventario;
 import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,11 +22,14 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
         this.jdbc = jdbc;
     }
 
+    @Autowired
+    private RepositorioInventario repositorioInventario;
+
     @Override
     public Usuario buscarUsuario(String email, String password) {
         try {
             return jdbc.queryForObject(
-                    "SELECT id, email, password, rol, activo, nombre, oro " +
+                    "SELECT id, email, password, rol, activo, nombre, oro, inventario_id " +
                             "FROM Usuario WHERE email = ? AND password = ?",
                     this::mapRowToUsuario,
                     email, password
@@ -39,8 +43,8 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     public void guardar(Usuario u) {
         jdbc.update(
                 "INSERT INTO Usuario " +
-                        "(email, password, rol, activo, nombre, oro,expedicionActual, mazmorraActual) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                        "(email, password, rol, activo, nombre, oro, expedicionActual, mazmorraActual, inventario_id) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 u.getEmail(),
                 u.getPassword(),
                 u.getRol(),
@@ -48,7 +52,8 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
                 u.getNombre(),
                 u.getOro(),
                 1,
-                1
+                1,
+                u.getInventario() != null ? u.getInventario().getId() : null
         );
         Long newId = jdbc.queryForObject("CALL IDENTITY()", Long.class);
         u.setId(newId);
@@ -58,7 +63,7 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     public Usuario buscar(String email) {
         try {
             return jdbc.queryForObject(
-                    "SELECT id, email, password, rol, activo, nombre, oro " +
+                    "SELECT id, email, password, rol, activo, nombre, oro, inventario_id " +
                             "FROM Usuario WHERE email = ?",
                     this::mapRowToUsuario,
                     email
@@ -72,12 +77,13 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     public void modificar(Usuario u) {
         jdbc.update(
                 "UPDATE Usuario SET " +
-                        " email    = ?, " +
-                        " password = ?, " +
-                        " rol      = ?, " +
-                        " activo   = ?, " +
-                        " nombre   = ?, " +
-                        " oro      = ?  " +
+                        " email        = ?, " +
+                        " password     = ?, " +
+                        " rol          = ?, " +
+                        " activo       = ?, " +
+                        " nombre       = ?, " +
+                        " oro          = ?, " +
+                        " inventario_id= ?  " +
                         "WHERE id = ?",
                 u.getEmail(),
                 u.getPassword(),
@@ -85,6 +91,7 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
                 u.getActivo(),
                 u.getNombre(),
                 u.getOro(),
+                u.getInventario() != null ? u.getInventario().getId() : null,
                 u.getId()
         );
     }
@@ -93,8 +100,7 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     public Usuario buscarUsuarioPorId(Long id) {
         try {
             return jdbc.queryForObject(
-                    "SELECT id, email, password, rol, activo, nombre, oro " +
-                            "FROM Usuario WHERE id = ?",
+                    "SELECT id, email, password, rol, activo, nombre, oro, inventario_id FROM Usuario WHERE id = ?",
                     this::mapRowToUsuario,
                     id
             );
@@ -124,6 +130,7 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
     // convierte cada fila del ResultSet (el resultado de la consulta SQL)
     // en una instancia de entidad de dominio Usuario.
 
+
     private Usuario mapRowToUsuario(ResultSet rs, int rowNum) throws SQLException {
         Usuario u = new Usuario();
         u.setId    (rs.getLong("id"));
@@ -133,6 +140,12 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
         u.setActivo(rs.getBoolean("activo"));
         u.setNombre(rs.getString("nombre"));
         u.setOro   (rs.getInt("oro"));
+
+        Long inventarioId = rs.getLong("inventario_id");
+        if (!rs.wasNull()) {
+            u.setInventario(repositorioInventario.buscarPorId(inventarioId));
+        }
+
         return u;
     }
 }

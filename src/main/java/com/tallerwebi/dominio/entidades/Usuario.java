@@ -30,6 +30,7 @@ public class Usuario {
     private List<Item> itemsComprados = new ArrayList<>();
 
     @OneToOne
+    @JoinColumn(name = "inventario_id")
     Inventario inventario;
 
     public Usuario(Long id, String email) {
@@ -82,6 +83,16 @@ public class Usuario {
 
     public void setMazmorraActual(int mazmorraActual) {
         this.mazmorraActual = mazmorraActual;
+    }
+
+
+    public void setId(long l) { this.id = l;
+    }
+
+    public void setInventario(Inventario inventario) { this.inventario = inventario;
+    }
+
+    public Long getId() { return this.id;
     }
 
 }

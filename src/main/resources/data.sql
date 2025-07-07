@@ -1,9 +1,17 @@
-INSERT INTO Usuario (email, password, rol, activo, nombre, oro, expedicionActual, mazmorraActual)
+INSERT INTO Usuario (id, email, password, rol, activo, nombre, oro, expedicionActual, mazmorraActual, inventario_id)
 VALUES
-  ('test@unlam.edu.ar', 'test', 'ADMIN', TRUE,  'Héroe',      1000, 1, 3),
-  ('otro@ejemplo.com',   '1234','ADMIN', TRUE,  'Aventurero',  500, 1, 2),
-  ('jugador3@game.com',  '123','USER',  TRUE,  'Usuario 3', 1000, 3, 1),
-  ('jugador4@game.com',  '123','USER',  TRUE,  'Usuario 4', 3000, 2, 3);
+  (1, 'test@unlam.edu.ar', 'test', 'ADMIN', TRUE,  'Héroe',      1000, 1, 3, null),
+  (2, 'otro@ejemplo.com',  '1234', 'ADMIN', TRUE,  'Aventurero',  500, 1, 2, null),
+  (3, 'jugador3@game.com', '123',  'USER',  TRUE,  'Usuario 3', 1000, 3, 1, null),
+  (4, 'jugador4@game.com', '123',  'USER',  TRUE,  'Usuario 4', 3000, 2, 3, null);
+
+INSERT INTO Inventario (id, usuario_id) VALUES (1, 1), (2, 2), (3, 3), (4, 4);
+
+UPDATE Usuario SET inventario_id = 1 WHERE id = 1;
+UPDATE Usuario SET inventario_id = 2 WHERE id = 2;
+UPDATE Usuario SET inventario_id = 3 WHERE id = 3;
+UPDATE Usuario SET inventario_id = 4 WHERE id = 4;
+
 
 INSERT INTO game_session (usuario_id, turno, nivel, active, finished, started_at, ended_at)
 VALUES
@@ -38,11 +46,6 @@ INSERT INTO Item (id, nombre, tipo, precio) VALUES
                                                 (2, 'Poción de Estrés','POCION',   80),
                                                 (3, 'Espada Rota',     'ARMA',  150),
                                                 (4, 'Armadura Ligera', 'ARMA', 120);
-
-
-INSERT INTO Inventario (id, usuario_id) VALUES (1, 1), (2, 2);
-UPDATE Usuario SET inventario_id = 1 WHERE id = 1;
-UPDATE Usuario SET inventario_id = 2 WHERE id = 2;
 
 
 -- estado de monstruos en la mazmorra 1 de la expedición 1
