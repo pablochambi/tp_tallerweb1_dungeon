@@ -15,4 +15,7 @@ public interface ServicioTienda {
     List<Item> obtenerTodosLosItems();
 
     List<Item> obtenerItemsDeTienda();
+    //void sumarOro(Integer monto, Usuario usuario);
+
+    void sumarOro(String paqueteOro, Usuario usuario);
 }

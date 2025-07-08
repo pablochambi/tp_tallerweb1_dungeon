@@ -1,46 +1,78 @@
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <title>Comprar Oro</title>-->
+<!--    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />-->
+<!--    <link rel="stylesheet" th:href="@{/css/comprar-oro.css}" />-->
+<!--</head>-->
+<!--<body>-->
+<!--<h1>Comprar Oro</h1>-->
+<!--<div id="wallet_container">-->
+<!--<form th:action="@{/crear-preferencia}" method="post">-->
+<!--    <label for="monto">Cantidad de oro a comprar:</label>-->
+<!--    <input type="number" id="monto" name="monto" min="10" required>-->
+<!--    <button type="button" data-id="paqueteDiamante" onclick="comprar(this)">Comprar con Mercado Pago</button>-->
+<!--</form>-->
+<!--</div>-->
+<!--<a class="button" th:href="@{/ver-tienda}">Volver a la Tienda</a>-->
+<!--<script th:src="@{/js/mercadoPago.js}" defer></script>-->
+<!--<script src="https://sdk.mercadopago.com/js/v2"></script>-->
+<!--</body>-->
+<!--</html>-->
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Comprar Oro</title>
-    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.2.0/css/bootstrap.min.css}" />
+    <link rel="stylesheet" th:href="@{/css/comprar-oro.css}" />
 </head>
 <body>
 <h1>Comprar Oro</h1>
+<div th:if="${mensaje}"
+     th:classappend="${mensaje.contains('exitosa')} ? 'alert-success' : 'alert-danger'"
+     id="mensaje-compra"
+     class="alert text-center w-75 mx-auto mt-4">
+    <p th:text="${mensaje}"></p>
+</div>
 <div id="wallet_container">
-<form th:action="@{/crear-preferencia}" method="post">
-    <label for="monto">Cantidad de oro a comprar:</label>
-    <input type="number" id="monto" name="monto" min="10" required>
-    <button type="button" data-id="paqueteDiamante" onclick="comprar(this)">Comprar con Mercado Pago</button>
-</form>
-<!--    <form onsubmit="return false;">-->
-<!--        <label for="monto">Cantidad de oro a comprar:</label>-->
-<!--        <input type="number" id="monto" name="monto" min="10" required>-->
-<!--        <button type="button" data-id="paqueteDiamante" onclick="comprar(this)">Comprar con Mercado Pago</button>-->
-<!--    </form>-->
+    <div class="paquete">
+        <div class="paquete-img-container">
+            <img th:src="@{/imagenes/imagen-oro2.png}" alt="100 monedas" class="paquete-img" />
+        </div>
+        <p>100 monedas de oro - $1000</p>
+        <button type="button" onclick="comprar('PAQUETE_100', 10)">Comprar</button>
+    </div>
+    <div class="paquete">
+        <div class="paquete-img-container">
+            <img th:src="@{/imagenes/imagen-oro2.png}" alt="100 monedas" class="paquete-img" />
+        </div>
+        <p>150 monedas de oro - $1500</p>
+        <button type="button" onclick="comprar('PAQUETE_150', 15)">Comprar</button>
+    </div>
+    <div class="paquete">
+        <div class="paquete-img-container">
+            <img th:src="@{/imagenes/imagen-oro2.png}" alt="100 monedas" class="paquete-img" />
+        </div>
+        <p>250 monedas de oro - $2200</p>
+        <button type="button" onclick="comprar('PAQUETE_250', 22)">Comprar</button>
+    </div>
 </div>
 <a class="button" th:href="@{/ver-tienda}">Volver a la Tienda</a>
 <script th:src="@{/js/mercadoPago.js}" defer></script>
 <script src="https://sdk.mercadopago.com/js/v2"></script>
-<!--<script>-->
-<!--    // Configure sua chave pública do Mercado Pago-->
-<!--    const publicKey = "APP_USR-6674ddbc-26cd-49a4-9245-fb430b35e6fd";-->
-<!--    // Configure o ID de preferência que você deve receber do seu backend-->
-<!--    const preferenceId = "YOUR_PREFERENCE_ID";-->
-
-<!--    // Inicializa o SDK do Mercado Pago-->
-<!--    const mp = new MercadoPago(publicKey);-->
-
-<!--    // Cria o botão de pagamento-->
-<!--    const bricksBuilder = mp.bricks();-->
-<!--    const renderWalletBrick = async (bricksBuilder) => {-->
-<!--        await bricksBuilder.create("wallet", "walletBrick_container", {-->
-<!--            initialization: {-->
-<!--                preferenceId: "<PREFERENCE_ID>",-->
-<!--            }-->
-<!--        });-->
-<!--    };-->
-
-<!--    renderWalletBrick(bricksBuilder);-->
-<!--</script>-->
+<script>
+    // Si existe el mensaje, ocultarlo después de 3 segundos
+    window.addEventListener('DOMContentLoaded', function () {
+        const mensaje = document.getElementById("mensaje-compra");
+        if (mensaje) {
+            setTimeout(() => {
+                mensaje.style.transition = "opacity 0.5s ease";
+                mensaje.style.opacity = "0";
+                setTimeout(() => mensaje.remove(), 500); // Lo elimina del DOM
+            }, 3000); // 3 segundos
+        }
+    });
+</script>
 </body>
 </html>
