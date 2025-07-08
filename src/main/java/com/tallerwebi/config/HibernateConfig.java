@@ -56,5 +56,5 @@ public class HibernateConfig {
         return new JdbcTemplate(dataSource);
     }
 
-
 }
+
