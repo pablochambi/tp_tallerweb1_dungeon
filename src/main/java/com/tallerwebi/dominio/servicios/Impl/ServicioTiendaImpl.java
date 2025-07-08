@@ -82,57 +82,31 @@ public class ServicioTiendaImpl implements ServicioTienda {
     public List<Item> obtenerItemsDeTienda() {
         return repositorioItem.obtenerItemsSinInventario();
     }
-//
-//    private RepositorioUsuario repositorioUsuario;
-//    private RepositorioItem repositorioItem;
-//
-//    @Autowired
-//    public ServicioTiendaImpl(RepositorioItem repositorioItem, RepositorioUsuario repositorioUsuario) {
-//         this.repositorioItem = repositorioItem;
-//         this.repositorioUsuario = repositorioUsuario;
-//    }
-//
-//    @Override
-//    public void comprar(Usuario usuarioSesion, Long idItem) {
-//
-//       Usuario usuario =  repositorioUsuario.buscarUsuarioPorId(usuarioSesion.getId());
-//       if (usuario == null) {
-//           throw new RuntimeException("Usuario no encontrado");
-//       }
-//
-//       Item item = repositorioItem.buscarPorId(idItem);
-//       if (item == null) {
-//           throw new RuntimeException("Item no encontrado");
-//       }
-//
-//       if (usuario.getOro() < item.getPrecio()) {
-//           throw new RuntimeException("No tenes suficiente oro!");
-//       }
-//
-//       usuario.setOro(usuario.getOro() - item.getPrecio());
-//
-//       Inventario inventario = usuario.getInventario();
-//       item.setInventario(inventario);
-//       repositorioItem.guardarItem(item);
-//
-//       repositorioUsuario.modificar(usuario);
-//
-//    }
-//
-//    @Override
-//    public List<Item> obtenerItemsPorInventario(Long idInventario) {
-//        return repositorioItem.obtenerLosItemsByInventario(idInventario);
-//    }
-//
-//    @Override
-//    public List<Item> obtenerItemsDeUsuario(Usuario usuario) {
-//        return repositorioItem.obtenerLosItemsByInventario(usuario.getInventario().getId());
-//    }
-//
-//    @Override
-//    public List<Item> obtenerTodosLosItems() {
-//        return repositorioItem.obtenerTodosLosItems();
-//    }
+
+    @Override
+    public void sumarOro(String paqueteOro, Usuario usuario) {
+        //Usuario usuario = repositorioUsuario.buscarUsuarioPorId(idUsuario);
+        int oro;
+        switch (paqueteOro) {
+            case "PAQUETE_100":
+                oro = 100;
+                break;
+            case "PAQUETE_150":
+                oro = 150;
+                break;
+            case "PAQUETE_250":
+                oro = 250;
+                break;
+            default:
+                oro = 0;
+                break;
+        }
+        usuario.setOro(usuario.getOro() + oro);
+        repositorioUsuario.modificar(usuario);
+
+    }
+
+
 
 
 
