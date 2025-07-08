@@ -12,6 +12,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,9 @@ import java.util.List;
 public class Repositorio_carruajeHeroeImpl implements Repositorio_carruajeHeroe {
 
     private SessionFactory sessionFactory;
+    private Session session() {
+        return sessionFactory.getCurrentSession();
+    }
 
     @Autowired
     Repositorio_carruajeHeroeImpl(SessionFactory sessionFactory) {
@@ -102,6 +106,48 @@ public class Repositorio_carruajeHeroeImpl implements Repositorio_carruajeHeroe 
     @Override
     public void quitarHeroeDeCarruaje(Carruaje carruajeBuscado, Heroe heroeBuscado) {
 
+    }
+    @Override
+    public void add(Carruaje c, Heroe h) {
+        // primero chequea duplicados si quieres
+        Carruaje HeroeExisting = (Carruaje) session()
+                .createCriteria(CarruajeHeroe.class)
+                .add(Restrictions.eq("carruaje", c))
+                .add(Restrictions.eq("heroe", h))
+                .uniqueResult();
+
+        if (HeroeExisting != null) {
+            throw new RuntimeException("Ya está seleccionado ese héroe");
+        }
+
+        CarruajeHeroe ch = new CarruajeHeroe();
+        ch.setCarruaje(c);
+        ch.setHeroe(h);
+        session().save(ch);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<CarruajeHeroe> findByCarruaje(Carruaje c) {
+        return session().createCriteria(CarruajeHeroe.class)
+                .add(Restrictions.eq("carruaje", c))
+                .list();
+    }
+
+    @Override
+    public void delete(CarruajeHeroe relacion) {
+        session().delete(relacion);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Heroe> findHeroesByCarruaje(Carruaje c) {
+        return session()
+                .createCriteria(CarruajeHeroe.class, "ch")
+                .createAlias("ch.heroe", "h")
+                .add(Restrictions.eq("ch.carruaje", c))
+                .setProjection(Projections.property("h"))
+                .list();
     }
 
 

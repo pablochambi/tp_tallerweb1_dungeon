@@ -4,22 +4,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 import java.util.List;
+import java.util.Optional;
 
-import com.tallerwebi.dominio.entidades.GameSession;
-import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.entidades.Monster;
-import com.tallerwebi.dominio.entidades.SessionMonster;
-import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
-import com.tallerwebi.dominio.interfaces.RepositorioMonster;
-import com.tallerwebi.dominio.interfaces.RepositorioSession;
-import com.tallerwebi.dominio.interfaces.RepositorioSessionMonster;
+import com.tallerwebi.dominio.entidades.*;
+import com.tallerwebi.dominio.interfaces.*;
 import com.tallerwebi.dominio.servicios.Impl.ServicioJuegoImpl;
+import com.tallerwebi.dominio.servicios.ServicioRecluta;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-
 
 class ServicioJuegoImplTest {
 
@@ -31,104 +27,148 @@ class ServicioJuegoImplTest {
     RepositorioMonster monsterRepo;
     @Mock
     RepositorioSessionMonster smRepo;
+    @Mock
+    RepositorioHeroSession shRepo;
+    @Mock
+    RepositorioExpedition expeditionRepo;
+    @Mock
+    ServicioRecluta servicioRecluta;
 
     @InjectMocks
     ServicioJuegoImpl servicio;
 
     private Usuario usuario;
     private GameSession session;
+    private Expedition expedition;
     private Monster m1, m2, m3;
     private SessionMonster sm1, sm2, sm3;
+    private SessionHero sh1, sh2;
 
     @BeforeEach
     void init() {
         MockitoAnnotations.openMocks(this);
-        // Jugador inicial
-        usuario = new Usuario();
-        usuario.setVida(100);
-        usuario.setAtk(10);
-        usuario.setDefensa(false);
-        usuario.setOro(500);
 
-        // Sesión vacía
+        usuario = new Usuario();
+        usuario.setId(1L);
+
         session = new GameSession();
         session.setUsuario(usuario);
+        session.setNivel(1);
 
-        // Monstruos base
+        expedition = new Expedition();
+        expedition.setSession(session);
+        expedition.setNumber(1);
+        expedition.setCompleted(false);
+
         m1 = new Monster(); m1.setId(1L); m1.setNombre("Esqueleto"); m1.setVida(30); m1.setAtk(5);
         m2 = new Monster(); m2.setId(2L); m2.setNombre("Goblin");    m2.setVida(40); m2.setAtk(8);
         m3 = new Monster(); m3.setId(3L); m3.setNombre("Araña");     m3.setVida(20); m3.setAtk(3);
 
-        // SessionMonster ejemplo
         sm1 = new SessionMonster(); sm1.setOrden(1); sm1.setVidaActual(30); sm1.setMonster(m1);
         sm2 = new SessionMonster(); sm2.setOrden(2); sm2.setVidaActual(40); sm2.setMonster(m2);
         sm3 = new SessionMonster(); sm3.setOrden(3); sm3.setVidaActual(20); sm3.setMonster(m3);
+
+        Heroe baseHero = new Heroe();
+        baseHero.setId(1L); baseHero.setNombre("HéroeTest"); baseHero.setMaxVida(100); baseHero.setAtk(10);
+        sh1 = new SessionHero(); sh1.setOrden(1); sh1.setHero(baseHero); sh1.setVidaActual(100);
+        sh2 = new SessionHero(); sh2.setOrden(2); sh2.setHero(baseHero); sh2.setVidaActual(100);
     }
 
     @Test
-    void getJugador_creaYDevuelveElJugador() {
-        // given
-        when(sessionRepo.findActive()).thenReturn(null);
-        when(usuarioRepo.buscarUsuarioPorId(1L)).thenReturn(usuario);
+    void iniciarPartida_nuevaSesion_siembraHeroesYMonstruos() {
+        when(sessionRepo.findActive(usuario)).thenReturn(null);
+        when(sessionRepo.startNew(usuario)).thenReturn(session);
+        when(expeditionRepo.findBySessionAndCompletedFalse(session)).thenReturn(Optional.empty());
 
-        // when
-        Usuario resultado = servicio.getUsuario();
+        // mockeo el save de Expedition para evitar el nullpointer exception
+        when(expeditionRepo.save(any(Expedition.class))).thenAnswer(invocation -> {
+            Expedition exp = invocation.getArgument(0);
+            exp.setNumber(1);
+            exp.setCompleted(false);
+            return exp;
+        });
+        when(servicioRecluta.getHeroesEnCarruaje(usuario.getId())).thenReturn(List.of(sh1.getHero(), sh2.getHero()));
+        when(shRepo.findBySession(session)).thenReturn(List.of());
+        when(smRepo.findBySessionAndDungeonNumber(session, session.getNivel())).thenReturn(List.of());
+        when(monsterRepo.obtenerTodosLosMonstruos()).thenReturn(List.of(m1, m2, m3));
 
-        // then
-        assertThat(resultado, sameInstance(usuario));
-        verify(usuarioRepo).buscarUsuarioPorId(1L);
-        verify(sessionRepo).save(any(GameSession.class));
+        GameSession s = servicio.iniciarPartida(usuario);
+
+        //verifico que siembra heroes y monster
+        verify(shRepo, atLeastOnce()).add(eq(session), any(Heroe.class), anyInt());
+        verify(smRepo, times(3)).add(eq(session), any(Monster.class), eq(1));
+        assertThat(s, notNullValue());
     }
 
     @Test
-    void getMonstruos_primeraVez_sembrados3MonstruosAleatorios() {
+    void atacar_heroeYMonstruoInexistente_devuelveMensajeMonstruoNoEncontrado() {
+        when(sessionRepo.findActive(usuario)).thenReturn(session);
+        when(expeditionRepo.findBySessionAndCompletedFalse(session)).thenReturn(Optional.of(expedition));
+        when(shRepo.findBySession(session)).thenReturn(List.of(sh1));
+        when(smRepo.findBySessionAndExpeditionNumber(session, expedition.getNumber()))
+                .thenReturn(List.of(sm1, sm2));
 
-        when(sessionRepo.findActive()).thenReturn(null);
+        // orden que no existe (monster 99)
+        String msg = servicio.atacar(usuario, 1, 99);
 
-        when(usuarioRepo.buscarUsuarioPorId(1L)).thenReturn(usuario);
-
-        when(monsterRepo.obtenerTodosLosMonstruos())
-                .thenReturn(List.of(m1, m2, m3, new Monster(), new Monster()));
-
-        servicio.getMonstruos();
-
-        verify(smRepo, times(3))
-                .add(any(GameSession.class), any(Monster.class));
+        assertThat(msg, containsString("Monstruo no encontrado."));
     }
 
     @Test
-    void atacar_ordenNoExiste_devuelveMonstruoNoEncontrado() {
-        // given
-        when(sessionRepo.findActive()).thenReturn(session);
-        when(smRepo.findBySession(session)).thenReturn(List.of(sm1, sm2));
-        // when
-        String mensaje = servicio.atacar(99);
-        // then
-        assertThat(mensaje, is("Monstruo no encontrado."));
+    void atacar_realizaDañoYContraataque() {
+        when(sessionRepo.findActive(usuario)).thenReturn(session);
+        when(expeditionRepo.findBySessionAndCompletedFalse(session)).thenReturn(Optional.of(expedition));
+
+        // buscar heroes y monsters
+        when(shRepo.findBySession(session)).thenReturn(List.of(sh1));
+        when(smRepo.findBySessionAndDungeonNumber(session, session.getNivel())).thenReturn(List.of(sm1));
+        when(smRepo.findBySessionAndExpeditionNumber(session, expedition.getNumber())).thenReturn(List.of(sm1));
+
+        // when heroe 1 ataca a monster 1
+        String msg = servicio.atacar(usuario, 1, 1);
+
+        verify(smRepo).update(argThat(sm -> sm.getVidaActual() == 20));
+        verify(shRepo).update(argThat(h -> h.getVidaActual() == 95));
+        assertThat(msg, containsString("Has atacado"));
+        assertThat(msg, containsString("Héroe"));
     }
 
-    @Test
-    void atacar_monstruoVivo_actualizaVidaYMensajeContieneNombre() {
-        // given
-        when(sessionRepo.findActive()).thenReturn(session);
-        when(smRepo.findBySession(session)).thenReturn(List.of(sm1));
-        // when
-        String msg = servicio.atacar(1);
-        // then
-        verify(smRepo).update(argThat(s -> s.getVidaActual() == 20));
-        assertThat(usuario.getVida(), is(95));
-        assertThat(msg, containsString("Esqueleto"));
-    }
 
     @Test
     void reiniciarMazmorra_borraYSemilla3Nuevos() {
-        // given
-        when(sessionRepo.findActive()).thenReturn(session);
-        when(monsterRepo.obtenerTodosLosMonstruos()).thenReturn(List.of(m1,m2,m3));
-        // when
-        servicio.reiniciarMazmorra();
-        // then: elimina antiguos y añade 3
+        when(sessionRepo.findActive(usuario)).thenReturn(session);
+        when(monsterRepo.obtenerTodosLosMonstruos()).thenReturn(List.of(m1, m2, m3));
+        when(shRepo.findBySession(session)).thenReturn(List.of(sh1, sh2));
+        when(expeditionRepo.findBySessionAndCompletedFalse(session)).thenReturn(Optional.of(expedition));
+
+        when(smRepo.findBySessionAndDungeonNumber(eq(session), anyInt())).thenReturn(List.of());
+
+        servicio.reiniciarMazmorra(usuario);
+
         verify(smRepo).deleteBySession(session);
-        verify(smRepo, times(3)).add(eq(session), any(Monster.class));
+        verify(smRepo, atLeast(3)).add(eq(session), any(Monster.class), eq(1));
+    }
+
+
+    @Test
+    void terminarExpedicion_marcaComoCompletadaYRecompensa() {
+        when(sessionRepo.findActive(usuario)).thenReturn(session);
+        when(expeditionRepo.findBySessionAndCompletedFalse(session)).thenReturn(Optional.of(expedition));
+        when(monsterRepo.obtenerTodosLosMonstruos()).thenReturn(List.of(m1, m2, m3));
+        when(shRepo.findBySession(session)).thenReturn(List.of(sh1, sh2));
+        when(expeditionRepo.save(any(Expedition.class))).thenAnswer(invocation -> {
+            Expedition exp = invocation.getArgument(0);
+            exp.setNumber(expedition.getNumber() + 1);
+            exp.setCompleted(false);
+            return exp;
+        });
+
+        usuario.setOro(0);
+        servicio.terminarExpedicion(usuario);
+
+        assertThat(usuario.getOro(), is(250));
+        verify(usuarioRepo).modificar(usuario);
+        verify(expeditionRepo).save(expedition);
+        verify(smRepo, atLeast(1)).add(eq(session), any(Monster.class), eq(1));
     }
 }

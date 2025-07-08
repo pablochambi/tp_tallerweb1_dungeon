@@ -1,27 +1,33 @@
-package com.tallerwebi.dominio.servicios;
+package com.tallerwebi.dominio;
 
-import com.tallerwebi.dominio.entidades.GameSession;
-import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.entidades.SessionMonster;
+import com.tallerwebi.dominio.entidades.*;
 
 import java.util.List;
 
 public interface ServicioJuego {
-    GameSession iniciarPartida();
-    List<SessionMonster> getMonstruos();
 
-    GameSession crearNuevaMazmorra();
+    GameSession iniciarPartida(Usuario u);
+    GameSession crearNuevaMazmorra(Usuario u);
+    void reiniciarMazmorra(Usuario u);
+    GameSession getSession(Usuario u);
+    Usuario getUsuario(Usuario u);
 
-    void reiniciarMazmorra();
+    GameSession getSession();
 
     Usuario getUsuario();
-    String atacar(int orden);
-    String defender();
-    String usarPocion();
-    Object getSession();
 
-
+    List<SessionMonster> getMonstruos(Usuario u);
+    List<SessionHero>    getHeroesDeSesion(Usuario u);
+    String atacar(Usuario u, int heroOrden, int monsterOrden);
+    String defender(Usuario u, int heroOrden);
+    String usarPocion(Usuario u, int heroOrden);
+    void siguienteMazmorra(Usuario u);
     void endSession(GameSession current);
 
 
+    Expedition getExpedicionActiva(Usuario usuario);
+
+    void terminarExpedicion(Usuario u);
+
+    boolean tieneSesionActiva(Usuario usuario);
 }

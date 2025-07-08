@@ -6,60 +6,133 @@ import com.tallerwebi.dominio.interfaces.RepositorioSession;
 import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @Repository
-@Transactional
 public class RepositorioSessionImpl implements RepositorioSession {
 
-    @Autowired
-    private SessionFactory sessionFactory;
+    private final JdbcTemplate jdbc;
+    private final RepositorioUsuario usuarioRepo;
+    private final SessionFactory sessionFactory;
 
     @Autowired
-    private RepositorioUsuario usuarioRepositorio;
+    public RepositorioSessionImpl(
+            JdbcTemplate jdbc,
+            RepositorioUsuario usuarioRepo, SessionFactory sessionFactory) {
+        this.jdbc = jdbc;
+        this.usuarioRepo = usuarioRepo;
+        this.sessionFactory = sessionFactory;
+    }
 
     @Override
     public GameSession startNew() {
-        // 1) Asegurar Jugador existente en BDD
-        Usuario usuario = usuarioRepositorio.buscarUsuarioPorId(1L);
-        if (usuario == null) {
-            usuario = new Usuario();
-            usuario.setVida(100);
-            usuario.setAtk(10);
-            usuario.setDefensa(false);
-            usuario.setOro(1000);
-            usuarioRepositorio.guardar(usuario);
-        }
-        // 2) Crear y guardar la sesión ya ligada a ese jugador
-        GameSession session = new GameSession();
-        session.setUsuario(usuario);
-        sessionFactory.getCurrentSession().save(session);
-        return session;
+        Usuario u = usuarioRepo.buscarUsuarioPorId(1L);
+        if (u == null) throw new IllegalStateException("Usuario 1 no encontrado");
+        return startNew(u);
     }
 
     @Override
     public GameSession findActive() {
-        return sessionFactory.getCurrentSession()
-                .createQuery("FROM GameSession g WHERE g.active = true", GameSession.class)
-                .uniqueResult();
+        Usuario u = usuarioRepo.buscarUsuarioPorId(1L);
+        if (u == null) return null;
+        return findActive(u);
+    }
+
+    /**
+     * Inicia una nueva sesión para el usuario dado o retorna la activa si existe.
+     */
+    @Override
+    public GameSession startNew(Usuario u) {
+        // Asegurar que el usuario exista en BD
+        Usuario existente = usuarioRepo.buscarUsuarioPorId(u.getId());
+        if (existente == null) {
+            usuarioRepo.guardar(u);
+        } else {
+            u = existente;
+        }
+        // Crear sesión
+        jdbc.update(
+                "INSERT INTO game_session (usuario_id, turno, nivel, active, finished, started_at) " +
+                        "VALUES (?, 1, 1, 1, 0, CURRENT_TIMESTAMP)",
+                u.getId()
+        );
+        Long newId = jdbc.queryForObject("CALL IDENTITY()", Long.class);
+        GameSession s = new GameSession();
+        s.setId(newId);
+        s.setUsuario(u);
+        s.setTurno(1);
+        s.setNivel(1);
+        s.setActive(true);
+        s.setFinished(false);
+        return s;
+    }
+
+    /**
+     * Busca la sesión activa del usuario dado, o null.
+     */
+    @Override
+    public GameSession findActive(Usuario u) {
+        try {
+            return jdbc.queryForObject(
+                    "SELECT id, usuario_id, turno, nivel, active, finished " +
+                            "FROM game_session WHERE usuario_id = ? AND active = TRUE",
+                    (ResultSet rs, int rn) -> {
+                        GameSession s = new GameSession();
+                        s.setId(rs.getLong("id"));
+                        s.setUsuario(u);
+                        s.setTurno(rs.getInt("turno"));
+                        s.setNivel(rs.getInt("nivel"));
+                        s.setActive(rs.getInt("active") == 1);
+                        s.setFinished(rs.getInt("finished") == 1);
+                        return s;
+                    },
+                    u.getId()
+            );
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
     public void save(GameSession s) {
-        sessionFactory.getCurrentSession().saveOrUpdate(s);
+        jdbc.update(
+                "UPDATE game_session SET turno = ?, nivel = ?, active = ?, finished = ?, ended_at = CURRENT_TIMESTAMP " +
+                        "WHERE id = ?",
+                s.getTurno(),
+                s.getNivel(),
+                s.isActive()   ? 1 : 0,
+                s.isFinished() ? 1 : 0,
+                s.getId()
+        );
     }
 
     @Override
-    public void delete(GameSession session) {
-        // 1) Eliminar primero los SessionMonster asociados a esta sesión
-        sessionFactory
-                .getCurrentSession()
-                .createQuery("delete from SessionMonster sm where sm.sessionId = :sid")
-                .setParameter("sid", session.getSessionId())
-                .executeUpdate();
+    public void update(GameSession s) {
+        jdbc.update(
+                "UPDATE game_session " +
+                        "   SET turno = ?, nivel = ?, active = ?, finished = ?, ended_at = CURRENT_TIMESTAMP " +
+                        " WHERE id = ?",
+                s.getTurno(),
+                s.getNivel(),
+                s.isActive()   ? 1 : 0,
+                s.isFinished() ? 1 : 0,
+                s.getId()
+        );
+    }
 
-        // 2) Ahora eliminar la GameSession
-        sessionFactory.getCurrentSession().delete(session);
+    @Override
+    public void delete(GameSession s) {
+        jdbc.update("DELETE FROM session_monster WHERE session_id = ?", s.getId());
+        jdbc.update("DELETE FROM session_hero    WHERE session_id = ?", s.getId());
+        jdbc.update("DELETE FROM game_session    WHERE id = ?", s.getId());
+    }
+
+    @Override
+    public SessionFactory getSessionFactory() {
+        return this.sessionFactory;
     }
 }

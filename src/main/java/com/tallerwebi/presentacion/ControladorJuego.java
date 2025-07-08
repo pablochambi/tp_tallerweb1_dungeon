@@ -1,70 +1,106 @@
 package com.tallerwebi.presentacion;
 
-import com.tallerwebi.dominio.entidades.GameSession;
-import com.tallerwebi.dominio.servicios.ServicioJuego;
-import com.tallerwebi.dominio.entidades.SessionMonster;
-import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.entidades.*;
+import com.tallerwebi.dominio.ServicioJuego;
+import com.tallerwebi.dominio.interfaces.RepositorioExpedition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
 public class ControladorJuego {
 
     private final ServicioJuego servicioJuego;
+    private final RepositorioExpedition expeditionRepo;
 
     @Autowired
-    public ControladorJuego(ServicioJuego servicioJuego) {
+    public ControladorJuego(ServicioJuego servicioJuego, RepositorioExpedition expeditionRepo) {
         this.servicioJuego = servicioJuego;
+        this.expeditionRepo = expeditionRepo;
     }
 
     @GetMapping("/juego")
-    public String mostrarJuego(Model model) {
-        GameSession session    = (GameSession) servicioJuego.getSession();
-        Usuario usuario        = session.getUsuario();
-        List<SessionMonster> monstruos = servicioJuego.getMonstruos();
+    public String mostrarJuego(HttpSession httpSession, Model model) {
+        Usuario usuario = (Usuario) httpSession.getAttribute("usuario");
+        if (usuario == null) return "redirect:/login";
 
-        model.addAttribute("session",   session);
-        model.addAttribute("usuario",   usuario);
-        model.addAttribute("monstruos", monstruos);
+        GameSession session = servicioJuego.iniciarPartida(usuario);
+
+        Expedition exp = expeditionRepo
+                .findBySessionAndCompletedFalse(session)
+                .orElseThrow(() -> new IllegalStateException("No hay expedición activa"));
+
+        model.addAttribute("expNumber",    exp.getNumber());
+        model.addAttribute("dungeonLevel", session.getNivel());
+        model.addAttribute("usuario",      usuario);
+        model.addAttribute("monstruos",    servicioJuego.getMonstruos(usuario));
+        model.addAttribute("heroesDeSesion", servicioJuego.getHeroesDeSesion(usuario));
+
         return "juego";
     }
 
     @PostMapping("/juego/atacar")
-    public String atacar(@RequestParam int orden, RedirectAttributes ra) {
-        String mensaje = servicioJuego.atacar(orden);
+    public String atacar(
+            @RequestParam int heroOrden,
+            @RequestParam int monsterOrden,
+            HttpSession httpSession,
+            RedirectAttributes ra
+    ) {
+        Usuario u = (Usuario) httpSession.getAttribute("usuario");
+        String mensaje = servicioJuego.atacar(u, heroOrden, monsterOrden);
         ra.addFlashAttribute("mensaje", mensaje);
         return "redirect:/juego";
     }
 
     @PostMapping("/juego/defender")
-    public String defender(RedirectAttributes ra) {
-        String mensaje = servicioJuego.defender();
+    public String defender(
+            @RequestParam int heroOrden,
+            HttpSession httpSession,
+            RedirectAttributes ra
+    ) {
+        Usuario u = (Usuario) httpSession.getAttribute("usuario");
+        String mensaje = servicioJuego.defender(u, heroOrden);
         ra.addFlashAttribute("mensaje", mensaje);
         return "redirect:/juego";
     }
 
     @PostMapping("/juego/usarPocion")
-    public String usarPocion(RedirectAttributes ra) {
-        String mensaje = servicioJuego.usarPocion();
+    public String usarPocion(
+            @RequestParam int heroOrden,
+            HttpSession httpSession,
+            RedirectAttributes ra
+    ) {
+        Usuario u = (Usuario) httpSession.getAttribute("usuario");
+        String mensaje = servicioJuego.usarPocion(u, heroOrden);
         ra.addFlashAttribute("mensaje", mensaje);
         return "redirect:/juego";
     }
 
-    @PostMapping("/juego/reiniciar")
-    public String reiniciarMazmorra(RedirectAttributes ra) {
-        ra.addFlashAttribute("mensaje", "Mazmorra reiniciada!");
+    @PostMapping("/juego/siguiente")
+    public String siguienteMazmorra(
+            HttpSession httpSession,
+            RedirectAttributes ra
+    ) {
+        Usuario u = (Usuario) httpSession.getAttribute("usuario");
+        servicioJuego.siguienteMazmorra(u);
+        ra.addFlashAttribute("mensaje", "¡Nueva mazmorra generada!");
         return "redirect:/juego";
     }
 
-    @PostMapping("/juego/siguiente")
-    public String siguienteMazmorra(RedirectAttributes ra) {
-        servicioJuego.reiniciarMazmorra();
-        ra.addFlashAttribute("mensaje", "¡Nueva mazmorra generada!");
-        return "redirect:/juego";
+    @PostMapping("/juego/terminarExpedicion")
+    public String terminarExpedicion(HttpSession httpSession, RedirectAttributes ra) {
+        Usuario u = (Usuario) httpSession.getAttribute("usuario");
+        if (u == null) return "redirect:/login";
+
+        servicioJuego.terminarExpedicion(u);
+        ra.addFlashAttribute("mensaje", "¡Expedición completada! Has recibido 250 de oro.");
+        ra.addFlashAttribute("oro", u.getOro());
+
+        return "redirect:/home";
     }
 }

@@ -1,185 +1,337 @@
 package com.tallerwebi.dominio.servicios.Impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.tallerwebi.dominio.entidades.*;
 import com.tallerwebi.dominio.interfaces.*;
-import com.tallerwebi.dominio.servicios.ServicioJuego;
+import com.tallerwebi.dominio.servicios.ServicioRecluta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
-public class ServicioJuegoImpl implements ServicioJuego {
+public class ServicioJuegoImpl implements com.tallerwebi.dominio.ServicioJuego {
 
-    @Autowired private RepositorioUsuario UsuarioRepo;
-    @Autowired private RepositorioSession sessionRepo;
-    @Autowired private RepositorioMonster monsterRepo;
-    @Autowired private RepositorioSessionMonster smRepo;
+    private final RepositorioSession sessionRepo;
+    private final RepositorioSessionMonster smRepo;
+    private final RepositorioHeroSession shRepo;
+    private final RepositorioMonster monsterRepo;
+    private final RepositorioUsuario usuarioRepo;
+    private final RepositorioExpedition expeditionRepo;
+    private final ServicioRecluta servicioRecluta;
 
-   //recupera sesion activa, sino crea una nueva
-   @Override
-   public GameSession iniciarPartida() {
-       GameSession session = sessionRepo.findActive();
-       if (session == null) {
-           session = crearNuevaMazmorra();
-       }
-       return session;
-   }
+    @Autowired
+    public ServicioJuegoImpl(
+            RepositorioSession sessionRepo,
+            RepositorioSessionMonster smRepo,
+            RepositorioHeroSession shRepo,
+            RepositorioMonster monsterRepo,
+            RepositorioUsuario usuarioRepo,
+            RepositorioExpedition expeditionRepo,
+            ServicioRecluta servicioRecluta
+    ) {
+        this.sessionRepo     = sessionRepo;
+        this.smRepo          = smRepo;
+        this.shRepo          = shRepo;
+        this.monsterRepo     = monsterRepo;
+        this.usuarioRepo     = usuarioRepo;
+        this.expeditionRepo  = expeditionRepo;
+        this.servicioRecluta = servicioRecluta;
+    }
+
     @Override
-    public GameSession crearNuevaMazmorra() {
-        // User fijo con id 1 (se crea si no existe)
+    public GameSession iniciarPartida(Usuario u) {
+        if (u == null) throw new IllegalArgumentException("Usuario nulo");
 
-        Usuario u = UsuarioRepo.buscarUsuarioPorId(1L);
-        if (u == null) {
-            u = new Usuario();
-            u.setVida(100);
-            u.setAtk(10);
-            u.setDefensa(false);
-            u.setOro(1000);
-            UsuarioRepo.guardar(u);
+        GameSession session = sessionRepo.findActive(u);
+        if (session == null) {
+            session = sessionRepo.startNew(u);
+            session.setNivel(1);
+            sessionRepo.update(session);
         }
 
-        GameSession session = new GameSession();
-        session.setUsuario(u);
-        sessionRepo.save(session);
+        GameSession finalSession = session;
+        GameSession finalSession1 = session;
+        Expedition exp = expeditionRepo
+                .findBySessionAndCompletedFalse(session)
+                .orElseGet(() -> crearExpedicion(finalSession, finalSession1.getNivel()));
 
-        // agregar 3 monstruos random
-        List<Monster> all = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
-        Collections.shuffle(all);
-        int toSeed = Math.min(3, all.size());
-        for (int i = 0; i < toSeed; i++) {
-            smRepo.add(session, all.get(i));
+        // Sembrar héroes si no existen (mantienen su vida entre sesiones/mazmorras)
+        if (shRepo.findBySession(session).isEmpty()) {
+            seedHeroes(session);
         }
+
+        // Sembrar monstruos si no existen para esta mazmorra
+        if (smRepo.findBySessionAndDungeonNumber(session, session.getNivel()).isEmpty()) {
+            seedMonsters(session, session.getNivel(), exp.getNumber());
+        }
+
         return session;
     }
 
     @Override
-    public void reiniciarMazmorra() {
-        GameSession session = sessionRepo.findActive();
+    public void siguienteMazmorra(Usuario u) {
+        GameSession session = sessionRepo.findActive(u);
         if (session == null) {
-            // si no existe la creamos
-            crearNuevaMazmorra();
+            session = sessionRepo.startNew(u);
+            session.setNivel(1);
+            sessionRepo.update(session);
+        }
+
+        int nivelAnterior = session.getNivel();
+        if (nivelAnterior < 3) {
+            int nuevoNivel = nivelAnterior + 1;
+            session.setNivel(nuevoNivel);
+            sessionRepo.update(session);
+
+            // Borrar monstruos de la mazmorra anterior y la nueva (por seguridad)
+            smRepo.deleteBySessionAndDungeonNumber(session, nivelAnterior);
+            smRepo.deleteBySessionAndDungeonNumber(session, nuevoNivel);
+
+            // Obtener número de expedición actual
+            Expedition exp = expeditionRepo
+                    .findBySessionAndCompletedFalse(session)
+                    .orElseThrow(() -> new IllegalStateException("No hay expedición activa"));
+
+            // Poblar con monstruos normales o buffeados según expedición
+            seedMonsters(session, nuevoNivel, exp.getNumber());
+
         } else {
-            // eliminar monstruos viejos
-            smRepo.deleteBySession(session);
-            // agregar monstruos 3 nuevos
-            List<Monster> all = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
-            Collections.shuffle(all);
-            int toSeed = Math.min(3, all.size());
-            for (int i = 0; i < toSeed; i++) {
-                smRepo.add(session, all.get(i));
-            }
+            throw new IllegalStateException("Usá terminarExpedicion() en mazmorra 3");
         }
     }
 
-
     @Override
-    public Usuario getUsuario() {
-        return iniciarPartida().getUsuario();
+    public GameSession crearNuevaMazmorra(Usuario u) {
+        GameSession session = iniciarPartida(u);
+
+        // Limpia héroes y monstruos
+        smRepo.deleteBySession(session);
+        shRepo.deleteBySession(session);
+
+        // Nueva expedición (forzada) a mazmorra 1, poblar héroes y monstruos
+        seedHeroes(session);
+        seedMonsters(session, 1, 1);
+
+        return session;
     }
 
     @Override
-    public List<SessionMonster> getMonstruos() {
-        return smRepo.findBySession(iniciarPartida());
+    public void reiniciarMazmorra(Usuario u) {
+        GameSession session = iniciarPartida(u);
+        smRepo.deleteBySession(session);
+        shRepo.deleteBySession(session);
+        seedHeroes(session);
+        seedMonsters(session, 1, 1);
     }
 
     @Override
-    public String atacar(int orden) {
-        GameSession session = iniciarPartida();
-        Usuario usuario = session.getUsuario();
+    public List<SessionMonster> getMonstruos(Usuario u) {
+        GameSession session = iniciarPartida(u);
+        // Devuelve solo los monstruos de la mazmorra actual
+        return smRepo.findBySessionAndDungeonNumber(session, session.getNivel());
+    }
 
-        // 1) Atacar al monstruo objetivo
-        SessionMonster objetivo = getMonstruos().stream()
-                .filter(sm -> sm.getOrden() == orden)
-                .findFirst()
-                .orElse(null);
-        if (objetivo == null) {
-            return "Monstruo no encontrado.";
-        }
-        objetivo.setVidaActual(objetivo.getVidaActual() - usuario.getAtk());
-        smRepo.update(objetivo);
+    @Override
+    public List<SessionHero> getHeroesDeSesion(Usuario u) {
+        GameSession session = iniciarPartida(u);
+        return shRepo.findBySession(session);
+    }
 
-        // 2) Monstruos vivos contraatacan y registramos sus nombres
-        List<SessionMonster> vivos = getMonstruos().stream()
-                .filter(sm -> sm.getVidaActual() > 0)
+    @Override
+    public String atacar(Usuario u, int heroOrden, int monsterOrden) {
+        GameSession session = iniciarPartida(u);
+
+        // 1) Localiza héroe y monstruo
+        SessionHero sh = getHeroesDeSesion(u).stream()
+                .filter(h -> h.getOrden() == heroOrden)
+                .findFirst().orElse(null);
+        SessionMonster sm = getMonstruos(u).stream()
+                .filter(m -> m.getOrden() == monsterOrden)
+                .findFirst().orElse(null);
+
+        if (sh == null) return "Héroe no encontrado.";
+        if (sm == null) return "Monstruo no encontrado.";
+
+        // 2) Héroe golpea
+        sm.takeDamage(sh.damageOutput());
+        smRepo.update(sm);
+
+        // 3) Monstruos vivos contraatacan
+        List<SessionMonster> vivos = getMonstruos(u).stream()
+                .filter(m -> m.getVidaActual() > 0)
                 .collect(Collectors.toList());
-
-        List<String> atacantes = new ArrayList<>();
-        for (SessionMonster sm : vivos) {
-            atacantes.add(sm.getMonster().getNombre());
-            int dano = sm.getMonster().getAtk();
-            if (usuario.isDefensa()) {
-                dano /= 2;
-                usuario.setDefensa(false);
-            }
-            usuario.setVida(usuario.getVida() - dano);
+        for (SessionMonster m : vivos) {
+            sh.takeDamage(m.getMonster().getAtk());
+            shRepo.update(sh);
         }
 
-        UsuarioRepo.guardar(usuario);
-
-        // 3) Construimos el texto de quién atacó
-        String textoAtacantes;
-        if (atacantes.isEmpty()) {
-            textoAtacantes = "Nadie";
-        } else if (atacantes.size() == 1) {
-            textoAtacantes = atacantes.get(0) + " te contraataca";
-        } else {
-            // Unir con comas y "y" antes del último
-            String lista = String.join(", ", atacantes.subList(0, atacantes.size()-1))
-                    + " y " + atacantes.get(atacantes.size()-1);
-            textoAtacantes = lista + " te contraatacan";
-        }
-
-        // 4) Devolver mensaje final
+        // 4) Arma el mensaje final
+        String atacantes = vivos.isEmpty()
+                ? "Nadie"
+                : vivos.stream()
+                .map(x -> x.getMonster().getNombre())
+                .collect(Collectors.joining(", "));
         return String.format(
-                "Has atacado. %s y ahora tu vida es %d.",
-                textoAtacantes,
-                usuario.getVida()
+                "Has atacado. Contraatacan: %s. Tu héroe %s ahora tiene %d/%d HP.",
+                atacantes,
+                sh.getHero().getNombre(),
+                sh.getVidaActual(),
+                sh.getHero().getMaxVida()
         );
     }
 
     @Override
-    public String defender() {
-        GameSession session = iniciarPartida();
-        Usuario usuario = session.getUsuario();
-
-        usuario.setDefensa(true);
-        UsuarioRepo.guardar(usuario);
-
-        for (SessionMonster sm : getMonstruos()) {
-            if (sm.getVidaActual() > 0) {
-                int dano = sm.getMonster().getAtk() / 2;
-                usuario.setVida(usuario.getVida() - dano);
-            }
-        }
-        UsuarioRepo.guardar(usuario);
-        return "Defiendes este turno. Vida restante: " + usuario.getVida() + ".";
+    public String defender(Usuario u, int heroOrden) {
+        GameSession session = iniciarPartida(u);
+        SessionHero sh = getHeroesDeSesion(u).stream()
+                .filter(h -> h.getOrden() == heroOrden)
+                .findFirst().orElse(null);
+        if (sh == null) return "Héroe no encontrado.";
+        sh.defend();
+        shRepo.update(sh);
+        return "Tu héroe " + sh.getHero().getNombre() + " se defiende.";
     }
 
     @Override
-    public String usarPocion() {
-        GameSession session = iniciarPartida();
-        Usuario usuario = session.getUsuario();
+    public String usarPocion(Usuario u, int heroOrden) {
+        GameSession session = iniciarPartida(u);
+        SessionHero sh = getHeroesDeSesion(u).stream()
+                .filter(h -> h.getOrden() == heroOrden)
+                .findFirst().orElse(null);
+        if (sh == null) return "Héroe no encontrado.";
+        sh.heal(30);
+        shRepo.update(sh);
+        return String.format(
+                "Tu héroe %s recupera vida: ahora %d/%d.",
+                sh.getHero().getNombre(),
+                sh.getVidaActual(),
+                sh.getHero().getMaxVida()
+        );
+    }
 
-        usuario.setVida(usuario.getVida() + 30);
-        UsuarioRepo.guardar(usuario);
-        return "Usaste poción. Vida actual: " + usuario.getVida() + ".";
+    @Override
+    public Expedition getExpedicionActiva(Usuario u) {
+        GameSession s = iniciarPartida(u);
+        return expeditionRepo
+                .findBySessionAndCompletedFalse(s)
+                .orElseThrow(() -> new IllegalStateException("No hay expedición activa"));
+    }
+
+    @Override
+    public void endSession(GameSession session) {
+        if (session != null) {
+            smRepo.deleteBySession(session);
+            shRepo.deleteBySession(session);
+            sessionRepo.delete(session);
+        }
+    }
+
+    @Override
+    public void terminarExpedicion(Usuario u) {
+        GameSession session = sessionRepo.findActive(u);
+        if (session == null) throw new IllegalStateException("No hay sesión activa");
+
+        Expedition exp = expeditionRepo
+                .findBySessionAndCompletedFalse(session)
+                .orElseThrow(() -> new IllegalStateException("No hay expedición activa"));
+
+        int oldNumber = exp.getNumber();
+        exp.setCompleted(true);
+        expeditionRepo.save(exp);
+
+        // Recompensa
+        u.setOro(u.getOro() + 250);
+        usuarioRepo.modificar(u);
+
+        // Nueva expedición N+1
+        Expedition next = crearExpedicion(session, oldNumber + 1);
+
+        // Reset mazmorra a 1 y poblar con monstruos buffeados si corresponde
+        session.setNivel(1);
+        sessionRepo.update(session);
+
+        // Limpia cualquier monstruo previo del nivel 1
+        smRepo.deleteBySessionAndDungeonNumber(session, 1);
+
+        // Poblar monstruos de nivel 1, usando buff si corresponde
+        seedMonsters(session, 1, next.getNumber());
+    }
+
+    // ----------- Métodos auxiliares -----------
+
+    private Expedition crearExpedicion(GameSession session, int numero) {
+        Expedition e = new Expedition();
+        e.setSession(session);
+        e.setNumber(numero);
+        e.setCompleted(false);
+        return expeditionRepo.save(e);
+    }
+
+    private void seedMonsters(GameSession session, int dungeonNumber, int expedicionNumber) {
+        if (expedicionNumber > 1) {
+            seedMonstersBuffed(session, expedicionNumber, dungeonNumber);
+        } else {
+            List<Monster> all = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
+            Collections.shuffle(all);
+            all.stream().limit(3)
+                    .forEach(m -> smRepo.add(session, m, dungeonNumber));
+        }
+    }
+
+    private void seedHeroes(GameSession session) {
+        List<Heroe> heroes = servicioRecluta.getHeroesEnCarruaje(session.getUsuario().getId());
+        int orden = 1;
+        for (Heroe h : heroes) {
+            shRepo.add(session, h, orden++);
+        }
+    }
+
+    private void seedMonstersBuffed(GameSession session, int expeditionNumber, int dungeonNumber) {
+        // factor de buff: +10% por cada expedición pasada
+        double factor = 1.0 + (expeditionNumber - 1) * 0.10;
+
+        List<Monster> todos = new ArrayList<>(monsterRepo.obtenerTodosLosMonstruos());
+        Collections.shuffle(todos);
+
+        int orden = 1;
+        for (Monster base : todos.subList(0, 3)) {
+            Monster buffed = new Monster();
+            buffed.setId     (base.getId());
+            buffed.setNombre (base.getNombre());
+            buffed.setImagen (base.getImagen());
+            buffed.setVida   ((int) Math.round(base.getVida() * factor));
+            buffed.setAtk    ((int) Math.round(base.getAtk()  * factor));
+            smRepo.add(session, buffed, dungeonNumber);
+            orden++;
+        }
+    }
+
+    @Override
+    public boolean tieneSesionActiva(Usuario u) {
+        return sessionRepo.findActive(u) != null;
     }
 
     @Override
     public GameSession getSession() {
-        return iniciarPartida();
+        throw new UnsupportedOperationException("Use getSession(Usuario) en su lugar");
     }
 
     @Override
-    public void endSession(GameSession current) {
-        if (current != null) {
-            sessionRepo.delete(current);
-        }
+    public Usuario getUsuario() {
+        throw new UnsupportedOperationException("Use getUsuario(Usuario) en su lugar");
+    }
+
+    @Override
+    public GameSession getSession(Usuario u) {
+        return iniciarPartida(u);
+    }
+
+    @Override
+    public Usuario getUsuario(Usuario u) {
+        return iniciarPartida(u).getUsuario();
     }
 }
