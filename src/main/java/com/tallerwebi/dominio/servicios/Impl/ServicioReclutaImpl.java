@@ -226,28 +226,35 @@ public class ServicioReclutaImpl implements ServicioRecluta {
     @Override
     public void seleccionarHeroe(Long uid, Long hid) {
         Usuario u = repositorioUsuario.buscarUsuarioPorId(uid);
-        Carruaje c = repositorioCarruaje
-                .buscarCarruajeAsignadoAUnUsuario(u);
-        Heroe h = repositorioHeroe
-                .buscarHeroePorId(hid);
+        Carruaje c = repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(u);
+        Heroe h = repositorioHeroe.buscarHeroePorId(hid);
+
+        if (u.getOro() < h.getPrecio()) {
+            throw new ReclutaException("No tienes suficiente oro para reclutar este héroe.");
+        }
+
+        u.setOro(u.getOro() - h.getPrecio());
+        repositorioUsuario.modificar(u);
 
         repositorio_carruajeHeroe.agregarRelacion(c, h);
     }
 
+
     @Override
     public void quitarHeroe(Long uid, Long hid) {
         Usuario u = repositorioUsuario.buscarUsuarioPorId(uid);
-        Carruaje c = repositorioCarruaje
-                .buscarCarruajeAsignadoAUnUsuario(u);
-        Heroe h = repositorioHeroe
-                .buscarHeroePorId(hid);
+        Carruaje c = repositorioCarruaje.buscarCarruajeAsignadoAUnUsuario(u);
+        Heroe h = repositorioHeroe.buscarHeroePorId(hid);
 
-        // localizo la entidad de unión y la borro
+        u.setOro(u.getOro() + h.getPrecio());
+        repositorioUsuario.modificar(u);
+
         CarruajeHeroe rel = repositorio_carruajeHeroe.buscarRelacion(c, h);
         if (rel != null) {
             repositorio_carruajeHeroe.removerRelacion(rel);
         }
     }
+
 
 }
 

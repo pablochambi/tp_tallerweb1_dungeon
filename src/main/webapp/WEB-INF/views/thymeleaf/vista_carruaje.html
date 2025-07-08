@@ -13,6 +13,14 @@
 <body>
 <main>
     <div class="container mt-4">
+        <div class="d-flex justify-content-end align-items-center mb-3">
+            <div class="alert alert-warning mb-0 px-4 py-2" style="font-weight:bold;">
+                Oro disponible: <span th:text="${usuario.oro}">0</span> &#128176;
+            </div>
+        </div>
+
+        <div th:if="${errorMsg}" class="alert alert-danger" th:text="${errorMsg}"></div>
+
 
         <h2 class="mb-4">Héroes disponibles</h2>
         <div class="row gy-3 mb-5">

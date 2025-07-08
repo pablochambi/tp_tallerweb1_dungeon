@@ -6,11 +6,13 @@ import com.tallerwebi.dominio.entidades.Carruaje;
 import com.tallerwebi.dominio.entidades.Heroe;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.excepcion.ReclutaException;
+import javassist.CtBehavior;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -68,18 +70,34 @@ public class ControladorReclutas {
     @PostMapping("/carruaje/seleccionar")
     public String seleccionarHeroe(
             @RequestParam Long usuarioId,
-            @RequestParam Long heroeId
+            @RequestParam Long heroeId,
+            HttpSession session,
+            RedirectAttributes redirectAttributes // <-- para mensajes flash
     ) {
-        servicioRecluta.seleccionarHeroe(usuarioId, heroeId);
+        try {
+            servicioRecluta.seleccionarHeroe(usuarioId, heroeId);
+
+            Usuario usuarioActualizado = servicioRecluta.getUsuarioPorId(usuarioId);
+            session.setAttribute("usuario", usuarioActualizado);
+
+        } catch (ReclutaException ex) {
+
+            redirectAttributes.addFlashAttribute("errorMsg", ex.getMessage());
+        }
         return "redirect:/carruaje";
     }
 
     @PostMapping("/carruaje/quitar")
     public String quitarHeroe(
             @RequestParam Long usuarioId,
-            @RequestParam Long heroeId
+            @RequestParam Long heroeId,
+            HttpSession session
     ) {
         servicioRecluta.quitarHeroe(usuarioId, heroeId);
+
+        Usuario usuarioActualizado = servicioRecluta.getUsuarioPorId(usuarioId);
+        session.setAttribute("usuario", usuarioActualizado);
+
         return "redirect:/carruaje";
     }
 
@@ -97,7 +115,6 @@ public class ControladorReclutas {
         Carruaje carruaje = servicioRecluta
                 .asignarOActualizarUnCarrujeAUnUsuario(usuario.getId());
 
-        // Las dos llamadas que tu test espera:
         servicioRecluta.quitarUnHeroeDelCarruaje(idHeroe, usuario.getId());
         servicioRecluta.agregarUnHeroeAlUsuario   (idHeroe, usuario);
 
