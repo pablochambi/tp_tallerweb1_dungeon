@@ -12,14 +12,14 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-public class HomeController {
+public class ControladorHome {
 
     private final ServicioJuego servicioJuego;
     private final RepositorioSession sessionRepo;
 
     @Autowired
-    public HomeController(ServicioJuego servicioJuego,
-                          RepositorioSession sessionRepo) {
+    public ControladorHome(ServicioJuego servicioJuego,
+                           RepositorioSession sessionRepo) {
         this.servicioJuego = servicioJuego;
         this.sessionRepo   = sessionRepo;
     }
