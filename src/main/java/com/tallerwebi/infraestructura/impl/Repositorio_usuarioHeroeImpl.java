@@ -1,7 +1,7 @@
-package com.tallerwebi.infraestructura;
+package com.tallerwebi.infraestructura.impl;
 
 import com.tallerwebi.dominio.entidades.*;
-import com.tallerwebi.dominio.interfaces.Repositorio_usuarioHeroe;
+import com.tallerwebi.infraestructura.Repositorio_usuarioHeroe;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

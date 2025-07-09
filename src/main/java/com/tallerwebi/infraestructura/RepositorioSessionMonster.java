@@ -1,10 +1,9 @@
-package com.tallerwebi.dominio.interfaces;
+package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.entidades.SessionMonster;
 import com.tallerwebi.dominio.entidades.GameSession;
 import com.tallerwebi.dominio.entidades.Monster;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface RepositorioSessionMonster {

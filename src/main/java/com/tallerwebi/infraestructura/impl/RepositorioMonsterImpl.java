@@ -1,9 +1,9 @@
-package com.tallerwebi.infraestructura;
+package com.tallerwebi.infraestructura.impl;
 
 import com.tallerwebi.dominio.entidades.GameSession;
 import com.tallerwebi.dominio.entidades.Monster;
 import com.tallerwebi.dominio.entidades.SessionMonster;
-import com.tallerwebi.dominio.interfaces.RepositorioMonster;
+import com.tallerwebi.infraestructura.RepositorioMonster;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;

@@ -1,17 +1,14 @@
 package com.tallerwebi.infraestructura;
 
+import com.tallerwebi.config.HibernateConfig;
 import com.tallerwebi.dominio.entidades.Inventario;
 import com.tallerwebi.dominio.entidades.Item;
 import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.interfaces.RepositorioItem;
-import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
-import com.tallerwebi.dominio.interfaces.RepositorioInventario;
 import com.tallerwebi.integracion.config.HibernateTestConfig;
 import com.tallerwebi.integracion.config.SpringWebTestConfig;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -23,10 +20,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {SpringWebTestConfig.class, HibernateTestConfig.class})
+@ContextConfiguration(classes = {
+        SpringWebTestConfig.class,
+        HibernateTestConfig.class,
+        HibernateConfig.class
+})
 public class RepositorioItemTest {
 
     @Autowired
@@ -36,10 +36,7 @@ public class RepositorioItemTest {
     @Autowired
     RepositorioInventario repositorioInventario;
 
-
     @Test
-    @Transactional
-    @Rollback
     public void queSeGuardeElItem() {
         Item item = new Item();
         repositorioItem.guardarItem(item);
@@ -48,12 +45,10 @@ public class RepositorioItemTest {
     }
 
     @Test
-    @Transactional
-    @Rollback
     public void obtenerListaDeItemsPorInventario() {
-
         Inventario inventario = new Inventario();
         repositorioInventario.guardar(inventario);
+
         Usuario usuario = new Usuario();
         usuario.setOro(500);
         usuario.setEmail("test2@prueba.com");
@@ -62,16 +57,15 @@ public class RepositorioItemTest {
 
         repositorioUsuario.guardar(usuario);
 
-        // Crear dos items
         Item item1 = new Item();
         item1.setNombre("Espada");
         item1.setPrecio(150);
-        item1.setInventario(usuario.getInventario());
+        item1.setInventario(inventario);
 
         Item item2 = new Item();
         item2.setNombre("Escudo");
         item2.setPrecio(120);
-        item2.setInventario(usuario.getInventario());
+        item2.setInventario(inventario);
 
         repositorioItem.guardarItem(item1);
         repositorioItem.guardarItem(item2);
@@ -80,17 +74,14 @@ public class RepositorioItemTest {
 
         assertNotNull(items);
         assertEquals(2, items.size());
-
     }
 
     @Test
-    @Transactional
-    @Rollback
     public void buscarPorIdDevuelveElItemEsperado() {
-
         Inventario inventario = new Inventario();
+        repositorioInventario.guardar(inventario);
+
         Item item = new Item();
-        item.setId(1L);
         item.setNombre("Poción");
         item.setPrecio(100);
         item.setInventario(inventario);
@@ -100,6 +91,4 @@ public class RepositorioItemTest {
         assertNotNull(repositorioItem.buscarPorId(item.getId()));
         assertEquals("Poción", repositorioItem.buscarPorId(item.getId()).getNombre());
     }
-
-
 }

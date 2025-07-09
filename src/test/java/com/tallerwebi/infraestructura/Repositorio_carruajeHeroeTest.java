@@ -4,7 +4,6 @@ import com.tallerwebi.dominio.entidades.Carruaje;
 import com.tallerwebi.dominio.entidades.CarruajeHeroe;
 import com.tallerwebi.dominio.entidades.Heroe;
 import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.interfaces.*;
 import com.tallerwebi.integracion.config.HibernateTestConfig;
 import com.tallerwebi.integracion.config.SpringWebTestConfig;
 import org.junit.jupiter.api.BeforeEach;

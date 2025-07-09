@@ -1,6 +1,5 @@
-package com.tallerwebi.dominio.interfaces;
+package com.tallerwebi.infraestructura;
 
-import com.tallerwebi.dominio.*;
 import com.tallerwebi.dominio.entidades.Carruaje;
 import com.tallerwebi.dominio.entidades.CarruajeHeroe;
 import com.tallerwebi.dominio.entidades.Heroe;

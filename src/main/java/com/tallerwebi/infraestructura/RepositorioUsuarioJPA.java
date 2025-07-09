@@ -1,4 +1,4 @@
-package com.tallerwebi.dominio.interfaces;
+package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.dominio.entidades.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,8 +1,8 @@
-package com.tallerwebi.infraestructura;
+package com.tallerwebi.infraestructura.impl;
 
 import com.tallerwebi.dominio.entidades.Expedition;
 import com.tallerwebi.dominio.entidades.GameSession;
-import com.tallerwebi.dominio.interfaces.RepositorioExpedition;
+import com.tallerwebi.infraestructura.RepositorioExpedition;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

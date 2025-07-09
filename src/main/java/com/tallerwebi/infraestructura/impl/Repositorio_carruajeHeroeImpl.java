@@ -1,9 +1,9 @@
-package com.tallerwebi.infraestructura;
+package com.tallerwebi.infraestructura.impl;
 
 import com.tallerwebi.dominio.entidades.Carruaje;
 import com.tallerwebi.dominio.entidades.CarruajeHeroe;
 import com.tallerwebi.dominio.entidades.Heroe;
-import com.tallerwebi.dominio.interfaces.Repositorio_carruajeHeroe;
+import com.tallerwebi.infraestructura.Repositorio_carruajeHeroe;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 
 
 import javax.transaction.Transactional;
-import java.util.Collections;
 import java.util.List;
 
 @Transactional

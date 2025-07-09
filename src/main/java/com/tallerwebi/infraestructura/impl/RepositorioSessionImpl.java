@@ -1,16 +1,15 @@
-package com.tallerwebi.infraestructura;
+package com.tallerwebi.infraestructura.impl;
 
 import com.tallerwebi.dominio.entidades.GameSession;
 import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.interfaces.RepositorioSession;
-import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
+import com.tallerwebi.infraestructura.RepositorioSession;
+import com.tallerwebi.infraestructura.RepositorioUsuario;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 @Repository
 public class RepositorioSessionImpl implements RepositorioSession {

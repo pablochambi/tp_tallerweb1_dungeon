@@ -1,11 +1,10 @@
-package com.tallerwebi.infraestructura;
+package com.tallerwebi.infraestructura.impl;
 
 
 import com.tallerwebi.dominio.entidades.Inventario;
-import com.tallerwebi.dominio.interfaces.RepositorioInventario;
+import com.tallerwebi.infraestructura.RepositorioInventario;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
