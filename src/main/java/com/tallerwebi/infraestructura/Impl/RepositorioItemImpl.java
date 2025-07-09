@@ -1,9 +1,9 @@
-package com.tallerwebi.infraestructura;
+package com.tallerwebi.infraestructura.Impl;
 
 
-import com.tallerwebi.dominio.entidades.Inventario;
 import com.tallerwebi.dominio.entidades.Item;
-import com.tallerwebi.dominio.interfaces.RepositorioItem;
+//import com.tallerwebi.dominio.interfaces.RepositorioItem;
+import com.tallerwebi.infraestructura.RepositorioItem;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;

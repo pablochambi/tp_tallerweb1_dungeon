@@ -2,7 +2,7 @@ package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.config.HibernateConfig;
 import com.tallerwebi.dominio.entidades.Heroe;
-import com.tallerwebi.dominio.interfaces.RepositorioHeroe;
+//import com.tallerwebi.dominio.interfaces.RepositorioHeroe;
 import com.tallerwebi.integracion.config.HibernateTestConfig;
 import com.tallerwebi.integracion.config.SpringWebTestConfig;
 import org.hibernate.SessionFactory;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;

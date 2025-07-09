@@ -1,7 +1,8 @@
-package com.tallerwebi.infraestructura;
+package com.tallerwebi.infraestructura.Impl;
 
 import com.tallerwebi.dominio.entidades.Heroe;
-import com.tallerwebi.dominio.interfaces.RepositorioHeroe;
+
+import com.tallerwebi.infraestructura.RepositorioHeroe;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;

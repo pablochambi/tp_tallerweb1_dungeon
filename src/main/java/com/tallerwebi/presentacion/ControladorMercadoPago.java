@@ -9,12 +9,10 @@ import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.net.HttpStatus;
 import com.mercadopago.resources.preference.Preference;
-import com.mercadopago.resources.preference.PreferenceBackUrls;
 import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
+//import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
 import com.tallerwebi.dominio.servicios.ServicioLogin;
 import com.tallerwebi.dominio.servicios.ServicioTienda;
-import org.dom4j.rule.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -34,12 +32,12 @@ import java.util.List;
 @Controller
 public class ControladorMercadoPago {
 
-//  https://a9ec0606f07e.ngrok-free.app -> http://localhost:8080     url de ngrok para entrar a mp
+//   https://c271873f42a6.ngrok-free.app  -> http://localhost:8080     url de ngrok para entrar a mp
    // @Autowired
     //private RepositorioUsuario repositorioUsuario;
     private ServicioLogin servicioLogin;
     private ServicioTienda servicioTienda;
-    private final String NGROK_URL = "https://a9ec0606f07e.ngrok-free.app";
+    private final String NGROK_URL = "https://c271873f42a6.ngrok-free.app";
 
     @Autowired
     public ControladorMercadoPago(ServicioLogin servicioLogin, ServicioTienda servicioTienda) {

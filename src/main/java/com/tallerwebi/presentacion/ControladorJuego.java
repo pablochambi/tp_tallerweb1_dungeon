@@ -2,7 +2,8 @@ package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.entidades.*;
 import com.tallerwebi.dominio.ServicioJuego;
-import com.tallerwebi.dominio.interfaces.RepositorioExpedition;
+//import com.tallerwebi.dominio.interfaces.RepositorioExpedition;
+import com.tallerwebi.infraestructura.RepositorioExpedition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 @Controller
 public class ControladorJuego {

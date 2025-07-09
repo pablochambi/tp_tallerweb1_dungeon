@@ -1,8 +1,9 @@
-package com.tallerwebi.infraestructura;
+package com.tallerwebi.infraestructura.Impl;
 
 import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.interfaces.RepositorioInventario;
-import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
+
+import com.tallerwebi.infraestructura.RepositorioInventario;
+import com.tallerwebi.infraestructura.RepositorioUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

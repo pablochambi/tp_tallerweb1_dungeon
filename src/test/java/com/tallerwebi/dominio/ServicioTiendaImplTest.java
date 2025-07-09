@@ -2,11 +2,13 @@ package com.tallerwebi.dominio;
 
 import com.tallerwebi.dominio.entidades.Item;
 import com.tallerwebi.dominio.entidades.Usuario;
-import com.tallerwebi.dominio.interfaces.RepositorioItem;
-import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
+//import com.tallerwebi.dominio.interfaces.RepositorioItem;
+//import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
 import com.tallerwebi.dominio.servicios.Impl.ServicioTiendaImpl;
-import com.tallerwebi.dominio.interfaces.RepositorioInventario;
+import com.tallerwebi.infraestructura.RepositorioInventario;
 import com.tallerwebi.dominio.servicios.ServicioTienda;
+import com.tallerwebi.infraestructura.RepositorioItem;
+import com.tallerwebi.infraestructura.RepositorioUsuario;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

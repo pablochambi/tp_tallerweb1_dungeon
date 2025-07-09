@@ -1,15 +1,14 @@
-package com.tallerwebi.infraestructura;
+package com.tallerwebi.infraestructura.Impl;
 
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.entidades.Carruaje;
-import com.tallerwebi.dominio.interfaces.RepositorioCarruaje;
+import com.tallerwebi.infraestructura.RepositorioCarruaje;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;

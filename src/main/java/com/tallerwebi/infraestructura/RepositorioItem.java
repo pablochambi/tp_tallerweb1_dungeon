@@ -1,5 +1,4 @@
-package com.tallerwebi.dominio.interfaces;
-import com.tallerwebi.dominio.entidades.Inventario;
+package com.tallerwebi.infraestructura;
 import com.tallerwebi.dominio.entidades.Item;
 
 import java.util.List;

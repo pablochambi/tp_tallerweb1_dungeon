@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.tallerwebi.dominio.entidades.*;
-import com.tallerwebi.dominio.interfaces.*;
 import com.tallerwebi.dominio.servicios.Impl.ServicioJuegoImpl;
 import com.tallerwebi.dominio.servicios.ServicioRecluta;
+import com.tallerwebi.infraestructura.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
