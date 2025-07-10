@@ -22,6 +22,7 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.ServicioJuego {
     private final RepositorioUsuario usuarioRepo;
     private final RepositorioExpedition expeditionRepo;
     private final ServicioRecluta servicioRecluta;
+    private final RepositorioHeroe repositorioHeroe;
 
     @Autowired
     public ServicioJuegoImpl(
@@ -31,7 +32,7 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.ServicioJuego {
             RepositorioMonster monsterRepo,
             RepositorioUsuario usuarioRepo,
             RepositorioExpedition expeditionRepo,
-            ServicioRecluta servicioRecluta
+            ServicioRecluta servicioRecluta, RepositorioHeroe repositorioHeroe
     ) {
         this.sessionRepo     = sessionRepo;
         this.smRepo          = smRepo;
@@ -40,6 +41,7 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.ServicioJuego {
         this.usuarioRepo     = usuarioRepo;
         this.expeditionRepo  = expeditionRepo;
         this.servicioRecluta = servicioRecluta;
+        this.repositorioHeroe = repositorioHeroe;
     }
 
     @Override
@@ -238,6 +240,13 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.ServicioJuego {
         Expedition exp = expeditionRepo
                 .findBySessionAndCompletedFalse(session)
                 .orElseThrow(() -> new IllegalStateException("No hay expedición activa"));
+
+        List<SessionHero> sessionHeroes = shRepo.findBySession(session);
+        for (SessionHero sh : sessionHeroes) {
+            Heroe h = sh.getHero();
+            h.setVidaActual(sh.getVidaActual());
+            repositorioHeroe.modificar(h);
+        }
 
         int oldNumber = exp.getNumber();
         exp.setCompleted(true);

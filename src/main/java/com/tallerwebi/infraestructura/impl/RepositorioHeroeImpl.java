@@ -39,5 +39,10 @@ public class RepositorioHeroeImpl implements RepositorioHeroe {
         return (List<Heroe>) criteria.list();
     }
 
+    @Override
+    public void modificar(Heroe heroe) {
+        sessionFactory.getCurrentSession().update(heroe);
+    }
+
 
 }
