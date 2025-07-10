@@ -17,7 +17,7 @@
 <body>
 
 <main>
-    <h1>Dungeon Seekers</h1>
+    <img th:src="@{/imagenes/logo.png}" alt="Logo" style="max-width: 400px; width: 70vw; margin-top: 24px; margin-bottom: 24px; display: block;"/>
     <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
     <div th:if="${oro}" class="alert alert-info">
         Tu oro actual: <span th:text="${oro}">0</span>
@@ -40,8 +40,13 @@
         <a class="btn btn-lg btn-warning" th:href="@{/ranking}">
             Ver Ranking de Jugadores
         </a>
-        <a class="button" th:href="@{/cerrar_sesion}">Cerrar Sesion</a>
         <a class="button" th:href="@{/ver-tienda}">Ir a la tienda</a>
+        <a class="btn btn-lg w-100 mb-2"
+           style="background-color:#ffb3b3; color:#b30000; border:1px solid #b30000;"
+           th:href="@{/cerrar_sesion}">
+            Cerrar Sesión
+        </a>
+
 
     </div>
 
