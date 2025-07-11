@@ -1,4 +1,4 @@
-package com.tallerwebi.infraestructura.Impl;
+package com.tallerwebi.infraestructura.impl;
 
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.entidades.Carruaje;
