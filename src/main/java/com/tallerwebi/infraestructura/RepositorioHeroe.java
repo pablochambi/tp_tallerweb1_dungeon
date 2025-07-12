@@ -10,4 +10,6 @@ public interface RepositorioHeroe {
     Heroe guardar(Heroe heroe);
 
     List<Heroe> getListaDeHeroes();
+
+    void modificar(Heroe heroe);
 }

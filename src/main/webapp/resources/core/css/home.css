@@ -10,31 +10,12 @@ body {
     margin: 0;
 }
 
-h1 {
-    font-size: 3em;
-    margin-bottom: 0.5em;
-    color: #7ed6df;
-}
-
 .menu {
     display: flex;
     flex-direction: column;
-    gap: 1em;
-}
-
-a.button {
-    padding: 15px 30px;
-    background-color: #30336b;
-    color: white;
-    text-decoration: none;
-    border-radius: 10px;
-    font-size: 1.2em;
-    transition: background-color 0.3s ease;
-    text-align: center;
-}
-
-a.button:hover {
-    background-color: #535c91;
+    gap: 0.7em;
+    max-width: 340px;
+    margin: 0 auto;
 }
 
 .footer {

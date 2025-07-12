@@ -20,6 +20,8 @@ public class Heroe {
     private int precio;
     @Column(name="max_vida", nullable=false)
     private int maxVida;
+    @Column(name = "vida_actual")
+    private Integer vidaActual;
 
     @Column(name="atk", nullable=false)
     private int atk;
@@ -102,5 +104,12 @@ public class Heroe {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Integer getVidaActual() {
+        return vidaActual;
+    }
+    public void setVidaActual(Integer vidaActual) {
+        this.vidaActual = vidaActual;
     }
 }

@@ -1,7 +1,6 @@
 package com.tallerwebi.infraestructura.impl;
 
 import com.tallerwebi.dominio.entidades.Usuario;
-
 import com.tallerwebi.infraestructura.RepositorioInventario;
 import com.tallerwebi.infraestructura.RepositorioUsuario;
 import org.springframework.beans.factory.annotation.Autowired;

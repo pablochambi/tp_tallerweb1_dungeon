@@ -2,7 +2,6 @@ package com.tallerwebi.infraestructura.impl;
 
 import com.tallerwebi.dominio.entidades.GameSession;
 import com.tallerwebi.dominio.entidades.Usuario;
-
 import com.tallerwebi.infraestructura.RepositorioSession;
 import com.tallerwebi.infraestructura.RepositorioUsuario;
 import org.hibernate.SessionFactory;

@@ -27,8 +27,9 @@ public class ControladorLoginTest {
 	@BeforeEach
 	public void init(){
 		datosLoginMock = new DatosLogin("dami@unlam.com", "123");
-		usuarioMock = mock(Usuario.class);
-		when(usuarioMock.getEmail()).thenReturn("dami@unlam.com");
+		usuarioMock = new Usuario();
+		usuarioMock.setEmail("dami@unlam.com");
+		usuarioMock.setRol("ADMIN");
 		requestMock = mock(HttpServletRequest.class);
 		sessionMock = mock(HttpSession.class);
 		servicioLoginMock = mock(ServicioLogin.class);
@@ -46,24 +47,24 @@ public class ControladorLoginTest {
 		// validacion
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("login"));
 		assertThat(modelAndView.getModel().get("error").toString(), equalToIgnoringCase("Usuario o clave incorrecta"));
-		verify(sessionMock, times(0)).setAttribute("ROL", "ADMIN");
+		verify(sessionMock, times(0)).setAttribute(eq("ROL"), any());
 	}
 
 	@Test
 	public void loginConUsuarioYPasswordCorrectosDeberiaLLevarAHome(){
 		// preparacion
-		Usuario usuarioEncontradoMock = mock(Usuario.class);
-		when(usuarioEncontradoMock.getRol()).thenReturn("ADMIN");
+		Usuario usuarioEncontrado = new Usuario();
+		usuarioEncontrado.setRol("ADMIN");
 
 		when(requestMock.getSession()).thenReturn(sessionMock);
-		when(servicioLoginMock.consultarUsuario(anyString(), anyString())).thenReturn(usuarioEncontradoMock);
+		when(servicioLoginMock.consultarUsuario(anyString(), anyString())).thenReturn(usuarioEncontrado);
 
 		// ejecucion
 		ModelAndView modelAndView = controladorLogin.validarLogin(datosLoginMock, requestMock);
 
 		// validacion
 		assertThat(modelAndView.getViewName(), equalToIgnoringCase("redirect:/home"));
-		verify(sessionMock, times(1)).setAttribute("ROL", usuarioEncontradoMock.getRol());
+		verify(sessionMock, times(1)).setAttribute("ROL", usuarioEncontrado.getRol());
 	}
 
 

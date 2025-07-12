@@ -10,7 +10,6 @@ import com.mercadopago.exceptions.MPException;
 import com.mercadopago.net.HttpStatus;
 import com.mercadopago.resources.preference.Preference;
 import com.tallerwebi.dominio.entidades.Usuario;
-//import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
 import com.tallerwebi.dominio.servicios.ServicioLogin;
 import com.tallerwebi.dominio.servicios.ServicioTienda;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ import java.util.List;
 @Controller
 public class ControladorMercadoPago {
 
-//   https://c271873f42a6.ngrok-free.app  -> http://localhost:8080     url de ngrok para entrar a mp
+//    https://c271873f42a6.ngrok-free.app -> http://localhost:8080     url de ngrok para entrar a mp
    // @Autowired
     //private RepositorioUsuario repositorioUsuario;
     private ServicioLogin servicioLogin;

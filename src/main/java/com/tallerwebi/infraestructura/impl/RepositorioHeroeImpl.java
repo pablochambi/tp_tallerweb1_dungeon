@@ -1,7 +1,6 @@
 package com.tallerwebi.infraestructura.impl;
 
 import com.tallerwebi.dominio.entidades.Heroe;
-
 import com.tallerwebi.infraestructura.RepositorioHeroe;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
@@ -38,6 +37,11 @@ public class RepositorioHeroeImpl implements RepositorioHeroe {
     public List<Heroe> getListaDeHeroes() {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Heroe.class);
         return (List<Heroe>) criteria.list();
+    }
+
+    @Override
+    public void modificar(Heroe heroe) {
+        sessionFactory.getCurrentSession().update(heroe);
     }
 
 

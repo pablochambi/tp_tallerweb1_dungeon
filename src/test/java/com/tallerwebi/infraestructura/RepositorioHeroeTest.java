@@ -2,7 +2,6 @@ package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.config.HibernateConfig;
 import com.tallerwebi.dominio.entidades.Heroe;
-//import com.tallerwebi.dominio.interfaces.RepositorioHeroe;
 import com.tallerwebi.integracion.config.HibernateTestConfig;
 import com.tallerwebi.integracion.config.SpringWebTestConfig;
 import org.hibernate.SessionFactory;

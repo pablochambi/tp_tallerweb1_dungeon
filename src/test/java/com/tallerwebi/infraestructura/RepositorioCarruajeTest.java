@@ -1,7 +1,6 @@
 package com.tallerwebi.infraestructura;
 
 import com.tallerwebi.config.HibernateConfig;
-//import com.tallerwebi.dominio.interfaces.RepositorioUsuario;
 import com.tallerwebi.dominio.entidades.Usuario;
 import com.tallerwebi.dominio.entidades.Carruaje;
 import com.tallerwebi.integracion.config.HibernateTestConfig;

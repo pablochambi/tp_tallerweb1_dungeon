@@ -33,6 +33,8 @@ class ServicioJuegoImplTest {
     RepositorioExpedition expeditionRepo;
     @Mock
     ServicioRecluta servicioRecluta;
+    @Mock //
+    RepositorioHeroe repositorioHeroe;
 
     @InjectMocks
     ServicioJuegoImpl servicio;
@@ -72,6 +74,11 @@ class ServicioJuegoImplTest {
         baseHero.setId(1L); baseHero.setNombre("HéroeTest"); baseHero.setMaxVida(100); baseHero.setAtk(10);
         sh1 = new SessionHero(); sh1.setOrden(1); sh1.setHero(baseHero); sh1.setVidaActual(100);
         sh2 = new SessionHero(); sh2.setOrden(2); sh2.setHero(baseHero); sh2.setVidaActual(100);
+
+        servicio = new ServicioJuegoImpl(
+                sessionRepo, smRepo, shRepo, monsterRepo,
+                usuarioRepo, expeditionRepo, servicioRecluta, repositorioHeroe
+        );
     }
 
     @Test

@@ -3,7 +3,6 @@ package com.tallerwebi.infraestructura.impl;
 import com.tallerwebi.dominio.entidades.GameSession;
 import com.tallerwebi.dominio.entidades.Heroe;
 import com.tallerwebi.dominio.entidades.SessionHero;
-//import com.tallerwebi.dominio.interfaces.RepositorioHeroSession;
 import com.tallerwebi.infraestructura.RepositorioHeroSession;
 import org.hibernate.Criteria;
 import org.hibernate.Session;

@@ -1,9 +1,8 @@
 package com.tallerwebi.dominio.servicios.Impl;
 
 import com.tallerwebi.dominio.entidades.Usuario;
-
-import com.tallerwebi.dominio.servicios.ServicioRanking;
 import com.tallerwebi.infraestructura.RepositorioUsuario;
+import com.tallerwebi.dominio.servicios.ServicioRanking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

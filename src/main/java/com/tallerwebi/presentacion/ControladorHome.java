@@ -2,7 +2,6 @@ package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.ServicioJuego;
 import com.tallerwebi.dominio.entidades.Usuario;
-//import com.tallerwebi.dominio.interfaces.RepositorioSession;
 import com.tallerwebi.infraestructura.RepositorioSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,14 +12,14 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-public class HomeController {
+public class ControladorHome {
 
     private final ServicioJuego servicioJuego;
     private final RepositorioSession sessionRepo;
 
     @Autowired
-    public HomeController(ServicioJuego servicioJuego,
-                          RepositorioSession sessionRepo) {
+    public ControladorHome(ServicioJuego servicioJuego,
+                           RepositorioSession sessionRepo) {
         this.servicioJuego = servicioJuego;
         this.sessionRepo   = sessionRepo;
     }
