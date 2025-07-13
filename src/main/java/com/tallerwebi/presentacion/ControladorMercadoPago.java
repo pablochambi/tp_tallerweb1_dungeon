@@ -31,12 +31,12 @@ import java.util.List;
 @Controller
 public class ControladorMercadoPago {
 
-//  https://a9ec0606f07e.ngrok-free.app -> http://localhost:8080     url de ngrok para entrar a mp
+//    https://c271873f42a6.ngrok-free.app -> http://localhost:8080     url de ngrok para entrar a mp
    // @Autowired
     //private RepositorioUsuario repositorioUsuario;
     private ServicioLogin servicioLogin;
     private ServicioTienda servicioTienda;
-    private final String NGROK_URL = "https://a9ec0606f07e.ngrok-free.app";
+    private final String NGROK_URL = "https://c271873f42a6.ngrok-free.app";
 
     @Autowired
     public ControladorMercadoPago(ServicioLogin servicioLogin, ServicioTienda servicioTienda) {
