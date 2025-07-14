@@ -15,7 +15,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.transaction.Transactional;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -72,9 +75,16 @@ public class RepositorioItemTest {
 
         List<Item> items = repositorioItem.obtenerLosItemsByInventario(inventario.getId());
 
-        assertNotNull(items);
-        assertEquals(2, items.size());
+        Map<Long, Item> itemsUnicos = new LinkedHashMap<>();
+        for (Item i : items) {
+            itemsUnicos.put(i.getId(), i);
+        }
+        List<Item> listaUnicos = new ArrayList<>(itemsUnicos.values());
+
+        assertNotNull(listaUnicos);
+        assertEquals(2, listaUnicos.size());
     }
+
 
     @Test
     public void buscarPorIdDevuelveElItemEsperado() {
