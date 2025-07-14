@@ -1,4 +1,4 @@
-package com.tallerwebi.dominio;
+package com.tallerwebi.dominio.servicios;
 
 import com.tallerwebi.dominio.entidades.*;
 
@@ -18,6 +18,7 @@ public interface ServicioJuego {
 
     List<SessionMonster> getMonstruos(Usuario u);
     List<SessionHero>    getHeroesDeSesion(Usuario u);
+    List<Item>           getItemsDeUsuario(Usuario usuario);
     String atacar(Usuario u, int heroOrden, int monsterOrden);
     String defender(Usuario u, int heroOrden);
     String usarPocion(Usuario u, int heroOrden);

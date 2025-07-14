@@ -1,7 +1,7 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.entidades.*;
-import com.tallerwebi.dominio.ServicioJuego;
+import com.tallerwebi.dominio.servicios.ServicioJuego;
 import com.tallerwebi.infraestructura.RepositorioExpedition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

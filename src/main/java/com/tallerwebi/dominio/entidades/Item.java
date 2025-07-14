@@ -18,6 +18,8 @@ public class Item {
     @Enumerated(EnumType.STRING)
     private TipoDeItem tipo;
     private Integer precio;
+    private String imagenUrl;
+
 
     @ManyToOne
     private Inventario inventario;

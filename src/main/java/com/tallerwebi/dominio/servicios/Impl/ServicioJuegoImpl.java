@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class ServicioJuegoImpl implements com.tallerwebi.dominio.ServicioJuego {
+public class ServicioJuegoImpl implements com.tallerwebi.dominio.servicios.ServicioJuego {
 
     private final RepositorioSession sessionRepo;
     private final RepositorioSessionMonster smRepo;
@@ -317,6 +317,14 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.ServicioJuego {
             smRepo.add(session, buffed, dungeonNumber);
             orden++;
         }
+    }
+
+    public List<Item> getItemsDeUsuario(Usuario usuario) {
+        if (usuario.getInventario() == null) {
+
+            return Collections.emptyList();
+        }
+        return usuario.getInventario().getItems();
     }
 
     @Override

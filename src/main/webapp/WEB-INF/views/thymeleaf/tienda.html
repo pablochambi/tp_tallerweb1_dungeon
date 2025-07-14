@@ -1,39 +1,3 @@
-
-
-<!--<!DOCTYPE html>-->
-<!--<html xmlns:th="http://www.thymeleaf.org">-->
-<!--<head><title>Tienda</title></head>-->
-<!--<body>-->
-<!--<h1>Tienda del jugador</h1>-->
-<!--<p th:text="${mensaje}"></p>-->
-
-<!--<h3>Oro disponible: <span th:text="${usuario.oro}"></span></h3>-->
-
-<!--<form th:action="@{/tienda/comprar}" method="post">-->
-<!--  <label>Comprar Items:-->
-<!--    <select name="itemId">-->
-<!--      <option value="" disabled selected>Selecciona un ítem</option>-->
-<!--      <option th:each="item : ${items}"-->
-<!--              th:value="${item.id}"-->
-<!--              th:text="${item.nombre + ' - Precio: ' + item.precio}"></option>-->
-<!--    </select>-->
-<!--  </label>-->
-<!--  <button type="submit">Comprar</button>-->
-
-<!--  <h3>Inventario del jugador:</h3>-->
-<!--  <ul>-->
-<!--    <li th:if="${#lists.isEmpty(itemsDeInventario)}">No hay ítems en el inventario.</li>-->
-<!--    <li th:each="item : ${itemsDeInventario}" th:unless="${#lists.isEmpty(itemsDeInventario)}">-->
-<!--      <span th:text="${item.nombre}"></span>-->
-<!--    </li>-->
-<!--  </ul>-->
-
-<!--</form>-->
-<!--</body>-->
-<!--</html>-->
-
-
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -75,10 +39,12 @@
     <h3 class="mt-4">Inventario del jugador:</h3>
     <ul class="inventario-list">
       <li th:if="${#lists.isEmpty(itemsDeInventario)}">No hay ítems en el inventario.</li>
-      <li th:each="item : ${itemsDeInventario}" th:unless="${#lists.isEmpty(itemsDeInventario)}">
-        <span th:text="${item.nombre}"></span>
+      <li th:each="entry : ${inventarioAgrupado.entrySet()}" th:unless="${#lists.isEmpty(itemsDeInventario)}">
+        <span th:text="${entry.key}"></span>
+        <span th:text="' x' + ${entry.value}" style="color:#90ee90;"></span>
       </li>
     </ul>
+
 
     <div class="d-grid mt-3">
       <a class="button" th:href="@{/comprar-oro}">Comprar Oro</a>

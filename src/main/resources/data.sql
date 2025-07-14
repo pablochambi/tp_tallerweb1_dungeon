@@ -5,13 +5,6 @@ VALUES
   (3, 'jugador3@game.com', '123',  'USER',  TRUE,  'Usuario 3', 1000, 3, 1, null),
   (4, 'jugador4@game.com', '123',  'USER',  TRUE,  'Usuario 4', 3000, 2, 3, null);
 
-INSERT INTO Inventario (id, usuario_id) VALUES (1, 1), (2, 2), (3, 3), (4, 4);
-
-UPDATE Usuario SET inventario_id = 1 WHERE id = 1;
-UPDATE Usuario SET inventario_id = 2 WHERE id = 2;
-UPDATE Usuario SET inventario_id = 3 WHERE id = 3;
-UPDATE Usuario SET inventario_id = 4 WHERE id = 4;
-
 
 INSERT INTO game_session (usuario_id, turno, nivel, active, finished, started_at, ended_at)
 VALUES
@@ -41,11 +34,10 @@ INSERT INTO monster (id, nombre, vida, atk, imagen) VALUES
   (10,'Demonio',    70, 18, '&#x1F47F;');
 
 
-INSERT INTO Item (id, nombre, tipo, precio) VALUES
-                                                (1, 'Poción de Vida',  'POCION',    100),
-                                                (2, 'Poción de Estrés','POCION',   80),
-                                                (3, 'Espada Rota',     'ARMA',  150),
-                                                (4, 'Armadura Ligera', 'ARMA', 120);
+INSERT INTO Item (id, nombre, tipo, precio, imagenUrl) VALUES
+(1, 'Poción de Vida', 'POCION', 100, '/imagenes/posion2.webp'),
+(2, 'Espada Corta', 'ARMA', 150, '/imagenes/espada_equipamiento.webp');
+
 
 
 -- estado de monstruos en la mazmorra 1 de la expedición 1

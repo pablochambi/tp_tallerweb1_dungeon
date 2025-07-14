@@ -57,6 +57,7 @@ public class ServicioTiendaImpl implements ServicioTienda {
         itemComprado.setTipo(itemTienda.getTipo());
         itemComprado.setPrecio(itemTienda.getPrecio());
         itemComprado.setInventario(usuario.getInventario());
+        itemComprado.setImagenUrl(itemTienda.getImagenUrl());
 
         repositorioItem.guardarItem(itemComprado);
         repositorioUsuario.modificar(usuario);
@@ -105,9 +106,4 @@ public class ServicioTiendaImpl implements ServicioTienda {
         repositorioUsuario.modificar(usuario);
 
     }
-
-
-
-
-
 }

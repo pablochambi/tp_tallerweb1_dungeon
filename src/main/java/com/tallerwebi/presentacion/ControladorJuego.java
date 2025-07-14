@@ -1,7 +1,7 @@
 package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.entidades.*;
-import com.tallerwebi.dominio.ServicioJuego;
+import com.tallerwebi.dominio.servicios.ServicioJuego;
 import com.tallerwebi.infraestructura.RepositorioExpedition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,6 +39,7 @@ public class ControladorJuego {
         model.addAttribute("usuario",      usuario);
         model.addAttribute("monstruos",    servicioJuego.getMonstruos(usuario));
         model.addAttribute("heroesDeSesion", servicioJuego.getHeroesDeSesion(usuario));
+        model.addAttribute("items", servicioJuego.getItemsDeUsuario(usuario));
 
         return "juego";
     }

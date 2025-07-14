@@ -15,8 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class ControladorTienda {
@@ -53,8 +52,8 @@ public class ControladorTienda {
 
         }
 
-        request.getSession().setAttribute("usuario", usuario);
-
+        Usuario usuarioActualizado = servicioLogin.buscarUsuario(usuario.getId());
+        request.getSession().setAttribute("usuario", usuarioActualizado);
 
         return "redirect:/ver-tienda";
 
@@ -70,11 +69,26 @@ public class ControladorTienda {
 
         List<Item> itemsDeInventario = servicioTienda.obtenerItemsPorInventario(usuario.getInventario().getId());
 
+        // Agrupa por nombre
+        Set<String> nombresUnicos = new HashSet<>();
+        Map<String, Integer> inventarioAgrupado = new LinkedHashMap<>();
+        for (Item item : itemsDeInventario) {
+            // Solo sumo si ese id no lo vi antes
+            String key = item.getNombre() + "-" + item.getId();
+            if (!nombresUnicos.contains(key)) {
+                inventarioAgrupado.merge(item.getNombre(), 1, Integer::sum);
+                nombresUnicos.add(key);
+            }
+        }
+
+
         model.addAttribute("usuario", usuario);
         model.addAttribute("items", items);
         model.addAttribute("itemsDeInventario", itemsDeInventario);
+        model.addAttribute("inventarioAgrupado", inventarioAgrupado);
         model.addAttribute("mensaje", mensaje == null || mensaje.isEmpty() ? "Bienvenido a la tienda!" : mensaje);
 
         return new ModelAndView("tienda", model);
     }
+
 }

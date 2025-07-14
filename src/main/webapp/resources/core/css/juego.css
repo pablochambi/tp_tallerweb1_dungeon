@@ -168,6 +168,137 @@ h1 {
     cursor: pointer;
 }
 
+.inventario-container {
+    background: #222a31;
+    border-radius: 0 0 14px 14px;
+    padding: 34px 22px 20px 22px;
+    margin-top: 34px;
+    margin-bottom: 20px;
+    min-height: 160px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 18px rgba(40,40,60,0.15);
+}
+
+.inventario-titulo {
+    color: #75eaf9;
+    font-size: 2.0rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    margin-bottom: 18px;
+    margin-top: 0;
+    text-shadow: 0 1px 16px #143746a2;
+    text-align: center;
+}
+
+.inventario-horizontal {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 50px;
+    align-items: flex-end;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+}
+
+.item-celda {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 130px;
+}
+
+.item-imgbox {
+    width: 100px;
+    height: 100px;
+    background: #20231e;
+    border: 3px solid #32e18c;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    transition: box-shadow .18s, border-color .2s;
+}
+
+.item-imgbox:hover {
+    box-shadow: 0 0 0 4px #7dffd0;
+    border-color: #49ffa7;
+}
+
+.item-img {
+    max-width: 74px;
+    max-height: 74px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 8px #0f1321);
+}
+
+.item-nombre {
+    font-weight: 600;
+    text-align: center;
+    font-size: 17px;
+    color: #e7fff9;
+    margin-top: 2px;
+    letter-spacing: 0.2px;
+    text-shadow: 0 1px 4px #0005;
+    text-transform: none;
+}
+
+.item-tooltip-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Tooltip oculto por defecto */
+.item-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    width: 190px;
+    background: #272;
+    color: #fff;
+    text-align: center;
+    border-radius: 8px;
+    padding: 8px 12px;
+    position: absolute;
+    z-index: 10;
+    bottom: 110%; /* Arriba del ítem */
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1em;
+    box-shadow: 0 2px 12px #0004;
+    transition: opacity 0.17s;
+    pointer-events: none;
+    line-height: 1.2;
+    font-weight: 500;
+    border: 2px solid #49ffa7;
+}
+
+/* Flechita abajo del tooltip */
+.item-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -10px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: #272 transparent transparent transparent;
+}
+
+/* Mostrar el tooltip cuando el mouse está encima de la imagen */
+.item-tooltip-wrapper:hover .item-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+
 @media (max-width: 1200px) {
     .mi_fondo {
         padding: 16px 3px;
