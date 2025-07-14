@@ -23,6 +23,7 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.servicios.Servi
     private final RepositorioExpedition expeditionRepo;
     private final ServicioRecluta servicioRecluta;
     private final RepositorioHeroe repositorioHeroe;
+    private final RepositorioItem repositorioItem;
 
     @Autowired
     public ServicioJuegoImpl(
@@ -32,7 +33,7 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.servicios.Servi
             RepositorioMonster monsterRepo,
             RepositorioUsuario usuarioRepo,
             RepositorioExpedition expeditionRepo,
-            ServicioRecluta servicioRecluta, RepositorioHeroe repositorioHeroe
+            ServicioRecluta servicioRecluta, RepositorioHeroe repositorioHeroe, RepositorioItem repositorioItem
     ) {
         this.sessionRepo     = sessionRepo;
         this.smRepo          = smRepo;
@@ -42,6 +43,7 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.servicios.Servi
         this.expeditionRepo  = expeditionRepo;
         this.servicioRecluta = servicioRecluta;
         this.repositorioHeroe = repositorioHeroe;
+        this.repositorioItem = repositorioItem;
     }
 
     @Override
@@ -200,13 +202,34 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.servicios.Servi
 
     @Override
     public String usarPocion(Usuario u, int heroOrden) {
-        GameSession session = iniciarPartida(u);
-        SessionHero sh = getHeroesDeSesion(u).stream()
+
+        Usuario usuarioHibernate = usuarioRepo.buscarUsuarioPorId(u.getId());
+        if (usuarioHibernate == null) return "Usuario no encontrado.";
+
+        GameSession session = iniciarPartida(usuarioHibernate);
+        SessionHero sh = getHeroesDeSesion(usuarioHibernate).stream()
                 .filter(h -> h.getOrden() == heroOrden)
                 .findFirst().orElse(null);
         if (sh == null) return "Héroe no encontrado.";
-        sh.heal(30);
+
+        Inventario inventario = usuarioHibernate.getInventario();
+        List<Item> items = inventario.getItems();
+
+        Item pocion = items.stream()
+                .filter(i -> i.getNombre().equals("Poción de Vida"))
+                .findFirst().orElse(null);
+
+        if (pocion == null) return "No tienes pociones de vida en el inventario.";
+
+        Item pocionHibernate = repositorioItem.buscarPorId(pocion.getId());
+
+        sh.heal(80);
         shRepo.update(sh);
+
+        items.remove(pocion);
+
+        repositorioItem.eliminarItem(pocionHibernate);
+
         return String.format(
                 "Tu héroe %s recupera vida: ahora %d/%d.",
                 sh.getHero().getNombre(),
@@ -214,6 +237,7 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.servicios.Servi
                 sh.getHero().getMaxVida()
         );
     }
+
 
     @Override
     public Expedition getExpedicionActiva(Usuario u) {

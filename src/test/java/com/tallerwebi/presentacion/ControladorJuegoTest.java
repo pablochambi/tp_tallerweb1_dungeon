@@ -2,6 +2,7 @@ package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.entidades.*;
 import com.tallerwebi.dominio.servicios.ServicioJuego;
+import com.tallerwebi.dominio.servicios.ServicioLogin;
 import com.tallerwebi.infraestructura.RepositorioExpedition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ public class ControladorJuegoTest {
 
     private Usuario usuario;
     private ControladorJuego controladorJuego;
+    private ServicioLogin servicioLogin;
 
     @BeforeEach
     public void setUp() {
@@ -42,7 +44,7 @@ public class ControladorJuegoTest {
         usuario.setOro(500);
         usuario.setEmail("user@taller.com");
 
-        controladorJuego = new ControladorJuego(servicioJuegoMock, expeditionRepoMock);
+        controladorJuego = new ControladorJuego(servicioJuegoMock, expeditionRepoMock, servicioLogin);
     }
 
     @Test
