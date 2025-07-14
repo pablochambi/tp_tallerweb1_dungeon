@@ -332,6 +332,7 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.servicios.Servi
         return sessionRepo.findActive(u) != null;
     }
 
+
     @Override
     public GameSession getSession() {
         throw new UnsupportedOperationException("Use getSession(Usuario) en su lugar");

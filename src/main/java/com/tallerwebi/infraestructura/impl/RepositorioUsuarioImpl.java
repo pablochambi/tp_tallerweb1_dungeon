@@ -1,6 +1,8 @@
 package com.tallerwebi.infraestructura.impl;
 
+import com.tallerwebi.dominio.entidades.Item;
 import com.tallerwebi.dominio.entidades.Usuario;
+import com.tallerwebi.dominio.enums.TipoDeItem;
 import com.tallerwebi.infraestructura.RepositorioInventario;
 import com.tallerwebi.infraestructura.RepositorioUsuario;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,5 +150,6 @@ public class RepositorioUsuarioImpl implements RepositorioUsuario {
 
         return u;
     }
+
 }
 

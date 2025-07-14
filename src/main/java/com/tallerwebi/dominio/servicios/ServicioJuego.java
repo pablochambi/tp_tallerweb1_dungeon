@@ -31,4 +31,5 @@ public interface ServicioJuego {
     void terminarExpedicion(Usuario u);
 
     boolean tieneSesionActiva(Usuario usuario);
+
 }

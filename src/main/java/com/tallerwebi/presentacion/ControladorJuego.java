@@ -103,4 +103,17 @@ public class ControladorJuego {
 
         return "redirect:/home";
     }
+
+//    @PostMapping("/juego/usar-item")
+//    public String usarItem(
+//            @RequestParam Long itemId,
+//            @RequestParam int heroOrden,
+//            HttpSession httpSession,
+//            RedirectAttributes ra
+//    ) {
+//        Usuario usuario = (Usuario) httpSession.getAttribute("usuario");
+//        //String mensaje = servicioJuego.usarItem(itemId, heroOrden, usuario);
+//        ra.addFlashAttribute("mensaje", mensaje);
+//        return "redirect:/juego";
+//    }
 }

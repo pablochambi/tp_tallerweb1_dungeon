@@ -26,7 +26,7 @@ public class Usuario {
     private Integer oro = 1000;
 
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Item> itemsComprados = new ArrayList<>();
 
     @OneToOne
