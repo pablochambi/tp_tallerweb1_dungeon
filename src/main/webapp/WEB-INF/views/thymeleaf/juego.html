@@ -68,6 +68,12 @@
                                 <img th:src="@{${sh.hero.urlImagen}}"
                                      class="entity-emoji mb-2 mx-auto"
                                      alt="Avatar"/>
+                                <div style="text-align: right; min-height: 30px;">
+                                      <span th:if="${sh.espadaBuff}"
+                                        style="color:#FFD700; font-weight:bold; font-size:1.3em;">
+                                         30% <span style="font-size:1.1em;">&#x2694;&#xFE0F;</span>
+                                     </span>
+                                </div>
                                 <h5 th:text="${sh.hero.nombre}">Héroe</h5>
                                 <p>
                                     <img th:src="@{/imagenes/corazon.webp}" alt="HP" style="width:22px;height:22px;vertical-align:middle;"/>
@@ -76,14 +82,14 @@
                                     <span th:text="${sh.hero.maxVida}">100</span>
                                 </p>
                                 <!-- Acciones propias -->
-                                <div class="mt-auto">
-                                    <form th:action="@{/juego/defender}" method="post" class="d-inline me-1">
+                                <div class="mt-auto d-flex justify-content-center gap-2">
+                                    <form th:action="@{/juego/usarEspada}" method="post" class="w-50">
                                         <input type="hidden" name="heroOrden" th:value="${sh.orden}"/>
-                                        <button class="btn btn-sm btn-secondary">Defender</button>
+                                        <button class="btn btn-sm btn-warning action-btn w-100" type="submit">Espada</button>
                                     </form>
-                                    <form th:action="@{/juego/usarPocion}" method="post" class="d-inline">
+                                    <form th:action="@{/juego/usarPocion}" method="post" class="w-50">
                                         <input type="hidden" name="heroOrden" th:value="${sh.orden}"/>
-                                        <button class="btn btn-sm btn-primary">Poción</button>
+                                        <button class="btn btn-sm btn-primary action-btn w-100" type="submit">Poción</button>
                                     </form>
                                 </div>
                             </div>

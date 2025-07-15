@@ -31,4 +31,6 @@ public interface ServicioJuego {
     void terminarExpedicion(Usuario u);
 
     boolean tieneSesionActiva(Usuario usuario);
+
+    String usarEspada(Usuario u, int heroOrden);
 }
