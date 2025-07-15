@@ -77,9 +77,13 @@
                                 </p>
                                 <!-- Acciones propias -->
                                 <div class="mt-auto">
-                                    <form th:action="@{/juego/defender}" method="post" class="d-inline me-1">
+<!--                                    <form th:action="@{/juego/defender}" method="post" class="d-inline me-1">-->
+<!--                                        <input type="hidden" name="heroOrden" th:value="${sh.orden}"/>-->
+<!--                                        <button class="btn btn-sm btn-secondary">Defender</button>-->
+<!--                                    </form>-->
+                                    <form th:action="@{/juego/usarArma}" method="post" class="d-inline ms-1">
                                         <input type="hidden" name="heroOrden" th:value="${sh.orden}"/>
-                                        <button class="btn btn-sm btn-secondary">Defender</button>
+                                        <button class="btn btn-sm btn-warning">Espada</button>
                                     </form>
                                     <form th:action="@{/juego/usarPocion}" method="post" class="d-inline">
                                         <input type="hidden" name="heroOrden" th:value="${sh.orden}"/>

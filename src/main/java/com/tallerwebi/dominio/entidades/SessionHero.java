@@ -21,11 +21,15 @@ public class SessionHero {
     @Column(name = "vida_actual", nullable = false)
     private int vidaActual;
 
+    @Column(name = "atk_actual", nullable = false)
+    private int atkActual;
+
     @Column(nullable = false)
     private int orden;
 
     @Column(nullable = false)
     private boolean defending = false;
+
 
     public SessionHero() {}
 
@@ -59,6 +63,10 @@ public class SessionHero {
         return vidaActual;
     }
 
+    public int getAtkActual() {return atkActual;}
+
+    public void setAtkActual(int atkActual) {this.atkActual = atkActual;}
+
     public void setVidaActual(int vidaActual) {
         this.vidaActual = vidaActual;
     }
@@ -81,8 +89,12 @@ public class SessionHero {
 
     // --- Logica de combate ---
 
+//    //public int damageOutput() {
+//        return hero.getAtk();
+//    }
+
     public int damageOutput() {
-        return hero.getAtk();
+        return this.atkActual;
     }
 
     public void takeDamage(int damage) {
@@ -103,5 +115,10 @@ public class SessionHero {
     public void heal(int amount) {
         int max = hero.getMaxVida();
         vidaActual = Math.min(max, vidaActual + amount);
+    }
+
+    public void increaseDamage(double porcentaje) {
+      int incremento= (int) (hero.getAtk() * porcentaje);
+      this.atkActual += incremento;
     }
 }

@@ -8,18 +8,29 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top shadow" style="padding: 0.5rem 2rem;">
+<!--<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top shadow" style="padding: 0.5rem 2rem;">-->
+<!--  <div class="container-fluid d-flex justify-content-center align-items-center position-relative">-->
+
+<!--        <span class="navbar-brand mx-auto d-block text-center"-->
+<!--              style="font-weight: bold; letter-spacing: 2px; color: #7eeaff; font-size:2.4rem;">-->
+<!--            DARKEST DUNGEON-->
+<!--        </span>-->
+<!--  </div>-->
+<!--</nav>-->
+<nav class="navbar">
   <div class="container-fluid d-flex justify-content-center align-items-center position-relative">
 
         <span class="navbar-brand mx-auto d-block text-center"
               style="font-weight: bold; letter-spacing: 2px; color: #7eeaff; font-size:2.4rem;">
-            DARKEST DUNGEON
+             <img th:src="@{/imagenes/logo.png}" alt="Logo"
+                  style="max-width: 400px; width: 70vw; margin-top: 24px; margin-bottom: 24px; display: block;"/>
         </span>
+
+
   </div>
 </nav>
 
-<main role="main" class="container mt-5 pt-5">
-  <h1 class="text-center mb-4">Registro de Usuario</h1>
+<main role="main" class="container mt-5">
 
   <!-- Alertas de error -->
   <div th:if="${error}" class="alert alert-danger text-center w-75 mx-auto">
@@ -28,6 +39,7 @@
 
   <!-- Formulario -->
   <div id="registro_container" class="w-75 mx-auto">
+    <h1 class="text-center mb-4">Registro de Usuario</h1>
     <form th:action="@{/registrarme}" method="POST" th:object="${usuario}">
       <div class="form-group mb-3">
         <label for="nombre">Nombre completo:</label>

@@ -1,3 +1,4 @@
+ALTER TABLE session_hero ADD COLUMN atk_actual INT NOT NULL DEFAULT 0;
 INSERT INTO Usuario (id, email, password, rol, activo, nombre, oro, expedicionActual, mazmorraActual, inventario_id)
 VALUES
   (1, 'test@unlam.edu.ar', 'test', 'ADMIN', TRUE,  'Héroe',      1000, 1, 3, null),

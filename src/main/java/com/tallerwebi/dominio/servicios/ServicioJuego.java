@@ -24,7 +24,7 @@ public interface ServicioJuego {
     String usarPocion(Usuario u, int heroOrden);
     void siguienteMazmorra(Usuario u);
     void endSession(GameSession current);
-
+    String usarArma(Usuario u, int heroOrden);
 
     Expedition getExpedicionActiva(Usuario usuario);
 

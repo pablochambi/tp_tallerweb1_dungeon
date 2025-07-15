@@ -45,8 +45,8 @@ public class RepositorioHeroSessionImpl implements RepositorioHeroSession {
         sh.setSession(session);
         sh.setHero(hero);
         sh.setVidaActual(hero.getMaxVida());
+        sh.setAtkActual(hero.getAtk());
         sh.setOrden(count.intValue() + 1);
-
         session().save(sh);
     }
 

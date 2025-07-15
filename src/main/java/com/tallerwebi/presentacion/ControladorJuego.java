@@ -90,6 +90,18 @@ public class ControladorJuego {
         return "redirect:/juego";
     }
 
+    @PostMapping("/juego/usarArma")
+    public String usarArma(
+            @RequestParam int heroOrden,
+            HttpSession httpSession,
+            RedirectAttributes ra
+    ) {
+        Usuario u = (Usuario) httpSession.getAttribute("usuario");
+        String mensaje = servicioJuego.usarArma(u, heroOrden);
+        ra.addFlashAttribute("mensaje", mensaje);
+        return "redirect:/juego";
+    }
+
     @PostMapping("/juego/siguiente")
     public String siguienteMazmorra(
             HttpSession httpSession,

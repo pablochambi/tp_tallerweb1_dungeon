@@ -238,6 +238,45 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.servicios.Servi
         );
     }
 
+    @Override
+    public String usarArma(Usuario u, int heroOrden) {
+
+        Usuario usuarioHibernate = usuarioRepo.buscarUsuarioPorId(u.getId());
+        if (usuarioHibernate == null) return "Usuario no encontrado.";
+
+        GameSession session = iniciarPartida(usuarioHibernate);
+        SessionHero sh = getHeroesDeSesion(usuarioHibernate).stream()
+                .filter(h -> h.getOrden() == heroOrden)
+                .findFirst().orElse(null);
+        if (sh == null) return "Héroe no encontrado.";
+
+        Inventario inventario = usuarioHibernate.getInventario();
+        List<Item> items = inventario.getItems();
+
+        Item arma = items.stream()
+                .filter(i -> i.getNombre().equals("Espada Corta"))
+                .findFirst().orElse(null);
+
+        if (arma == null) return "No tienes espadas cortas en el inventario.";
+
+        Item armaHibernate = repositorioItem.buscarPorId(arma.getId());
+
+//        sh.heal(80);
+        sh.increaseDamage(0.30);
+        shRepo.update(sh);
+
+        items.remove(arma);
+
+        repositorioItem.eliminarItem(armaHibernate);
+
+        return String.format(
+                "Tu héroe %s aumenta ataque: ahora %d.",
+                sh.getHero().getNombre(),
+                sh.getAtkActual()
+        );
+    }
+
+
 
     @Override
     public Expedition getExpedicionActiva(Usuario u) {
