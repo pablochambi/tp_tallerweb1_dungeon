@@ -3,6 +3,7 @@ package com.tallerwebi.infraestructura.impl;
 
 import com.tallerwebi.dominio.entidades.Item;
 import com.tallerwebi.infraestructura.RepositorioItem;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,11 @@ public class RepositorioItemImpl implements RepositorioItem {
     public Item buscarPorId(Long id) {
         return sessionFactory.getCurrentSession()
                 .get(Item.class, id);
+    }
+
+    @Override
+    public void eliminarItem(Item item) {
+        sessionFactory.getCurrentSession().delete(item);
     }
 
 

@@ -35,6 +35,8 @@ class ServicioJuegoImplTest {
     ServicioRecluta servicioRecluta;
     @Mock //
     RepositorioHeroe repositorioHeroe;
+    @Mock
+    RepositorioItem repositorioItem;
 
     @InjectMocks
     ServicioJuegoImpl servicio;
@@ -77,7 +79,7 @@ class ServicioJuegoImplTest {
 
         servicio = new ServicioJuegoImpl(
                 sessionRepo, smRepo, shRepo, monsterRepo,
-                usuarioRepo, expeditionRepo, servicioRecluta, repositorioHeroe
+                usuarioRepo, expeditionRepo, servicioRecluta, repositorioHeroe,repositorioItem
         );
     }
 

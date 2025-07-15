@@ -2,6 +2,7 @@ package com.tallerwebi.presentacion;
 
 import com.tallerwebi.dominio.entidades.*;
 import com.tallerwebi.dominio.servicios.ServicioJuego;
+import com.tallerwebi.dominio.servicios.ServicioLogin;
 import com.tallerwebi.infraestructura.RepositorioExpedition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,17 +17,24 @@ public class ControladorJuego {
 
     private final ServicioJuego servicioJuego;
     private final RepositorioExpedition expeditionRepo;
+    private final ServicioLogin servicioLogin;
 
     @Autowired
-    public ControladorJuego(ServicioJuego servicioJuego, RepositorioExpedition expeditionRepo) {
+    public ControladorJuego(ServicioJuego servicioJuego, RepositorioExpedition expeditionRepo, ServicioLogin servicioLogin) {
         this.servicioJuego = servicioJuego;
         this.expeditionRepo = expeditionRepo;
+        this.servicioLogin = servicioLogin;
     }
 
     @GetMapping("/juego")
     public String mostrarJuego(HttpSession httpSession, Model model) {
-        Usuario usuario = (Usuario) httpSession.getAttribute("usuario");
-        if (usuario == null) return "redirect:/login";
+        Usuario usuarioSesion = (Usuario) httpSession.getAttribute("usuario");
+        if (usuarioSesion == null) return "redirect:/login";
+
+        // ¡RECARGAR el usuario desde la base!
+        Usuario usuario = servicioLogin.buscarUsuario(usuarioSesion.getId());
+        // Opcional: actualizá el usuario en sesión por si lo vas a necesitar más tarde
+        httpSession.setAttribute("usuario", usuario);
 
         GameSession session = servicioJuego.iniciarPartida(usuario);
 
@@ -43,6 +51,7 @@ public class ControladorJuego {
 
         return "juego";
     }
+
 
     @PostMapping("/juego/atacar")
     public String atacar(

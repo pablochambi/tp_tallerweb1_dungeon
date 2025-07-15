@@ -7,7 +7,7 @@ public interface RepositorioItem {
     List<Item> obtenerTodosLosItems();
     Item buscarPorId(Long id);
 
-
+    void eliminarItem(Item item);
 
     void guardarItem(Item item);
 
