@@ -245,41 +245,55 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.servicios.Servi
     }
 
     @Override
-    public String usarArma(Usuario u, int heroOrden) {
-
+    public String usarEspada(Usuario u, int heroOrden) {
+        // RECARGA desde Hibernate, igual que usarPocion:
         Usuario usuarioHibernate = usuarioRepo.buscarUsuarioPorId(u.getId());
         if (usuarioHibernate == null) return "Usuario no encontrado.";
 
         GameSession session = iniciarPartida(usuarioHibernate);
+
+        // Buscar la expedición activa:
+        Expedition expedicionActual = expeditionRepo
+                .findBySessionAndCompletedFalse(session)
+                .orElse(null);
+
+        if (expedicionActual == null) return "No hay expedición activa.";
+
+        int numeroExpedicion = expedicionActual.getNumber();
+
+        // Buscá el héroe correspondiente:
         SessionHero sh = getHeroesDeSesion(usuarioHibernate).stream()
                 .filter(h -> h.getOrden() == heroOrden)
                 .findFirst().orElse(null);
+
         if (sh == null) return "Héroe no encontrado.";
 
+        // Buscá una espada en el inventario:
         Inventario inventario = usuarioHibernate.getInventario();
         List<Item> items = inventario.getItems();
 
-        Item arma = items.stream()
+        Item espada = items.stream()
                 .filter(i -> i.getNombre().equals("Espada Corta"))
                 .findFirst().orElse(null);
 
-        if (arma == null) return "No tienes espadas cortas en el inventario.";
+        if (espada == null) return "No tienes espadas cortas en el inventario.";
 
-        Item armaHibernate = repositorioItem.buscarPorId(arma.getId());
+        // Recargá la espada con Hibernate para evitar conflictos
+        Item espadaHibernate = repositorioItem.buscarPorId(espada.getId());
 
-//        sh.heal(80);
-        sh.increaseDamage(0.30);
+        // Activar el buff solo si no está ya activo en esta expedición
+        if (sh.isEspadaBuff() && sh.getNumeroExpedicionBuff() != null && sh.getNumeroExpedicionBuff() == numeroExpedicion) {
+            return "Este héroe ya tiene el buff de espada en esta expedición.";
+        }
+
+        sh.setEspadaBuff(true);
+        sh.setNumeroExpedicionBuff(numeroExpedicion);
         shRepo.update(sh);
 
-        items.remove(arma);
+        items.remove(espada);
+        repositorioItem.eliminarItem(espadaHibernate);
 
-        repositorioItem.eliminarItem(armaHibernate);
-
-        return String.format(
-                "Tu héroe %s aumenta ataque: ahora %d.",
-                sh.getHero().getNombre(),
-                sh.getAtkActual()
-        );
+        return String.format("¡%s ahora inflige un 30%% más de daño hasta terminar la expedición!", sh.getHero().getNombre());
     }
 
 
@@ -315,10 +329,6 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.servicios.Servi
             Heroe h = sh.getHero();
             h.setVidaActual(sh.getVidaActual());
             repositorioHeroe.modificar(h);
-            // Remover buff espada al finalizar expedición
-            sh.setEspadaBuff(false);
-            sh.setNumeroExpedicionBuff(null);
-            shRepo.update(sh);
         }
 
         int oldNumber = exp.getNumber();
@@ -404,60 +414,6 @@ public class ServicioJuegoImpl implements com.tallerwebi.dominio.servicios.Servi
     public boolean tieneSesionActiva(Usuario u) {
         return sessionRepo.findActive(u) != null;
     }
-
-
-    @Override
-    public String usarEspada(Usuario u, int heroOrden) {
-        // RECARGA desde Hibernate, igual que usarPocion:
-        Usuario usuarioHibernate = usuarioRepo.buscarUsuarioPorId(u.getId());
-        if (usuarioHibernate == null) return "Usuario no encontrado.";
-
-        GameSession session = iniciarPartida(usuarioHibernate);
-
-        // Buscar la expedición activa:
-        Expedition expedicionActual = expeditionRepo
-                .findBySessionAndCompletedFalse(session)
-                .orElse(null);
-
-        if (expedicionActual == null) return "No hay expedición activa.";
-
-        int numeroExpedicion = expedicionActual.getNumber();
-
-        // Buscá el héroe correspondiente:
-        SessionHero sh = getHeroesDeSesion(usuarioHibernate).stream()
-                .filter(h -> h.getOrden() == heroOrden)
-                .findFirst().orElse(null);
-
-        if (sh == null) return "Héroe no encontrado.";
-
-        // Buscá una espada en el inventario:
-        Inventario inventario = usuarioHibernate.getInventario();
-        List<Item> items = inventario.getItems();
-
-        Item espada = items.stream()
-                .filter(i -> i.getNombre().equals("Espada Corta"))
-                .findFirst().orElse(null);
-
-        if (espada == null) return "No tienes espadas cortas en el inventario.";
-
-        // Recargá la espada con Hibernate para evitar conflictos
-        Item espadaHibernate = repositorioItem.buscarPorId(espada.getId());
-
-        // Activar el buff solo si no está ya activo en esta expedición
-        if (sh.isEspadaBuff() && sh.getNumeroExpedicionBuff() != null && sh.getNumeroExpedicionBuff() == numeroExpedicion) {
-            return "Este héroe ya tiene el buff de espada en esta expedición.";
-        }
-
-        sh.setEspadaBuff(true);
-        sh.setNumeroExpedicionBuff(numeroExpedicion);
-        shRepo.update(sh);
-
-        items.remove(espada);
-        repositorioItem.eliminarItem(espadaHibernate);
-
-        return String.format("¡%s ahora inflige un 30%% más de daño hasta terminar la expedición!", sh.getHero().getNombre());
-    }
-
 
     @Override
     public GameSession getSession() {
