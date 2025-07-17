@@ -90,17 +90,18 @@ public class ControladorJuego {
         return "redirect:/juego";
     }
 
-    @PostMapping("/juego/usarArma")
-    public String usarArma(
+    @PostMapping("/juego/usarEspada")
+    public String usarEspada(
             @RequestParam int heroOrden,
             HttpSession httpSession,
             RedirectAttributes ra
     ) {
         Usuario u = (Usuario) httpSession.getAttribute("usuario");
-        String mensaje = servicioJuego.usarArma(u, heroOrden);
+        String mensaje = servicioJuego.usarEspada(u, heroOrden);
         ra.addFlashAttribute("mensaje", mensaje);
         return "redirect:/juego";
     }
+
 
     @PostMapping("/juego/siguiente")
     public String siguienteMazmorra(
@@ -124,17 +125,4 @@ public class ControladorJuego {
 
         return "redirect:/home";
     }
-
-//    @PostMapping("/juego/usar-item")
-//    public String usarItem(
-//            @RequestParam Long itemId,
-//            @RequestParam int heroOrden,
-//            HttpSession httpSession,
-//            RedirectAttributes ra
-//    ) {
-//        Usuario usuario = (Usuario) httpSession.getAttribute("usuario");
-//        //String mensaje = servicioJuego.usarItem(itemId, heroOrden, usuario);
-//        ra.addFlashAttribute("mensaje", mensaje);
-//        return "redirect:/juego";
-//    }
 }

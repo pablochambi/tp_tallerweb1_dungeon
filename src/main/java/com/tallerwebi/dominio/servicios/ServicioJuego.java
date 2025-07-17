@@ -24,7 +24,7 @@ public interface ServicioJuego {
     String usarPocion(Usuario u, int heroOrden);
     void siguienteMazmorra(Usuario u);
     void endSession(GameSession current);
-    String usarArma(Usuario u, int heroOrden);
+
 
     Expedition getExpedicionActiva(Usuario usuario);
 
@@ -32,4 +32,5 @@ public interface ServicioJuego {
 
     boolean tieneSesionActiva(Usuario usuario);
 
+    String usarEspada(Usuario u, int heroOrden);
 }

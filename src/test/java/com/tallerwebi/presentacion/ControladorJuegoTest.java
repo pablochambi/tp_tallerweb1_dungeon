@@ -26,10 +26,10 @@ public class ControladorJuegoTest {
     private HttpSession sessionMock;
     private Model modelMock;
     private RedirectAttributes redirectAttributesMock;
+    private ServicioLogin servicioLoginMock;
 
     private Usuario usuario;
     private ControladorJuego controladorJuego;
-    private ServicioLogin servicioLogin;
 
     @BeforeEach
     public void setUp() {
@@ -38,13 +38,14 @@ public class ControladorJuegoTest {
         sessionMock = mock(HttpSession.class);
         modelMock = mock(Model.class);
         redirectAttributesMock = mock(RedirectAttributes.class);
+        servicioLoginMock = mock(ServicioLogin.class);
 
         usuario = new Usuario();
         usuario.setId(1L);
         usuario.setOro(500);
         usuario.setEmail("user@taller.com");
 
-        controladorJuego = new ControladorJuego(servicioJuegoMock, expeditionRepoMock, servicioLogin);
+        controladorJuego = new ControladorJuego(servicioJuegoMock, expeditionRepoMock, servicioLoginMock);
     }
 
     @Test
@@ -57,6 +58,7 @@ public class ControladorJuegoTest {
    @Test
     public void mostrarJuego_deberiaAgregarDatosYRetornarVistaJuego() {
         when(sessionMock.getAttribute("usuario")).thenReturn(usuario);
+       when(servicioLoginMock.buscarUsuario(usuario.getId())).thenReturn(usuario);
 
         GameSession gameSession = new GameSession();
         Expedition expedition = new Expedition();

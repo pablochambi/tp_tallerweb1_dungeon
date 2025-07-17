@@ -21,15 +21,17 @@ public class SessionHero {
     @Column(name = "vida_actual", nullable = false)
     private int vidaActual;
 
-    @Column(name = "atk_actual", nullable = false)
-    private int atkActual;
-
     @Column(nullable = false)
     private int orden;
 
     @Column(nullable = false)
     private boolean defending = false;
 
+    @Column(nullable = false)
+    private boolean espadaBuff = false; // true si el buff está activo
+
+    @Column(name = "numero_expedicion_buff")
+    private Integer numeroExpedicionBuff; // en qué expedición fue buffeado (null si no está activo)
 
     public SessionHero() {}
 
@@ -63,10 +65,6 @@ public class SessionHero {
         return vidaActual;
     }
 
-    public int getAtkActual() {return atkActual;}
-
-    public void setAtkActual(int atkActual) {this.atkActual = atkActual;}
-
     public void setVidaActual(int vidaActual) {
         this.vidaActual = vidaActual;
     }
@@ -87,15 +85,23 @@ public class SessionHero {
         this.defending = defending;
     }
 
+    public boolean isEspadaBuff() { return espadaBuff; }
+    public void setEspadaBuff(boolean espadaBuff) { this.espadaBuff = espadaBuff; }
+
+    public Integer getNumeroExpedicionBuff() { return numeroExpedicionBuff; }
+    public void setNumeroExpedicionBuff(Integer numeroExpedicionBuff) { this.numeroExpedicionBuff = numeroExpedicionBuff; }
+
     // --- Logica de combate ---
 
-//    //public int damageOutput() {
-//        return hero.getAtk();
-//    }
+    public int damageOutput(int expedicionActual) {
+        int base = hero.getAtk();
+        if (espadaBuff && numeroExpedicionBuff != null && numeroExpedicionBuff.intValue() == expedicionActual) {
+            return (int) Math.round(base * 1.3); // +30%
+        }
 
-    public int damageOutput() {
-        return this.atkActual;
+        return base;
     }
+
 
     public void takeDamage(int damage) {
         // defensa base que el héroe tiene
@@ -117,8 +123,13 @@ public class SessionHero {
         vidaActual = Math.min(max, vidaActual + amount);
     }
 
-    public void increaseDamage(double porcentaje) {
-      int incremento= (int) (hero.getAtk() * porcentaje);
-      this.atkActual += incremento;
+    public boolean sigueBuffeado(int expedicionActual) {
+        return espadaBuff && numeroExpedicionBuff != null && numeroExpedicionBuff.equals(expedicionActual);
+    }
+
+
+    public void quitarBuffEspada() {
+        this.espadaBuff = false;
+        this.numeroExpedicionBuff = null;
     }
 }

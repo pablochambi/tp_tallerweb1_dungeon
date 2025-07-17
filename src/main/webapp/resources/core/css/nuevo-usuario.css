@@ -3,6 +3,7 @@ body {
 background-color: #111;
 font-family: 'Segoe UI', sans-serif;
 margin: 0;
+
 color: #eee;
 }
 
@@ -59,27 +60,17 @@ input[type="password"]:focus {
 }
 
 button {
-    /*display: block;*/
-    /*width: fit-content;*/
-    /*padding: 12px 25px;*/
-    /*background-color: #30336b;*/
-    /*color: white;*/
-    /*border: none;*/
-    /*border-radius: 8px;*/
-    /*font-size: 1.1em;*/
-    /*cursor: pointer;*/
-    /*transition: background-color 0.3s ease;*/
-    /*margin-top: 10px;*/
-
+    display: block;
+    width: fit-content;
+    padding: 12px 25px;
     background-color: #30336b;
     color: white;
-    padding: 12px 25px;
     border: none;
     border-radius: 8px;
     font-size: 1.1em;
-    width: 80%;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-top: 10px;
 }
 
 button:hover {
